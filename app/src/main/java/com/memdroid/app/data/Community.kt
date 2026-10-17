@@ -24,6 +24,12 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.7", "17 Oct 2026", listOf(
+            "Fixed a crash on the Battery tab",
+            "Thumbnails and an Open button for duplicates and large files",
+            "Ignore apps forever in the unused apps list",
+            "A brand new look for the heroes wall",
+        )),
         Release("1.0.6", "17 Oct 2026", listOf(
             "Auto-kill rules: stop chosen apps when the screen turns off or RAM runs low",
             "App growth: see which apps' storage grew the most over 7 or 30 days",
@@ -50,14 +56,14 @@ object Community {
         Release("1.0.1", "17 Oct 2026", listOf("First release: RAM, storage and large files")),
     )
 
-    data class Hero(val name: String, val anonymous: Boolean, val since: String)
+    data class Hero(val name: String, val anonymous: Boolean, val since: String, val badge: String)
 
     /** Supporters listed in assets/heroes.json. Anonymous heroes are shown without their name. */
     fun heroes(context: Context): List<Hero> = try {
         val json = JSONArray(context.assets.open("heroes.json").bufferedReader().readText())
         (0 until json.length()).map { i ->
             val o = json.getJSONObject(i)
-            Hero(o.optString("name"), o.optBoolean("anonymous", false), o.optString("since"))
+            Hero(o.optString("name"), o.optBoolean("anonymous", false), o.optString("since"), o.optString("badge"))
         }
     } catch (_: Exception) {
         emptyList()

@@ -2,7 +2,16 @@ package com.memdroid.app.ui.screens
 
 import android.app.Application
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import com.memdroid.app.ui.FileThumbnail
+import com.memdroid.app.ui.openFile
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -137,7 +146,7 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
         if (scanning) LinearProgressIndicator(Modifier.fillMaxWidth())
         status?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp)) }
         Text(
-            "The oldest copy in each set is kept by default. At least one copy is always kept.",
+            "Files match only when their size and full contents are identical. The oldest copy in each set is kept by default, and at least one copy is always kept. Tap a thumbnail to open it.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -158,15 +167,20 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Checkbox(checked = checked, onCheckedChange = { vm.toggle(group, f) })
+                                Box(Modifier.clickable { openFile(context, f) }) { FileThumbnail(f) }
+                                Spacer(Modifier.width(12.dp))
                                 Column(Modifier.weight(1f)) {
                                     Text(f.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                     Text(
                                         "${f.parent} · ${formatDate(f.lastModified())}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        maxLines = 1,
+                                        maxLines = 2,
                                         overflow = TextOverflow.Ellipsis,
                                     )
+                                }
+                                IconButton(onClick = { openFile(context, f) }) {
+                                    Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = "Open")
                                 }
                             }
                         }

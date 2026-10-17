@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -30,7 +31,9 @@ class BatteryRepository(private val context: Context) {
     private val lookup = AppLookup(context)
 
     fun status(): BatteryStatus? {
-        val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED)) ?: return null
+        val intent = ContextCompat.registerReceiver(
+            context, null, IntentFilter(Intent.ACTION_BATTERY_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED,
+        ) ?: return null
         val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100)
         val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
@@ -61,23 +64,34 @@ class BatteryRepository(private val context: Context) {
      * Android only exposes this to the shell, so it needs Shizuku.
      */
     suspend fun appUsage(): Result<List<AppBattery>> = withContext(Dispatchers.IO) {
+        try {
+            readAppUsage()
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private suspend fun readAppUsage(): Result<List<AppBattery>> {
         var byUid = parseCheckin(ShizukuShell.exec("dumpsys batterystats --checkin"))
         if (byUid.isEmpty()) byUid = parseText(ShizukuShell.exec("dumpsys batterystats"))
         if (byUid.isEmpty()) {
-            return@withContext Result.failure(IllegalStateException("No battery stats found"))
+            return Result.failure(IllegalStateException("No battery stats found"))
         }
 
         val foreground = foregroundTimes()
         val pm = context.packageManager
-        val apps = byUid.filterValues { it > 0 }.mapNotNull { (uid, mah) ->
-            val meta = pm.getPackagesForUid(uid).orEmpty().firstNotNullOfOrNull { lookup.find(it) }
-                ?: return@mapNotNull null
-            Triple(meta, mah, foreground?.get(meta.packageName))
+        // Several uids (shared system uids, SDK sandboxes) can resolve to the same package, so
+        // sum per package; duplicate entries would also break the list's unique keys.
+        val byPackage = LinkedHashMap<String, Pair<AppMeta, Double>>()
+        byUid.filterValues { it > 0 }.forEach { (uid, mah) ->
+            val meta = pm.getPackagesForUid(uid).orEmpty().firstNotNullOfOrNull { lookup.find(it) } ?: return@forEach
+            val previous = byPackage[meta.packageName]?.second ?: 0.0
+            byPackage[meta.packageName] = meta to (previous + mah)
         }
-        val total = apps.sumOf { it.second }.coerceAtLeast(0.001)
-        Result.success(
-            apps.map { (meta, mah, fg) ->
-                AppBattery(meta.packageName, meta.label, meta.isSystem, mah, (mah / total).toFloat(), fg)
+        val total = byPackage.values.sumOf { it.second }.coerceAtLeast(0.001)
+        return Result.success(
+            byPackage.values.map { (meta, mah) ->
+                AppBattery(meta.packageName, meta.label, meta.isSystem, mah, (mah / total).toFloat(), foreground?.get(meta.packageName))
             }.sortedByDescending { it.mah }
         )
     }

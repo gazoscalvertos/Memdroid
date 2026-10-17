@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7 (17 Oct 2026)
+- Fixed a crash on the Battery tab
+- Thumbnails and an Open button for duplicates and large files
+- Ignore apps forever in the unused apps list
+- A brand new look for the heroes wall
+
 ## 1.0.6 (17 Oct 2026)
 - Auto-kill rules: stop chosen apps when the screen turns off or RAM runs low
 - App growth: see which apps' storage grew the most over 7, 30 or 60 days

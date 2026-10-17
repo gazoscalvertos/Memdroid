@@ -17,6 +17,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +33,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.StorageRepository
 import com.memdroid.app.data.UnusedApp
 import com.memdroid.app.data.findUnusedApps
@@ -45,6 +50,7 @@ import kotlinx.coroutines.launch
 
 class UnusedAppsViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = StorageRepository(app)
+    val prefs = Prefs.get(app)
 
     private val _days = MutableStateFlow(60)
     val days: StateFlow<Int> = _days
@@ -76,6 +82,8 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
     val days by vm.days.collectAsState()
     val apps by vm.apps.collectAsState()
     val loading by vm.loading.collectAsState()
+    val ignored by vm.prefs.ignoredUnused.collectAsState()
+    var showIgnored by rememberSaveable { mutableStateOf(false) }
 
     // Refreshes on return from the uninstall dialog too.
     LifecycleResumeEffect(Unit) {
@@ -99,13 +107,23 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
             }
         }
         if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-        Text(
-            "${apps.size} apps not opened in $days days, using ${formatBytes(apps.sumOf { it.app.totalBytes })}.",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(16.dp, 4.dp),
-        )
+        val active = apps.filter { it.app.packageName !in ignored }
+        val shown = if (showIgnored) apps.filter { it.app.packageName in ignored } else active
+        Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                if (showIgnored) "${shown.size} ignored apps. Tap Restore to show them again."
+                else "${active.size} apps not opened in $days days, using ${formatBytes(active.sumOf { it.app.totalBytes })}.",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.weight(1f),
+            )
+            if (ignored.isNotEmpty()) {
+                TextButton(onClick = { showIgnored = !showIgnored }) {
+                    Text(if (showIgnored) "Back" else "Ignored (${ignored.size})")
+                }
+            }
+        }
         LazyColumn(Modifier.fillMaxSize()) {
-            items(apps, key = { it.app.packageName }) { u ->
+            items(shown, key = { it.app.packageName }) { u ->
                 Row(
                     Modifier.fillMaxWidth().padding(16.dp, 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -121,9 +139,14 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    // Android shows its own confirmation before uninstalling.
-                    OutlinedButton(onClick = { context.startActivity(uninstallIntent(u.app.packageName)) }) {
-                        Text("Uninstall")
+                    if (showIgnored) {
+                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, false) }) { Text("Restore") }
+                    } else {
+                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, true) }) { Text("Ignore") }
+                        // Android shows its own confirmation before uninstalling.
+                        OutlinedButton(onClick = { context.startActivity(uninstallIntent(u.app.packageName)) }) {
+                            Text("Uninstall")
+                        }
                     }
                 }
                 HorizontalDivider()

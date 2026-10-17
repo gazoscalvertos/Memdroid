@@ -98,6 +98,16 @@ class Prefs private constructor(context: Context) {
         sp.edit().putString(KEY_AUTO_KILL_LOG, value).apply()
     }
 
+    /** Apps the user chose to never see in the unused apps list. */
+    private val _ignoredUnused = MutableStateFlow(sp.getStringSet(KEY_IGNORED_UNUSED, emptySet())!!.toSet())
+    val ignoredUnused: StateFlow<Set<String>> = _ignoredUnused
+
+    fun setIgnoredUnused(pkg: String, ignored: Boolean) {
+        val updated = if (ignored) _ignoredUnused.value + pkg else _ignoredUnused.value - pkg
+        _ignoredUnused.value = updated
+        sp.edit().putStringSet(KEY_IGNORED_UNUSED, updated).apply()
+    }
+
     var lastAppSnapshot: Long
         get() = sp.getLong(KEY_LAST_APP_SNAPSHOT, 0)
         set(value) = sp.edit().putLong(KEY_LAST_APP_SNAPSHOT, value).apply()
@@ -133,6 +143,7 @@ class Prefs private constructor(context: Context) {
         private const val KEY_AUTO_KILL_RAM_PERCENT = "auto_kill_ram_percent"
         private const val KEY_AUTO_KILL_LOG = "auto_kill_log"
         private const val KEY_LAST_APP_SNAPSHOT = "last_app_snapshot"
+        private const val KEY_IGNORED_UNUSED = "ignored_unused"
 
         private val DEFAULT_WHITELIST = setOf(
             "com.google.android.apps.nexuslauncher",

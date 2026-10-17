@@ -1,6 +1,19 @@
 package com.memdroid.app.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -118,22 +131,38 @@ fun ChangelogScreen() {
     }
 }
 
+private val GOLD = Color(0xFFFFC107)
+private val AMBER = Color(0xFFFF8F00)
+
 @Composable
 fun HeroesScreen() {
     val context = LocalContext.current
     val heroes = remember { Community.heroes(context) }
-    LazyColumn(Modifier.fillMaxSize()) {
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 16.dp)) {
         item {
-            Column(Modifier.padding(16.dp, 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    "Memdroid is free. These heroes chipped in to keep it going. " +
-                        "Supporters choose whether to be listed by name or anonymously.",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                if (Community.DONATE_URL.isNotEmpty()) {
-                    Button(onClick = { Community.open(context, Community.DONATE_URL) }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = null)
-                        Text("  Support Memdroid")
+            Box(
+                Modifier.fillMaxWidth().padding(16.dp, 8.dp).clip(RoundedCornerShape(24.dp))
+                    .background(Brush.linearGradient(listOf(GOLD, AMBER)))
+                    .padding(20.dp)
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("🍺 Heroes wall", style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold, color = Color(0xFF3E2723))
+                    Text(
+                        "Memdroid is free, with no ads. These heroes keep it that way. " +
+                            "Supporters choose to be listed by name or anonymously.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF3E2723),
+                    )
+                    Text(
+                        if (heroes.size == 1) "1 hero so far" else "${heroes.size} heroes so far",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color(0xFF3E2723),
+                    )
+                    if (Community.DONATE_URL.isNotEmpty()) {
+                        Button(onClick = { Community.open(context, Community.DONATE_URL) }) {
+                            Text("Buy me a beer 🍺")
+                        }
                     }
                 }
             }
@@ -148,20 +177,60 @@ fun HeroesScreen() {
                 )
             }
         }
-        items(heroes) { hero ->
-            Card(Modifier.fillMaxWidth().padding(16.dp, 4.dp)) {
-                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Filled.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+        itemsIndexed(heroes) { index, hero -> HeroCard(index, hero) }
+    }
+}
+
+@Composable
+private fun HeroCard(index: Int, hero: Community.Hero) {
+    val anonymous = hero.anonymous || hero.name.isBlank()
+    val first = index == 0
+    Card(
+        Modifier.fillMaxWidth().padding(16.dp, 5.dp),
+        border = if (first) BorderStroke(2.dp, GOLD) else null,
+    ) {
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier.size(48.dp).clip(CircleShape).background(
+                    if (anonymous) Brush.linearGradient(listOf(Color(0xFF607D8B), Color(0xFF37474F)))
+                    else Brush.linearGradient(listOf(GOLD, AMBER))
+                ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    if (anonymous) "🕶" else hero.name.trim().first().uppercase(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                )
+            }
+            Column(Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        if (hero.anonymous || hero.name.isBlank()) "Anonymous hero" else hero.name,
+                        if (anonymous) "Anonymous hero" else hero.name,
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.weight(1f).padding(start = 12.dp),
+                        fontWeight = FontWeight.SemiBold,
                     )
-                    if (hero.since.isNotBlank()) {
-                        Text(hero.since, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (hero.badge.isNotBlank()) {
+                        Surface(shape = RoundedCornerShape(50), color = MaterialTheme.colorScheme.primaryContainer) {
+                            Text(
+                                hero.badge,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                            )
+                        }
                     }
                 }
+                Text(
+                    buildString {
+                        append(if (first) "Hero #1" else "Hero #${index + 1}")
+                        if (hero.since.isNotBlank()) append(" · since ${hero.since}")
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
+            if (first) Text("🏆", style = MaterialTheme.typography.titleLarge)
         }
     }
 }

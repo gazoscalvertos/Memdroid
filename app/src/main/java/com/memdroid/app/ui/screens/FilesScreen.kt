@@ -2,6 +2,15 @@ package com.memdroid.app.ui.screens
 
 import android.app.Application
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import com.memdroid.app.ui.FileThumbnail
+import com.memdroid.app.ui.openFile
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -150,6 +159,8 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
                     Checkbox(checked = checked, onCheckedChange = {
                         selected = if (it) selected + path else selected - path
                     })
+                    Box(Modifier.clickable { openFile(context, f.file) }) { FileThumbnail(f.file) }
+                    Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(f.file.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(
@@ -159,6 +170,9 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
+                    }
+                    IconButton(onClick = { openFile(context, f.file) }) {
+                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = "Open")
                     }
                 }
                 HorizontalDivider()
