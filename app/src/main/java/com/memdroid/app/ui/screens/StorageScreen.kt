@@ -62,6 +62,7 @@ import com.memdroid.app.ui.AppIcon
 import com.memdroid.app.ui.ConfirmDialog
 import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.appDetailsIntent
+import com.memdroid.app.ui.isExpandedWidth
 import com.memdroid.app.ui.uninstallIntent
 import com.memdroid.app.ui.usageAccessIntent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -162,31 +163,41 @@ private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit) {
     val shizuku by ShizukuShell.state.collectAsState()
     var confirmClearCaches by remember { mutableStateOf(false) }
 
-    LazyColumn(Modifier.fillMaxSize()) {
-        item {
-            if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (!usageAccess) UsageAccessCard()
-            breakdown?.let { BreakdownCard(it) }
-            message?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
-            }
-            if (shizuku == ShizukuState.READY && apps.isNotEmpty()) {
-                OutlinedButton(
-                    onClick = { confirmClearCaches = true },
-                    enabled = !loading,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                ) { Text("Clear all app caches (${formatBytes(apps.sumOf { it.cacheBytes })})") }
-            }
+    val summary: @Composable () -> Unit = {
+        if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
+        if (!usageAccess) UsageAccessCard()
+        breakdown?.let { BreakdownCard(it) }
+        message?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
         }
+        if (shizuku == ShizukuState.READY && apps.isNotEmpty()) {
+            OutlinedButton(
+                onClick = { confirmClearCaches = true },
+                enabled = !loading,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            ) { Text("Clear all app caches (${formatBytes(apps.sumOf { it.cacheBytes })})") }
+        }
+    }
+    val topLists: @Composable () -> Unit = {
         if (apps.isNotEmpty()) {
-            item { TopList("Biggest apps", apps.take(5).map { it to it.totalBytes }, onShowApps) }
-            item {
-                TopList(
-                    "Biggest caches",
-                    apps.sortedByDescending { it.cacheBytes }.take(5).map { it to it.cacheBytes },
-                    onShowApps,
-                )
-            }
+            TopList("Biggest apps", apps.take(5).map { it to it.totalBytes }, onShowApps)
+            TopList(
+                "Biggest caches",
+                apps.sortedByDescending { it.cacheBytes }.take(5).map { it to it.cacheBytes },
+                onShowApps,
+            )
+        }
+    }
+
+    if (isExpandedWidth()) {
+        Row(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.weight(1f)) { item { Column { summary() } } }
+            LazyColumn(Modifier.weight(1f)) { item { Column { topLists() } } }
+        }
+    } else {
+        LazyColumn(Modifier.fillMaxSize()) {
+            item { Column { summary() } }
+            item { Column { topLists() } }
         }
     }
 
@@ -298,8 +309,8 @@ private fun AppsTab(vm: StorageViewModel) {
     val apps by vm.apps.collectAsState()
     val usageAccess by vm.usageAccess.collectAsState()
     val loading by vm.loading.collectAsState()
-    var systemTab by remember { mutableStateOf(false) }
-    var sort by remember { mutableStateOf(AppSort.SIZE) }
+    var systemTab by rememberSaveable { mutableStateOf(false) }
+    var sort by rememberSaveable { mutableStateOf(AppSort.SIZE) }
 
     if (!usageAccess) {
         UsageAccessCard()
@@ -314,7 +325,7 @@ private fun AppsTab(vm: StorageViewModel) {
     }
 
     LazyColumn(Modifier.fillMaxSize()) {
-        item {
+        item { Column {
             if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -336,7 +347,7 @@ private fun AppsTab(vm: StorageViewModel) {
                     FilterChip(selected = sort == s, onClick = { sort = s }, label = { Text(s.label) })
                 }
             }
-        }
+        } }
         items(visible, key = { it.packageName }) { app ->
             AppStorageRow(
                 app,

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +56,7 @@ import com.memdroid.app.ui.AppIcon
 import com.memdroid.app.ui.ConfirmDialog
 import com.memdroid.app.ui.NoticeCard
 import com.memdroid.app.ui.UsageCard
+import com.memdroid.app.ui.isExpandedWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -129,7 +132,7 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
     val whitelist by vm.prefs.whitelist.collectAsState()
     val includeSystem by vm.prefs.includeSystemInKillAll.collectAsState()
 
-    var systemTab by remember { mutableStateOf(false) }
+    var systemTab by rememberSaveable { mutableStateOf(false) }
     var selected by remember { mutableStateOf(setOf<String>()) }
     var pendingKill by remember { mutableStateOf<List<RunningApp>?>(null) }
     var sort by remember { mutableStateOf(SortOrder.RAM_HIGH) }
@@ -144,7 +147,7 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
     val killable = visible.filter { it.packageName !in whitelist }
     val selectedApps = visible.filter { it.packageName in selected && it.packageName !in whitelist }
 
-    Column(modifier.fillMaxSize()) {
+    val ramCard: @Composable () -> Unit = {
         UsageCard(
             title = "RAM",
             fraction = ram.usedFraction,
@@ -152,7 +155,9 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
                 "${formatBytes(ram.availableBytes)} available",
             warning = if (ram.lowMemory) "The system is low on memory." else null,
         )
+    }
 
+    val appsPane: @Composable ColumnScope.() -> Unit = {
         when (shizuku) {
             ShizukuState.NOT_RUNNING -> NoticeCard(
                 "Shizuku isn't running",
@@ -246,6 +251,18 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
                     }
                 }
             }
+        }
+    }
+
+    if (isExpandedWidth()) {
+        Row(modifier.fillMaxSize()) {
+            Column(Modifier.width(380.dp)) { ramCard() }
+            Column(Modifier.weight(1f)) { appsPane() }
+        }
+    } else {
+        Column(modifier.fillMaxSize()) {
+            ramCard()
+            appsPane()
         }
     }
 

@@ -7,6 +7,8 @@ An Android app for managing RAM and storage on a Pixel phone (built for the Pixe
 - **RAM:** live system RAM usage. With Shizuku: running apps by memory, split into user and system apps, kill selected apps or kill all, and a whitelist of apps that are never killed.
 - **Storage:** a colour-coded breakdown (apps, app data, app cache, images, videos, audio, other files, system), biggest apps and caches, every app's size with sorting, a folder explorer showing which folders use the most space, and (with Shizuku) clear all app caches.
 - **Files:** find files over 50/100/250/500 MB and delete them. Every delete asks for confirmation first.
+- **Battery:** level, charging, temperature and health. With Shizuku: battery used by each app since the last full charge, screen time, and force stop.
+- **Tablets and foldables:** a side navigation rail on wide screens, and two-pane RAM, storage and battery screens on tablets and unfolded phones.
 
 ## Install
 
