@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A memory chip: body with pins on each side. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,36h28a4,4 0 0 1 4,4v28a4,4 0 0 1 -4,4h-28a4,4 0 0 1 -4,-4v-28a4,4 0 0 1 4,-4z" />
+    <path
+        android:fillColor="#1B5E20"
+        android:pathData="M46,46h16v16h-16z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,42h6v3h-6zM30,49h6v3h-6zM30,56h6v3h-6zM30,63h6v3h-6zM72,42h6v3h-6zM72,49h6v3h-6zM72,56h6v3h-6zM72,63h6v3h-6zM42,30h3v6h-3zM49,30h3v6h-3zM56,30h3v6h-3zM63,30h3v6h-3zM42,72h3v6h-3zM49,72h3v6h-3zM56,72h3v6h-3zM63,72h3v6h-3z" />
+</vector>

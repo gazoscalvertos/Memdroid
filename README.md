@@ -1,0 +1,43 @@
+# Memdroid
+
+An Android app for managing RAM and storage on a Pixel phone (built for the Pixel 9 Pro XL, works on Android 12+).
+
+## Features
+
+- **RAM:** live system RAM usage. With Shizuku: running apps by memory, split into user and system apps, kill selected apps or kill all, and a whitelist of apps that are never killed.
+- **Storage:** used/free space, images/videos/audio totals, every app's size (app, data, cache) and last-used date, uninstall shortcut, and (with Shizuku) clear all app caches.
+- **Files:** find files over 50/100/250/500 MB and delete them. Every delete asks for confirmation first.
+
+## Install
+
+1. Open the [latest release](../../releases/latest) on your phone and download the `.apk`.
+2. Open it and allow installing from your browser when Android asks.
+3. New releases install over the old one; your whitelist and settings are kept.
+
+## Setting up Shizuku (needed for killing apps and clearing caches)
+
+Android doesn't let normal apps stop other apps. [Shizuku](https://shizuku.rikka.app/) gives Memdroid the same access as a USB debugging connection, without root.
+
+1. Install **Shizuku** from the Play Store.
+2. Turn on Developer options (Settings › About phone › tap Build number 7 times).
+3. In Shizuku, choose **Start via Wireless debugging** and follow the pairing steps.
+4. Open Memdroid and tap **Grant access**.
+
+Shizuku stops when the phone restarts; open Shizuku and start it again.
+
+## Permissions
+
+| Permission | Why |
+|---|---|
+| Usage access | Per-app storage sizes and last-used dates |
+| All files access | Finding large files anywhere on the phone |
+| Query all packages | Listing installed apps |
+| Request delete packages | Opening the uninstall dialog |
+
+Memdroid has no internet permission; nothing leaves the phone.
+
+## Building
+
+Every push to `main` builds a signed APK with GitHub Actions and publishes it as a release. To build locally: `./gradlew assembleRelease` (needs the Android SDK).
+
+The signing key in `signing/` is checked in on purpose so every CI build can update the installed app. It's fine for a personal sideloaded app; don't reuse it for anything published.
