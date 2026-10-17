@@ -39,7 +39,7 @@ import com.memdroid.app.data.formatBytes
 import com.memdroid.app.data.formatDate
 import com.memdroid.app.data.hasAllFilesAccess
 import com.memdroid.app.ui.ConfirmDialog
-import com.memdroid.app.ui.NoticeCard
+import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.allFilesAccessIntent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -102,12 +102,11 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
 
     Column(modifier.fillMaxSize()) {
         if (!allFilesAccess) {
-            NoticeCard(
+            PermissionCard(
                 "Allow all files access",
                 "To find large files anywhere on your phone, Memdroid needs permission to see all files. " +
                     "Nothing is ever deleted without asking you first.",
-                action = "Open settings",
-                onAction = { context.startActivity(allFilesAccessIntent(context.packageName)) },
+                onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
             )
             return@Column
         }

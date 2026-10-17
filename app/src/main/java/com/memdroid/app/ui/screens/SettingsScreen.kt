@@ -39,6 +39,7 @@ import com.memdroid.app.data.ShizukuState
 import com.memdroid.app.data.hasAllFilesAccess
 import com.memdroid.app.data.hasUsageAccess
 import com.memdroid.app.ui.AppIcon
+import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.allFilesAccessIntent
 import com.memdroid.app.ui.usageAccessIntent
 
@@ -75,20 +76,26 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             )
         }
         item {
-            StatusRow(
-                "Usage access",
-                if (usageAccess) "Allowed" else "Needed for per-app storage sizes.",
-                action = if (usageAccess) null else "Allow",
-                onAction = { context.startActivity(usageAccessIntent()) },
-            )
+            if (usageAccess) {
+                StatusRow("Usage access", "Allowed", action = null, onAction = {})
+            } else {
+                PermissionCard(
+                    "Usage access",
+                    "Needed for app, app data and cache sizes.",
+                    onOpenSettings = { context.startActivity(usageAccessIntent()) },
+                )
+            }
         }
         item {
-            StatusRow(
-                "All files access",
-                if (allFiles) "Allowed" else "Needed to find large files.",
-                action = if (allFiles) null else "Allow",
-                onAction = { context.startActivity(allFilesAccessIntent(context.packageName)) },
-            )
+            if (allFiles) {
+                StatusRow("All files access", "Allowed", action = null, onAction = {})
+            } else {
+                PermissionCard(
+                    "All files access",
+                    "Needed for the folder breakdown and finding large files.",
+                    onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
+                )
+            }
         }
 
         item { SectionTitle("Killing apps") }

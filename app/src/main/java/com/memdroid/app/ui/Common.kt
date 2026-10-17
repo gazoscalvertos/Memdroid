@@ -23,7 +23,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -73,6 +78,44 @@ fun NoticeCard(title: String, body: String, action: String? = null, onAction: ()
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(body, style = MaterialTheme.typography.bodyMedium)
             action?.let { Button(onClick = onAction) { Text(it) } }
+        }
+    }
+}
+
+/**
+ * Asks for a special permission, with steps for Android's "restricted setting" block that
+ * sideloaded apps hit on Android 13 and later.
+ */
+@Composable
+fun PermissionCard(title: String, body: String, onOpenSettings: () -> Unit) {
+    val context = LocalContext.current
+    var showHelp by remember { mutableStateOf(false) }
+    Card(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(body, style = MaterialTheme.typography.bodyMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onOpenSettings) { Text("Open settings") }
+                TextButton(onClick = { showHelp = !showHelp }) {
+                    Text(if (showHelp) "Hide help" else "Toggle greyed out?")
+                }
+            }
+            if (showHelp) {
+                Text(
+                    "Android blocks this setting for apps installed outside the Play Store. To allow it:\n" +
+                        "1. Tap Open settings and try the toggle once, so Android shows \"App was denied access\". Tap Close.\n" +
+                        "2. Tap Open App info below.\n" +
+                        "3. Tap ⋮ in the top right, then Allow restricted settings, and confirm with your PIN or fingerprint.\n" +
+                        "4. Come back and tap Open settings again. The toggle now works.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                OutlinedButton(onClick = { context.startActivity(appDetailsIntent(context.packageName)) }) {
+                    Text("Open App info")
+                }
+            }
         }
     }
 }

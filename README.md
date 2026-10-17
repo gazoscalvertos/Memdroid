@@ -5,7 +5,7 @@ An Android app for managing RAM and storage on a Pixel phone (built for the Pixe
 ## Features
 
 - **RAM:** live system RAM usage. With Shizuku: running apps by memory, split into user and system apps, kill selected apps or kill all, and a whitelist of apps that are never killed.
-- **Storage:** used/free space, images/videos/audio totals, every app's size (app, data, cache) and last-used date, uninstall shortcut, and (with Shizuku) clear all app caches.
+- **Storage:** a colour-coded breakdown (apps, app data, app cache, images, videos, audio, other files, system), biggest apps and caches, every app's size with sorting, a folder explorer showing which folders use the most space, and (with Shizuku) clear all app caches.
 - **Files:** find files over 50/100/250/500 MB and delete them. Every delete asks for confirmation first.
 
 ## Install
@@ -41,3 +41,7 @@ Memdroid has no internet permission; nothing leaves the phone.
 Every push to `main` builds a signed APK with GitHub Actions and publishes it as a release. To build locally: `./gradlew assembleRelease` (needs the Android SDK).
 
 The signing key in `signing/` is checked in on purpose so every CI build can update the installed app. It's fine for a personal sideloaded app; don't reuse it for anything published.
+
+## "Controlled by restricted setting"
+
+Android blocks usage access for apps installed outside the Play Store. Try the toggle once, then open Memdroid's App info, tap ⋮ › **Allow restricted settings**, confirm, and go back to the toggle. Memdroid shows these steps under **Toggle greyed out?** on any permission card.
