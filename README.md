@@ -9,6 +9,9 @@ An Android app for managing RAM and storage on a Pixel phone (built for the Pixe
 - **Files:** find files over 50/100/250/500 MB and delete them. Every delete asks for confirmation first.
 - **Battery:** level, charging, temperature and health. With Shizuku: battery used by each app since the last full charge, screen time, and force stop.
 - **Tools:** usage history charts (RAM, storage, battery over 30 days), large files, duplicate finder (always keeps one copy), and unused apps (30/60/90 days) with uninstall.
+- **Auto-kill rules:** stop apps you choose when the screen turns off or RAM runs low (needs Shizuku).
+- **App growth:** which apps' storage grew the most over 7, 30 or 60 days.
+- **Community:** feature ideas to vote on, bug and feature reports (pre-filled GitHub issues), what's new, and the heroes wall.
 - **Alerts (optional, off by default):** a notification when free storage or available RAM drops below a level you choose.
 - **Widget:** RAM and storage on your home screen, with refresh and a Kill all button that opens the app to confirm.
 - **Tablets and foldables:** a side navigation rail on wide screens, and two-pane RAM, storage and battery screens on tablets and unfolded phones.
@@ -50,3 +53,20 @@ The signing key in `signing/` is checked in on purpose so every CI build can upd
 ## "Controlled by restricted setting"
 
 Android blocks usage access for apps installed outside the Play Store. Try the toggle once, then open Memdroid's App info, tap ⋮ › **Allow restricted settings**, confirm, and go back to the toggle. Memdroid shows these steps under **Toggle greyed out?** on any permission card.
+
+## Heroes wall
+
+Supporters are listed in `app/src/main/assets/heroes.json` and appear in the app from the next release:
+
+```json
+[
+  { "name": "Alex", "anonymous": false, "since": "Oct 2026" },
+  { "name": "", "anonymous": true, "since": "Nov 2026" }
+]
+```
+
+Anonymous heroes are shown as "Anonymous hero". Set `DONATE_URL` in `Community.kt` to show the Support button.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md). The same list is in the app under Tools › What's new (`Community.changelog`).

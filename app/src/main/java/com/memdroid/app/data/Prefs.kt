@@ -53,6 +53,55 @@ class Prefs private constructor(context: Context) {
         sp.edit().putInt(KEY_RAM_PERCENT, value).apply()
     }
 
+    /** Apps Memdroid stops automatically when an auto-kill rule fires. */
+    private val _autoKillApps = MutableStateFlow(sp.getStringSet(KEY_AUTO_KILL_APPS, emptySet())!!.toSet())
+    val autoKillApps: StateFlow<Set<String>> = _autoKillApps
+
+    private val _autoKillOnScreenOff = MutableStateFlow(sp.getBoolean(KEY_AUTO_KILL_SCREEN_OFF, false))
+    val autoKillOnScreenOff: StateFlow<Boolean> = _autoKillOnScreenOff
+
+    private val _autoKillOnLowRam = MutableStateFlow(sp.getBoolean(KEY_AUTO_KILL_LOW_RAM, false))
+    val autoKillOnLowRam: StateFlow<Boolean> = _autoKillOnLowRam
+
+    /** Auto-kill runs when available RAM drops below this percentage. */
+    private val _autoKillRamPercent = MutableStateFlow(sp.getInt(KEY_AUTO_KILL_RAM_PERCENT, 15))
+    val autoKillRamPercent: StateFlow<Int> = _autoKillRamPercent
+
+    private val _autoKillLog = MutableStateFlow(sp.getString(KEY_AUTO_KILL_LOG, null))
+    val autoKillLog: StateFlow<String?> = _autoKillLog
+
+    val autoKillActive get() = _autoKillOnScreenOff.value || _autoKillOnLowRam.value
+
+    fun setAutoKill(pkg: String, enabled: Boolean) {
+        val updated = if (enabled) _autoKillApps.value + pkg else _autoKillApps.value - pkg
+        _autoKillApps.value = updated
+        sp.edit().putStringSet(KEY_AUTO_KILL_APPS, updated).apply()
+    }
+
+    fun setAutoKillOnScreenOff(value: Boolean) {
+        _autoKillOnScreenOff.value = value
+        sp.edit().putBoolean(KEY_AUTO_KILL_SCREEN_OFF, value).apply()
+    }
+
+    fun setAutoKillOnLowRam(value: Boolean) {
+        _autoKillOnLowRam.value = value
+        sp.edit().putBoolean(KEY_AUTO_KILL_LOW_RAM, value).apply()
+    }
+
+    fun setAutoKillRamPercent(value: Int) {
+        _autoKillRamPercent.value = value
+        sp.edit().putInt(KEY_AUTO_KILL_RAM_PERCENT, value).apply()
+    }
+
+    fun setAutoKillLog(value: String) {
+        _autoKillLog.value = value
+        sp.edit().putString(KEY_AUTO_KILL_LOG, value).apply()
+    }
+
+    var lastAppSnapshot: Long
+        get() = sp.getLong(KEY_LAST_APP_SNAPSHOT, 0)
+        set(value) = sp.edit().putLong(KEY_LAST_APP_SNAPSHOT, value).apply()
+
     /** Whether an alert is currently showing for [key], so each low state notifies only once. */
     fun alertActive(key: String) = sp.getBoolean("alert_active_$key", false)
 
@@ -78,6 +127,12 @@ class Prefs private constructor(context: Context) {
         private const val KEY_ALERTS = "alerts_enabled"
         private const val KEY_STORAGE_GB = "storage_alert_gb"
         private const val KEY_RAM_PERCENT = "ram_alert_percent"
+        private const val KEY_AUTO_KILL_APPS = "auto_kill_apps"
+        private const val KEY_AUTO_KILL_SCREEN_OFF = "auto_kill_screen_off"
+        private const val KEY_AUTO_KILL_LOW_RAM = "auto_kill_low_ram"
+        private const val KEY_AUTO_KILL_RAM_PERCENT = "auto_kill_ram_percent"
+        private const val KEY_AUTO_KILL_LOG = "auto_kill_log"
+        private const val KEY_LAST_APP_SNAPSHOT = "last_app_snapshot"
 
         private val DEFAULT_WHITELIST = setOf(
             "com.google.android.apps.nexuslauncher",

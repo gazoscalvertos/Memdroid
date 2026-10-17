@@ -23,6 +23,7 @@ class MonitorWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         val snapshot = HistoryStore.capture(applicationContext)
         HistoryStore.append(applicationContext, snapshot)
         Alerts.check(applicationContext, snapshot)
+        AppHistoryStore.recordIfDue(applicationContext)
         MemdroidWidget.updateAll(applicationContext)
         return Result.success()
     }

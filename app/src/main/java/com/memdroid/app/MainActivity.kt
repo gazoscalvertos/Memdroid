@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.memdroid.app.data.AutoKillService
 import com.memdroid.app.data.MonitorWorker
 import com.memdroid.app.data.ShizukuShell
 import com.memdroid.app.ui.isMediumWidth
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         ShizukuShell.init()
         MonitorWorker.schedule(this)
+        AutoKillService.sync(this)
         handleIntent(intent)
         enableEdgeToEdge()
         setContent {

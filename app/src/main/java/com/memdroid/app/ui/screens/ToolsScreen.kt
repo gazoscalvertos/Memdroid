@@ -11,7 +11,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.AutoMode
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.FilePresent
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Timeline
@@ -32,10 +38,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 private enum class Tool(val title: String, val description: String, val icon: ImageVector) {
+    AUTO_KILL("Auto-kill rules", "Stop chosen apps when the screen turns off or RAM runs low", Icons.Filled.AutoMode),
     HISTORY("Usage history", "RAM, storage and battery over the last 30 days", Icons.Filled.Timeline),
+    APP_GROWTH("App growth", "Which apps' storage is growing fastest", Icons.AutoMirrored.Filled.TrendingUp),
     LARGE_FILES("Large files", "Find and delete files over 50 MB", Icons.Filled.FilePresent),
     DUPLICATES("Duplicate files", "Find identical photos, videos and files", Icons.Filled.ContentCopy),
     UNUSED_APPS("Unused apps", "Apps you haven't opened in a while", Icons.Filled.HourglassEmpty),
+    IDEAS("Feature ideas", "Vote on what gets built next", Icons.Filled.Lightbulb),
+    FEEDBACK("Report a bug or request a feature", "Opens a pre-filled GitHub issue", Icons.Filled.BugReport),
+    CHANGELOG("What's new", "Changes in each version", Icons.Filled.NewReleases),
+    HEROES("Heroes wall", "The people supporting Memdroid", Icons.Filled.Favorite),
 }
 
 @Composable
@@ -46,7 +58,15 @@ fun ToolsScreen(modifier: Modifier = Modifier) {
     val tool = open
     if (tool == null) {
         LazyColumn(modifier.fillMaxSize()) {
-            items(Tool.entries) { t ->
+            items(Tool.entries) { t -> Column {
+                if (t == Tool.IDEAS) {
+                    Text(
+                        "Community",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp),
+                    )
+                }
                 Card(Modifier.fillMaxWidth().padding(16.dp, 6.dp).clickable { open = t }) {
                     ListItem(
                         headlineContent = { Text(t.title) },
@@ -54,7 +74,7 @@ fun ToolsScreen(modifier: Modifier = Modifier) {
                         leadingContent = { Icon(t.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     )
                 }
-            }
+            } }
         }
         return
     }
@@ -67,10 +87,16 @@ fun ToolsScreen(modifier: Modifier = Modifier) {
             Text(tool.title, style = MaterialTheme.typography.titleMedium)
         }
         when (tool) {
+            Tool.AUTO_KILL -> AutoKillScreen()
             Tool.HISTORY -> HistoryScreen()
+            Tool.APP_GROWTH -> AppGrowthScreen()
             Tool.LARGE_FILES -> FilesScreen()
             Tool.DUPLICATES -> DuplicatesScreen()
             Tool.UNUSED_APPS -> UnusedAppsScreen()
+            Tool.IDEAS -> FeatureIdeasScreen(onSuggest = { open = Tool.FEEDBACK })
+            Tool.FEEDBACK -> FeedbackScreen()
+            Tool.CHANGELOG -> ChangelogScreen()
+            Tool.HEROES -> HeroesScreen()
         }
     }
 }
