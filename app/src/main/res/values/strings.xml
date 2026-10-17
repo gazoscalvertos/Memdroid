@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Memdroid</string>
+    <string name="widget_description">RAM and storage at a glance</string>
 </resources>

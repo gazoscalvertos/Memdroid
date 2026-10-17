@@ -31,6 +31,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -123,7 +124,12 @@ class RamViewModel(app: Application) : AndroidViewModel(app) {
 }
 
 @Composable
-fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
+fun RamScreen(
+    modifier: Modifier = Modifier,
+    killAllRequested: Boolean = false,
+    onKillAllHandled: () -> Unit = {},
+    vm: RamViewModel = viewModel(),
+) {
     val ram by vm.ram.collectAsState()
     val apps by vm.apps.collectAsState()
     val loading by vm.loading.collectAsState()
@@ -145,6 +151,18 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
         }
     }
     val killable = visible.filter { it.packageName !in whitelist }
+
+    // The widget's Kill all opens here: confirm stopping every non-whitelisted user app.
+    LaunchedEffect(killAllRequested, apps, shizuku) {
+        if (!killAllRequested) return@LaunchedEffect
+        if (shizuku != ShizukuState.READY) {
+            onKillAllHandled()
+        } else if (apps.isNotEmpty()) {
+            systemTab = false
+            pendingKill = apps.filter { !it.isSystem && it.packageName !in whitelist }
+            onKillAllHandled()
+        }
+    }
     val selectedApps = visible.filter { it.packageName in selected && it.packageName !in whitelist }
 
     val ramCard: @Composable () -> Unit = {

@@ -20,6 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.FilterChip
+import androidx.core.content.ContextCompat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,6 +57,12 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     val shizuku by ShizukuShell.state.collectAsState()
     val whitelist by prefs.whitelist.collectAsState()
     val includeSystem by prefs.includeSystemInKillAll.collectAsState()
+    val alertsEnabled by prefs.alertsEnabled.collectAsState()
+    val storageAlertGb by prefs.storageAlertGb.collectAsState()
+    val ramAlertPercent by prefs.ramAlertPercent.collectAsState()
+    val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        prefs.setAlertsEnabled(granted)
+    }
 
     var usageAccess by remember { mutableStateOf(hasUsageAccess(context)) }
     var allFiles by remember { mutableStateOf(hasAllFilesAccess()) }
@@ -95,6 +107,46 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     "Needed for the folder breakdown and finding large files.",
                     onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
                 )
+            }
+        }
+
+        item { SectionTitle("Alerts") }
+        item {
+            Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("Low storage and memory alerts")
+                    Text(
+                        "Off by default. Memdroid checks every 30 minutes and notifies you once when space or memory runs low.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(checked = alertsEnabled, onCheckedChange = { on ->
+                    val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                        PackageManager.PERMISSION_GRANTED
+                    if (on && !granted) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    else prefs.setAlertsEnabled(on)
+                })
+            }
+        }
+        if (alertsEnabled) {
+            item {
+                Column(Modifier.padding(16.dp, 4.dp)) {
+                    Text("Alert when free storage is below", style = MaterialTheme.typography.bodyMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(5, 10, 20, 50).forEach { gb ->
+                            FilterChip(selected = storageAlertGb == gb, onClick = { prefs.setStorageAlertGb(gb) },
+                                label = { Text("$gb GB") })
+                        }
+                    }
+                    Text("Alert when available RAM is below", style = MaterialTheme.typography.bodyMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(5, 10, 15, 20).forEach { pct ->
+                            FilterChip(selected = ramAlertPercent == pct, onClick = { prefs.setRamAlertPercent(pct) },
+                                label = { Text("$pct%") })
+                        }
+                    }
+                }
             }
         }
 
