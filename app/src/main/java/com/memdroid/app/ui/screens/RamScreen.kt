@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
@@ -55,6 +58,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
+private enum class SortOrder(val label: String) {
+    RAM_HIGH("Most RAM"),
+    RAM_LOW("Least RAM"),
+    NAME("Name"),
+}
 
 class RamViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = RamRepository(app)
@@ -123,8 +132,15 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
     var systemTab by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf(setOf<String>()) }
     var pendingKill by remember { mutableStateOf<List<RunningApp>?>(null) }
+    var sort by remember { mutableStateOf(SortOrder.RAM_HIGH) }
 
-    val visible = apps.filter { it.isSystem == systemTab }
+    val visible = apps.filter { it.isSystem == systemTab }.let { list ->
+        when (sort) {
+            SortOrder.RAM_HIGH -> list.sortedByDescending { it.memoryBytes }
+            SortOrder.RAM_LOW -> list.sortedBy { it.memoryBytes }
+            SortOrder.NAME -> list.sortedBy { it.label.lowercase() }
+        }
+    }
     val killable = visible.filter { it.packageName !in whitelist }
     val selectedApps = visible.filter { it.packageName in selected && it.packageName !in whitelist }
 
@@ -173,6 +189,33 @@ fun RamScreen(modifier: Modifier = Modifier, vm: RamViewModel = viewModel()) {
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = vm::refreshApps, enabled = !loading) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                    }
+                }
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    val allSelected = killable.isNotEmpty() && selectedApps.size == killable.size
+                    TriStateCheckbox(
+                        state = when {
+                            selectedApps.isEmpty() -> ToggleableState.Off
+                            allSelected -> ToggleableState.On
+                            else -> ToggleableState.Indeterminate
+                        },
+                        onClick = {
+                            selected = if (allSelected) emptySet() else killable.map { it.packageName }.toSet()
+                        },
+                        enabled = killable.isNotEmpty(),
+                    )
+                    Text("Select all", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(Modifier.weight(1f))
+                    SortOrder.entries.forEach { order ->
+                        FilterChip(
+                            selected = sort == order,
+                            onClick = { sort = order },
+                            label = { Text(order.label, style = MaterialTheme.typography.labelSmall) },
+                        )
                     }
                 }
                 if (systemTab && !includeSystem) {
