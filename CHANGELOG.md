@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.12 (18 Oct 2026)
+- Fixed the privacy policy link
+
 ## 1.0.11 (18 Oct 2026)
 - Buy me a beer: tip through Google Play and join the heroes wall by name or anonymously
 - Privacy policy, in Settings › About

@@ -77,7 +77,7 @@ Then add four secrets under the repo's Settings › Secrets and variables › Ac
 
 Tips use Google Play Billing. Create three one-time in-app products in Play Console with these IDs: `beer_half`, `beer_pint`, `beer_round`. Until they exist, and in sideloaded copies, the heroes wall says tips work in the Play Store version.
 
-The privacy policy is `docs/privacy.html`, served by GitHub Pages at https://gazoscalvertos.github.io/memdroid/privacy.html.
+The privacy policy is `docs/privacy.html`, served by GitHub Pages at https://gazoscalvertos.github.io/Memdroid/privacy.html.
 
 ## "Controlled by restricted setting"
 

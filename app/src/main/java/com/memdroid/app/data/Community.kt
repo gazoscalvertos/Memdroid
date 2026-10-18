@@ -9,7 +9,7 @@ import org.json.JSONArray
 object Community {
     const val REPO_URL = "https://github.com/gazoscalvertos/Memdroid"
 
-    const val PRIVACY_URL = "https://gazoscalvertos.github.io/memdroid/privacy.html"
+    const val PRIVACY_URL = "https://gazoscalvertos.github.io/Memdroid/privacy.html"
 
     /** A donation page for copies not installed from Play, where Play tips can't work. Empty hides the button. */
     const val DONATE_URL = ""
@@ -26,6 +26,7 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.12", "18 Oct 2026", listOf("Fixed the privacy policy link")),
         Release("1.0.11", "18 Oct 2026", listOf(
             "Buy me a beer: tip through Google Play and join the heroes wall by name or anonymously",
             "Privacy policy, in Settings › About",
