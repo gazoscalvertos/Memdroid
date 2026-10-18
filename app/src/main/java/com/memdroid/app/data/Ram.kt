@@ -31,20 +31,9 @@ class RamRepository(private val context: Context) {
         val result = ShizukuShell.exec("ps -A -o RSS,NAME")
         if (!result.ok) return Result.failure(IllegalStateException(result.err.ifBlank { "ps failed" }))
 
-        val byPackage = HashMap<String, Pair<Long, Int>>()
-        result.out.lineSequence().drop(1).forEach { line ->
-            val parts = line.trim().split(Regex("\\s+"), limit = 2)
-            if (parts.size != 2) return@forEach
-            val rssKb = parts[0].toLongOrNull() ?: return@forEach
-            val pkg = parts[1].substringBefore(':')
-            if (!isValidPackageName(pkg)) return@forEach
-            val (bytes, count) = byPackage[pkg] ?: (0L to 0)
-            byPackage[pkg] = (bytes + rssKb * 1024) to (count + 1)
-        }
-
-        val apps = byPackage.mapNotNull { (pkg, usage) ->
+        val apps = Parsers.psByPackage(result.out).mapNotNull { (pkg, usage) ->
             val meta = lookup.find(pkg) ?: return@mapNotNull null
-            RunningApp(pkg, meta.label, meta.isSystem, usage.first, usage.second)
+            RunningApp(pkg, meta.label, meta.isSystem, usage.bytes, usage.processes)
         }.sortedByDescending { it.memoryBytes }
         return Result.success(apps)
     }
