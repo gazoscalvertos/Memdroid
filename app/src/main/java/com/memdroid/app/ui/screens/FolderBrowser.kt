@@ -45,6 +45,7 @@ import com.memdroid.app.data.StorageRepository
 import com.memdroid.app.data.formatBytes
 import com.memdroid.app.data.hasAllFilesAccess
 import com.memdroid.app.ui.ConfirmDialog
+import com.memdroid.app.ui.deleteOutcome
 import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.allFilesAccessIntent
 import kotlinx.coroutines.Job
@@ -99,7 +100,7 @@ class FolderViewModel(app: Application) : AndroidViewModel(app) {
     fun delete(entry: FolderEntry) {
         viewModelScope.launch {
             val ok = repo.delete(listOf(entry.file)) == 1
-            _message.value = if (ok) "Deleted ${entry.file.name}, ${formatBytes(entry.size)} freed."
+            _message.value = if (ok) "Removed ${entry.file.name} (${formatBytes(entry.size)})."
             else "Couldn't delete ${entry.file.name}."
             load()
         }
@@ -203,9 +204,9 @@ fun FolderBrowser(vm: FolderViewModel = viewModel()) {
             title = if (entry.isDirectory) "Delete folder ${entry.file.name}?" else "Delete ${entry.file.name}?",
             items = listOf(entry.file.absolutePath.removePrefix(vm.root.absolutePath + "/")),
             summary = if (entry.isDirectory) {
-                "The folder and all ${entry.fileCount} files in it (${formatBytes(entry.size)}) will be permanently deleted. This can't be undone."
+                "The folder and all ${entry.fileCount} files in it (${formatBytes(entry.size)}) ${deleteOutcome()}"
             } else {
-                "${formatBytes(entry.size)} will be permanently deleted. This can't be undone."
+                "${formatBytes(entry.size)} ${deleteOutcome()}"
             },
             confirmLabel = "Delete",
             onConfirm = { vm.delete(entry); pendingDelete = null },

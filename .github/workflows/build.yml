@@ -22,8 +22,8 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build release APK
-        run: ./gradlew --no-daemon assembleRelease
+      - name: Run tests and build release APK
+        run: ./gradlew --no-daemon testReleaseUnitTest assembleRelease
 
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk memdroid-1.0.${{ github.run_number }}.apk

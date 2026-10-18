@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import android.os.Process
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -72,22 +73,8 @@ class BatteryRepository(private val context: Context) {
     }
 
     private suspend fun readAppUsage(): Result<List<AppBattery>> {
-        var byUid = parseCheckin(ShizukuShell.exec("dumpsys batterystats --checkin"))
-        if (byUid.isEmpty()) byUid = parseText(ShizukuShell.exec("dumpsys batterystats"))
-        if (byUid.isEmpty()) {
-            return Result.failure(IllegalStateException("No battery stats found"))
-        }
-
+        val byPackage = usageByPackage() ?: return Result.failure(IllegalStateException("No battery stats found"))
         val foreground = foregroundTimes()
-        val pm = context.packageManager
-        // Several uids (shared system uids, SDK sandboxes) can resolve to the same package, so
-        // sum per package; duplicate entries would also break the list's unique keys.
-        val byPackage = LinkedHashMap<String, Pair<AppMeta, Double>>()
-        byUid.filterValues { it > 0 }.forEach { (uid, mah) ->
-            val meta = pm.getPackagesForUid(uid).orEmpty().firstNotNullOfOrNull { lookup.find(it) } ?: return@forEach
-            val previous = byPackage[meta.packageName]?.second ?: 0.0
-            byPackage[meta.packageName] = meta to (previous + mah)
-        }
         val total = byPackage.values.sumOf { it.second }.coerceAtLeast(0.001)
         return Result.success(
             byPackage.values.map { (meta, mah) ->
@@ -96,38 +83,37 @@ class BatteryRepository(private val context: Context) {
         )
     }
 
-    /** Checkin rows look like `9,<uid>,l,pwi,uid,<mAh>,...`; `l` is "since last charge". */
-    private fun parseCheckin(result: ShellResult): Map<Int, Double> {
-        if (!result.ok) return emptyMap()
-        val out = HashMap<Int, Double>()
-        result.out.lineSequence().forEach { line ->
-            val f = line.split(',')
-            if (f.size > 5 && f[2] == "l" && f[3] == "pwi" && f[4] == "uid") {
-                val uid = f[1].toIntOrNull() ?: return@forEach
-                val mah = f[5].toDoubleOrNull() ?: return@forEach
-                out[uid] = (out[uid] ?: 0.0) + mah
-            }
+    /**
+     * mAh used per package since the last full charge, for this profile only. Returns null if the
+     * stats couldn't be read. Needs Shizuku.
+     */
+    suspend fun usageByPackage(): Map<String, Pair<AppMeta, Double>>? {
+        val checkin = ShizukuShell.exec("dumpsys batterystats --checkin")
+        var byUid = if (checkin.ok) Parsers.batteryCheckin(checkin.out) else emptyMap()
+        if (byUid.isEmpty()) {
+            val text = ShizukuShell.exec("dumpsys batterystats")
+            if (text.ok) byUid = Parsers.batteryText(text.out)
         }
-        return out
-    }
+        if (byUid.isEmpty()) return null
 
-    /** Fallback for the human-readable "Estimated power use (mAh)" section: `UID u0a123: 45.6 ...`. */
-    private fun parseText(result: ShellResult): Map<Int, Double> {
-        if (!result.ok) return emptyMap()
-        val start = result.out.indexOf("Estimated power use")
-        if (start < 0) return emptyMap()
-        val row = Regex("""^\s+UID (?:u(\d+)a(\d+)|(\d+)):\s+([\d.]+)""")
-        val out = HashMap<Int, Double>()
-        result.out.substring(start).lineSequence().drop(1)
-            .takeWhile { it.isBlank() || it.startsWith(" ") }
-            .forEach { line ->
-                val m = row.find(line) ?: return@forEach
-                val (user, appId, plain, mah) = m.destructured
-                val uid = if (plain.isNotEmpty()) plain.toInt()
-                else user.toInt() * 100_000 + 10_000 + appId.toInt()
-                out[uid] = (out[uid] ?: 0.0) + mah.toDouble()
+        val pm = context.packageManager
+        val myUser = Parsers.userIdOf(Process.myUid())
+        // Several uids (shared system uids, SDK sandboxes) can resolve to the same package, so
+        // sum per package. Uids from other profiles (Work, Private Space) can't be looked up
+        // from this profile, so they're skipped.
+        val byPackage = LinkedHashMap<String, Pair<AppMeta, Double>>()
+        byUid.filterValues { it > 0 }.forEach { (uid, mah) ->
+            if (Parsers.userIdOf(uid) != myUser) return@forEach
+            val packages = try {
+                pm.getPackagesForUid(uid).orEmpty()
+            } catch (_: SecurityException) {
+                return@forEach
             }
-        return out
+            val meta = packages.firstNotNullOfOrNull { lookup.find(it) } ?: return@forEach
+            val previous = byPackage[meta.packageName]?.second ?: 0.0
+            byPackage[meta.packageName] = meta to (previous + mah)
+        }
+        return byPackage
     }
 
     /** Screen time per app over the last day, if usage access is allowed. */

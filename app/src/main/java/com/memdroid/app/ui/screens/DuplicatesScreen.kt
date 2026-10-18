@@ -48,6 +48,7 @@ import com.memdroid.app.data.formatBytes
 import com.memdroid.app.data.formatDate
 import com.memdroid.app.data.hasAllFilesAccess
 import com.memdroid.app.ui.ConfirmDialog
+import com.memdroid.app.ui.deleteOutcome
 import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.allFilesAccessIntent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -194,8 +195,7 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
         ConfirmDialog(
             title = "Delete ${toDelete.size} duplicate files?",
             items = toDelete.map { "${it.first.name} (${formatBytes(it.second)}) in ${it.first.parent}" },
-            summary = "${formatBytes(toDelete.sumOf { it.second })} will be permanently deleted. " +
-                "One copy of each file is kept. This can't be undone.",
+            summary = "${formatBytes(toDelete.sumOf { it.second })} ${deleteOutcome()} One copy of each file is kept.",
             confirmLabel = "Delete",
             onConfirm = { vm.deleteSelected(); confirm = false },
             onDismiss = { confirm = false },

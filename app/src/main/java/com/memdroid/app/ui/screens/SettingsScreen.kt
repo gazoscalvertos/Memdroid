@@ -60,6 +60,9 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     val alertsEnabled by prefs.alertsEnabled.collectAsState()
     val storageAlertGb by prefs.storageAlertGb.collectAsState()
     val ramAlertPercent by prefs.ramAlertPercent.collectAsState()
+    val drainAlerts by prefs.drainAlertsEnabled.collectAsState()
+    val drainThreshold by prefs.drainThresholdMah.collectAsState()
+    val recycleBin by prefs.recycleBinEnabled.collectAsState()
     val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         prefs.setAlertsEnabled(granted)
     }
@@ -147,6 +150,55 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                         }
                     }
                 }
+            }
+        }
+
+        if (alertsEnabled) {
+            item {
+                Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Background battery drain")
+                        Text(
+                            "Alerts when an app you haven't opened uses at least $drainThreshold mAh per hour. " +
+                                "Needs Shizuku and usage access.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(checked = drainAlerts, onCheckedChange = prefs::setDrainAlertsEnabled)
+                }
+            }
+            if (drainAlerts) {
+                item {
+                    Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(50, 100, 200).forEach { mah ->
+                            FilterChip(selected = drainThreshold == mah, onClick = { prefs.setDrainThresholdMah(mah) },
+                                label = { Text("$mah mAh/h") })
+                        }
+                    }
+                }
+            }
+        }
+
+        item { SectionTitle("Deleting files") }
+        item {
+            Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("Recycle bin")
+                    Text(
+                        "Deleted files are kept for 30 days so you can restore them (Tools › Recycle bin).",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(checked = recycleBin, onCheckedChange = prefs::setRecycleBinEnabled)
+            }
+        }
+
+        item { SectionTitle("Setup") }
+        item {
+            OutlinedButton(onClick = { prefs.setOnboarded(false) }, modifier = Modifier.padding(16.dp, 4.dp)) {
+                Text("Run setup again")
             }
         }
 

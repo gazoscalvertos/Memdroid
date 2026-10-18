@@ -154,7 +154,7 @@ class StorageRepository(private val context: Context) {
 
     /** Lists a folder's contents with each entry's total size, largest first. Needs all files access. */
     suspend fun listFolder(dir: File): List<FolderEntry> = withContext(Dispatchers.IO) {
-        dir.listFiles().orEmpty().map { f ->
+        dir.listFiles().orEmpty().filter { it.absolutePath != RecycleBin.dir.absolutePath }.map { f ->
             if (f.isDirectory) {
                 var size = 0L
                 var count = 0
@@ -164,6 +164,14 @@ class StorageRepository(private val context: Context) {
                 FolderEntry(f, f.length(), false, 1)
             }
         }.sortedByDescending { it.size }
+    }
+
+    /** Files in [dirs] (searched recursively) last modified before [olderThan]. Needs all files access. */
+    suspend fun findOldFiles(dirs: List<File>, olderThan: Long): List<LargeFile> = withContext(Dispatchers.IO) {
+        dirs.filter { it.exists() }.flatMap { d ->
+            d.walkTopDown().onEnter { !it.isHidden }.filter { it.isFile && !it.isHidden && it.lastModified() < olderThan }
+                .map { LargeFile(it, it.length(), it.lastModified()) }.toList()
+        }.distinctBy { it.file.absolutePath }.sortedByDescending { it.size }
     }
 
     /** Walks shared storage for files at or above [minBytes]. Needs all files access. */
@@ -186,11 +194,18 @@ class StorageRepository(private val context: Context) {
         }
 
     /**
-     * Deletes files or folders. Only called after the user confirms in a dialog.
-     * Returns how many were deleted.
+     * Deletes files or folders, or moves them to the recycle bin when it's on. Only called after
+     * the user confirms in a dialog. Returns how many were removed.
      */
     suspend fun delete(files: List<File>): Int = withContext(Dispatchers.IO) {
-        val deleted = files.filter { if (it.isDirectory) it.deleteRecursively() else it.delete() }
+        val useBin = Prefs.get(context).recycleBinEnabled.value
+        val deleted = files.filter {
+            when {
+                useBin -> RecycleBin.moveToBin(context, it)
+                it.isDirectory -> it.deleteRecursively()
+                else -> it.delete()
+            }
+        }
         if (deleted.isNotEmpty()) {
             MediaScannerConnection.scanFile(context, deleted.map { it.absolutePath }.toTypedArray(), null, null)
         }

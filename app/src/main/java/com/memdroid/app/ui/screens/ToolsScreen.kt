@@ -15,6 +15,8 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.NewReleases
@@ -28,6 +30,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,8 +45,10 @@ private enum class Tool(val title: String, val description: String, val icon: Im
     HISTORY("Usage history", "RAM, storage and battery over the last 30 days", Icons.Filled.Timeline),
     APP_GROWTH("App growth", "Which apps' storage is growing fastest", Icons.AutoMirrored.Filled.TrendingUp),
     LARGE_FILES("Large files", "Find and delete files over 50 MB", Icons.Filled.FilePresent),
+    OLD_FILES("Old downloads and screenshots", "Clear out files you've kept for months", Icons.Filled.History),
     DUPLICATES("Duplicate files", "Find identical photos, videos and files", Icons.Filled.ContentCopy),
     UNUSED_APPS("Unused apps", "Apps you haven't opened in a while", Icons.Filled.HourglassEmpty),
+    RECYCLE_BIN("Recycle bin", "Restore deleted files for 30 days", Icons.Filled.DeleteSweep),
     IDEAS("Feature ideas", "Vote on what gets built next", Icons.Filled.Lightbulb),
     FEEDBACK("Report a bug or request a feature", "Opens a pre-filled GitHub issue", Icons.Filled.BugReport),
     CHANGELOG("What's new", "Changes in each version", Icons.Filled.NewReleases),
@@ -51,8 +56,15 @@ private enum class Tool(val title: String, val description: String, val icon: Im
 }
 
 @Composable
-fun ToolsScreen(modifier: Modifier = Modifier) {
+fun ToolsScreen(modifier: Modifier = Modifier, request: String? = null, onRequestHandled: () -> Unit = {}) {
     var open by rememberSaveable { mutableStateOf<Tool?>(null) }
+    // Other screens (like smart cleanup) can open a tool by name.
+    LaunchedEffect(request) {
+        if (request != null) {
+            open = Tool.entries.firstOrNull { it.name == request }
+            onRequestHandled()
+        }
+    }
     BackHandler(enabled = open != null) { open = null }
 
     val tool = open
@@ -91,6 +103,8 @@ fun ToolsScreen(modifier: Modifier = Modifier) {
             Tool.HISTORY -> HistoryScreen()
             Tool.APP_GROWTH -> AppGrowthScreen()
             Tool.LARGE_FILES -> FilesScreen()
+            Tool.OLD_FILES -> OldFilesScreen()
+            Tool.RECYCLE_BIN -> RecycleBinScreen()
             Tool.DUPLICATES -> DuplicatesScreen()
             Tool.UNUSED_APPS -> UnusedAppsScreen()
             Tool.IDEAS -> FeatureIdeasScreen(onSuggest = { open = Tool.FEEDBACK })
