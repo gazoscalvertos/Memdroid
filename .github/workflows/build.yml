@@ -1,4 +1,4 @@
-name: Build and release APK
+name: Build and release
 
 on:
   push:
@@ -28,10 +28,29 @@ jobs:
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk memdroid-1.0.${{ github.run_number }}.apk
 
+      # The Play bundle is signed with the private upload key, which only exists in GitHub secrets.
+      - name: Build Play bundle
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          if [ -z "$UPLOAD_KEYSTORE_BASE64" ]; then
+            echo "::notice::No upload key in secrets, so no Play bundle was built. See README › Play Store."
+            exit 0
+          fi
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+          UPLOAD_KEYSTORE_PATH="$RUNNER_TEMP/upload.keystore" ./gradlew --no-daemon bundleRelease
+          cp app/build/outputs/bundle/release/app-release.aab memdroid-1.0.${{ github.run_number }}.aab
+          rm "$RUNNER_TEMP/upload.keystore"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: memdroid-apk
-          path: memdroid-*.apk
+          name: memdroid-${{ github.run_number }}
+          path: |
+            memdroid-*.apk
+            memdroid-*.aab
 
       - name: Publish GitHub release
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
@@ -41,6 +60,9 @@ jobs:
           name: Memdroid 1.0.${{ github.run_number }}
           body: |
             Download the APK below on your phone and open it to install.
+            The .aab file, when present, is the Play Store bundle for Play Console.
             Built from ${{ github.sha }}.
-          files: memdroid-*.apk
+          files: |
+            memdroid-*.apk
+            memdroid-*.aab
           make_latest: true

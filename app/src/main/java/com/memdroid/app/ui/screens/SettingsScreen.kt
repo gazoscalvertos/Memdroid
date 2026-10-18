@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.memdroid.app.data.AppLookup
+import com.memdroid.app.data.Community
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.ShizukuShell
 import com.memdroid.app.data.ShizukuState
@@ -199,6 +200,13 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         item {
             OutlinedButton(onClick = { prefs.setOnboarded(false) }, modifier = Modifier.padding(16.dp, 4.dp)) {
                 Text("Run setup again")
+            }
+        }
+
+        item { SectionTitle("About") }
+        item {
+            OutlinedButton(onClick = { Community.open(context, Community.PRIVACY_URL) }, modifier = Modifier.padding(16.dp, 4.dp)) {
+                Text("Privacy policy")
             }
         }
 

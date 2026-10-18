@@ -9,7 +9,9 @@ import org.json.JSONArray
 object Community {
     const val REPO_URL = "https://github.com/gazoscalvertos/Memdroid"
 
-    /** Donation page for the Support button. Empty hides the button. */
+    const val PRIVACY_URL = "https://gazoscalvertos.github.io/memdroid/privacy.html"
+
+    /** A donation page for copies not installed from Play, where Play tips can't work. Empty hides the button. */
     const val DONATE_URL = ""
 
     data class Idea(val title: String, val description: String, val issue: Int)
@@ -24,6 +26,11 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.11", "18 Oct 2026", listOf(
+            "Buy me a beer: tip through Google Play and join the heroes wall by name or anonymously",
+            "Privacy policy, in Settings › About",
+            "Updated for Android 16",
+        )),
         Release("1.0.10", "18 Oct 2026", listOf(
             "Smart cleanup: see everything you could free in one card",
             "Optional recycle bin: restore deleted files for 30 days",
@@ -95,6 +102,25 @@ object Community {
         return Uri.parse("$REPO_URL/issues/new").buildUpon()
             .appendQueryParameter("labels", if (bug) "bug" else "enhancement")
             .appendQueryParameter("title", title.trim())
+            .appendQueryParameter("body", body)
+            .build().toString()
+    }
+
+    /**
+     * A pre-filled GitHub issue asking to be added to the heroes wall. New heroes are checked
+     * against the Play order ID and added to assets/heroes.json in the next release.
+     */
+    fun heroSignupUrl(name: String, anonymous: Boolean, thanks: Tips.Thanks): String {
+        val shown = if (anonymous) "Anonymous hero" else name.trim()
+        val body = buildString {
+            append("Please add me to the heroes wall.\n\n")
+            append("**Show as:** ").append(shown).append("\n")
+            append("**Tip:** ").append(Tips.PRODUCTS.find { it.id == thanks.productId }?.title ?: thanks.productId).append("\n")
+            append("**Order:** ").append(thanks.orderId ?: "unknown").append("\n")
+        }
+        return Uri.parse("$REPO_URL/issues/new").buildUpon()
+            .appendQueryParameter("labels", "hero")
+            .appendQueryParameter("title", "Hero: $shown")
             .appendQueryParameter("body", body)
             .build().toString()
     }

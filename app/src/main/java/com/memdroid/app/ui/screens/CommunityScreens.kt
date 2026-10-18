@@ -43,7 +43,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.RadioButton
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import com.memdroid.app.data.Community
+import com.memdroid.app.data.Prefs
+import com.memdroid.app.data.Tips
 
 @Composable
 fun FeatureIdeasScreen(onSuggest: () -> Unit) {
@@ -138,6 +147,7 @@ private val AMBER = Color(0xFFFF8F00)
 fun HeroesScreen() {
     val context = LocalContext.current
     val heroes = remember { Community.heroes(context) }
+    val myHero by Prefs.get(context).myHero.collectAsState()
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 16.dp)) {
         item {
             Box(
@@ -159,12 +169,18 @@ fun HeroesScreen() {
                         style = MaterialTheme.typography.labelLarge,
                         color = Color(0xFF3E2723),
                     )
-                    if (Community.DONATE_URL.isNotEmpty()) {
-                        Button(onClick = { Community.open(context, Community.DONATE_URL) }) {
-                            Text("Buy me a beer 🍺")
-                        }
-                    }
                 }
+            }
+        }
+        item { TipJar() }
+        myHero?.takeIf { mine -> heroes.none { it.name == mine } }?.let { mine ->
+            item {
+                Text(
+                    "You're on your way to the wall as \"$mine\". You'll appear here for everyone after the next update.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp, 4.dp),
+                )
             }
         }
         if (heroes.isEmpty()) {
@@ -179,6 +195,122 @@ fun HeroesScreen() {
         }
         itemsIndexed(heroes) { index, hero -> HeroCard(index, hero) }
     }
+}
+
+@Composable
+private fun TipJar() {
+    val context = LocalContext.current
+    val tips = remember { Tips(context) }
+    DisposableEffect(tips) {
+        tips.connect()
+        onDispose { tips.disconnect() }
+    }
+    val state by tips.state.collectAsState()
+    val products by tips.tips.collectAsState()
+    val pending by tips.pending.collectAsState()
+    val thanks by tips.thanks.collectAsState()
+
+    Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("Buy me a beer", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                "A one-off tip through Google Play. Nothing is locked, and you can join the heroes wall afterwards.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            when (state) {
+                Tips.State.CONNECTING -> Text("Loading…", style = MaterialTheme.typography.bodySmall)
+                Tips.State.UNAVAILABLE -> {
+                    Text(
+                        "Tips work in the Play Store version of Memdroid.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    if (Community.DONATE_URL.isNotEmpty()) {
+                        Button(onClick = { Community.open(context, Community.DONATE_URL) }) {
+                            Text("Buy me a beer 🍺")
+                        }
+                    }
+                }
+                Tips.State.READY -> products.forEach { tip ->
+                    OutlinedButton(
+                        onClick = { context.findActivity()?.let { tips.buy(it, tip) } },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("${tip.product.emoji}  ${tip.product.title}", Modifier.weight(1f))
+                        Text(tip.price, fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
+            if (pending) {
+                Text(
+                    "Your tip is waiting for the payment to clear. Thank you!",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+    }
+
+    thanks?.let { HeroOptInDialog(it, onDone = tips::clearThanks) }
+}
+
+@Composable
+private fun HeroOptInDialog(thanks: Tips.Thanks, onDone: () -> Unit) {
+    val context = LocalContext.current
+    var name by rememberSaveable { mutableStateOf("") }
+    var choice by rememberSaveable { mutableStateOf(0) } // 0 name, 1 anonymous, 2 don't list
+    AlertDialog(
+        onDismissRequest = onDone,
+        title = { Text("Cheers! 🍻") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Thank you for supporting Memdroid. Would you like to join the heroes wall?")
+                listOf("Show my name", "List me as an anonymous hero", "Don't list me").forEachIndexed { i, label ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = choice == i, onClick = { choice = i })
+                        Text(label)
+                    }
+                }
+                if (choice == 0) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it.take(30) },
+                        label = { Text("Name or nickname") },
+                        singleLine = true,
+                    )
+                }
+                if (choice != 2) {
+                    Text(
+                        "This opens a short request on GitHub. Heroes are added in the next update.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                enabled = choice != 0 || name.isNotBlank(),
+                onClick = {
+                    if (choice != 2) {
+                        val anonymous = choice == 1
+                        Prefs.get(context).setMyHero(if (anonymous) "Anonymous hero" else name.trim())
+                        Community.open(context, Community.heroSignupUrl(name, anonymous, thanks))
+                    }
+                    onDone()
+                },
+            ) { Text(if (choice == 2) "Done" else "Join the wall") }
+        },
+    )
+}
+
+private fun Context.findActivity(): Activity? {
+    var c: Context? = this
+    while (c is ContextWrapper) {
+        if (c is Activity) return c
+        c = c.baseContext
+    }
+    return null
 }
 
 @Composable

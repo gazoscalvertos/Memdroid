@@ -160,6 +160,15 @@ class Prefs private constructor(context: Context) {
         sp.edit().putBoolean("alert_active_$key", active).apply()
     }
 
+    /** How this supporter asked to appear on the heroes wall, shown until the next release lists them. */
+    private val _myHero = MutableStateFlow(sp.getString(KEY_MY_HERO, null))
+    val myHero: StateFlow<String?> = _myHero
+
+    fun setMyHero(shownAs: String) {
+        _myHero.value = shownAs
+        sp.edit().putString(KEY_MY_HERO, shownAs).apply()
+    }
+
     fun setWhitelisted(pkg: String, whitelisted: Boolean) {
         if (pkg in locked) return
         val updated = if (whitelisted) _whitelist.value + pkg else _whitelist.value - pkg
@@ -189,6 +198,7 @@ class Prefs private constructor(context: Context) {
         private const val KEY_DRAIN_ALERTS = "drain_alerts"
         private const val KEY_DRAIN_THRESHOLD = "drain_threshold_mah"
         private const val KEY_ONBOARDED = "onboarded"
+        private const val KEY_MY_HERO = "my_hero"
 
         private val DEFAULT_WHITELIST = setOf(
             "com.google.android.apps.nexuslauncher",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.11 (18 Oct 2026)
+- Buy me a beer: tip through Google Play and join the heroes wall by name or anonymously
+- Privacy policy, in Settings › About
+- Updated for Android 16
+
 ## 1.0.10 (18 Oct 2026)
 - Smart cleanup: see everything you could free in one card
 - Optional recycle bin: restore deleted files for 30 days

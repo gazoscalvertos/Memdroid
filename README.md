@@ -53,7 +53,31 @@ Every build runs the unit tests in `app/src/test` (battery stats, process list a
 
 Every push to `main` builds a signed APK with GitHub Actions and publishes it as a release. To build locally: `./gradlew assembleRelease` (needs the Android SDK).
 
-The signing key in `signing/` is checked in on purpose so every CI build can update the installed app. It's fine for a personal sideloaded app; don't reuse it for anything published.
+The signing key in `signing/` is checked in on purpose so every CI build can update a sideloaded app. It signs the GitHub APKs only. The Play Store bundle uses a private upload key (below).
+
+## Play Store
+
+When the upload key is in GitHub secrets, every build also makes `memdroid-1.0.N.aab`, the bundle to upload in Play Console. Play re-signs it with its own app signing key (Play App Signing), so the Play version and the GitHub APK can't update each other: uninstall the GitHub copy before installing from Play.
+
+Create the upload key once, on your own computer, and keep a backup of the file and passwords:
+
+```sh
+keytool -genkeypair -v -keystore upload.keystore -alias upload -keyalg RSA -keysize 4096 -validity 10000
+base64 -w0 upload.keystore > upload.keystore.b64   # macOS: base64 -i upload.keystore -o upload.keystore.b64
+```
+
+Then add four secrets under the repo's Settings › Secrets and variables › Actions:
+
+| Secret | Value |
+|---|---|
+| `UPLOAD_KEYSTORE_BASE64` | the contents of `upload.keystore.b64` |
+| `UPLOAD_STORE_PASSWORD` | the keystore password |
+| `UPLOAD_KEY_ALIAS` | `upload` |
+| `UPLOAD_KEY_PASSWORD` | the key password (the same as the keystore password unless you set another) |
+
+Tips use Google Play Billing. Create three one-time in-app products in Play Console with these IDs: `beer_half`, `beer_pint`, `beer_round`. Until they exist, and in sideloaded copies, the heroes wall says tips work in the Play Store version.
+
+The privacy policy is `docs/privacy.html`, served by GitHub Pages at https://gazoscalvertos.github.io/memdroid/privacy.html.
 
 ## "Controlled by restricted setting"
 
@@ -70,7 +94,7 @@ Supporters are listed in `app/src/main/assets/heroes.json` and appear in the app
 ]
 ```
 
-Anonymous heroes are shown as "Anonymous hero". Set `DONATE_URL` in `Community.kt` to show the Support button.
+Anonymous heroes are shown as "Anonymous hero". After a tip, supporters choose to be listed by name, anonymously, or not at all; listing opens a GitHub issue labelled `hero` with the Play order ID to check before adding them. `DONATE_URL` in `Community.kt` is an optional link for copies not installed from Play.
 
 ## Changelog
 
