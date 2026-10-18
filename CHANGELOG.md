@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.8 (18 Oct 2026)
+## 1.0.10 (18 Oct 2026)
 - Smart cleanup: see everything you could free in one card
 - Optional recycle bin: restore deleted files for 30 days
 - Old downloads and screenshots cleaner
