@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.8 (18 Oct 2026)
+- Smart cleanup: see everything you could free in one card
+- Optional recycle bin: restore deleted files for 30 days
+- Old downloads and screenshots cleaner
+- Background battery drain alerts (optional)
+- Setup wizard for permissions and Shizuku
+- Crash reports you can send with one tap
+- Fixed battery stats on phones with a Work profile or Private Space
+
 ## 1.0.7 (17 Oct 2026)
 - Fixed a crash on the Battery tab
 - Thumbnails and an Open button for duplicates and large files

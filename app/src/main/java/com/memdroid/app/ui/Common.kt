@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -165,3 +166,15 @@ fun usageAccessIntent() =
 fun allFilesAccessIntent(pkg: String) =
     Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:$pkg"))
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+/**
+ * How a delete ends, for confirmation dialogs: kept in the recycle bin for 30 days when it's on,
+ * otherwise gone for good.
+ */
+@Composable
+fun deleteOutcome(): String {
+    val context = LocalContext.current
+    val bin by com.memdroid.app.data.Prefs.get(context).recycleBinEnabled.collectAsState()
+    return if (bin) "will be moved to the recycle bin and deleted for good after 30 days. You can restore it until then."
+    else "will be permanently deleted. This can't be undone."
+}

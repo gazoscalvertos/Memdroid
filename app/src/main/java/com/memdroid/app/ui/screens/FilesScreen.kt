@@ -48,6 +48,7 @@ import com.memdroid.app.data.formatBytes
 import com.memdroid.app.data.formatDate
 import com.memdroid.app.data.hasAllFilesAccess
 import com.memdroid.app.ui.ConfirmDialog
+import com.memdroid.app.ui.deleteOutcome
 import com.memdroid.app.ui.PermissionCard
 import com.memdroid.app.ui.allFilesAccessIntent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -184,7 +185,7 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
         ConfirmDialog(
             title = "Delete ${targets.size} files?",
             items = targets.map { "${it.file.name} (${formatBytes(it.size)})" },
-            summary = "${formatBytes(targets.sumOf { it.size })} will be permanently deleted. This can't be undone.",
+            summary = "${formatBytes(targets.sumOf { it.size })} ${deleteOutcome()}",
             confirmLabel = "Delete",
             onConfirm = {
                 vm.delete(targets)

@@ -24,6 +24,15 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.8", "18 Oct 2026", listOf(
+            "Smart cleanup: see everything you could free in one card",
+            "Optional recycle bin: restore deleted files for 30 days",
+            "Old downloads and screenshots cleaner",
+            "Background battery drain alerts (optional)",
+            "Setup wizard for permissions and Shizuku",
+            "Crash reports you can send with one tap",
+            "Fixed battery stats on phones with a Work profile or Private Space",
+        )),
         Release("1.0.7", "17 Oct 2026", listOf(
             "Fixed a crash on the Battery tab",
             "Thumbnails and an Open button for duplicates and large files",

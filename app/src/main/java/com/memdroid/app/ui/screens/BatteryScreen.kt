@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +41,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.memdroid.app.data.AppBattery
 import com.memdroid.app.data.BatteryRepository
 import com.memdroid.app.data.BatteryStatus
+import com.memdroid.app.data.Community
+import com.memdroid.app.data.CrashReports
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.RamRepository
 import com.memdroid.app.data.ShizukuShell
@@ -165,8 +168,14 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
                         label = { Text("System (${apps.count { it.isSystem }})") })
                 }
                 if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-                message?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
+                message?.let { msg ->
+                    Text(msg, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
+                    if (msg.startsWith("Couldn't")) {
+                        TextButton(
+                            onClick = { Community.open(context, CrashReports.issueUrl(context, "Battery stats error", msg)) },
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                        ) { Text("Report this problem") }
+                    }
                 }
                 LazyColumn(Modifier.fillMaxSize()) {
                     items(visible, key = { it.packageName }) { app ->

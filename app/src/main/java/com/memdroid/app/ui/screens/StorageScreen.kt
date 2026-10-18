@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
@@ -50,6 +52,8 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.memdroid.app.data.AppStorage
+import com.memdroid.app.data.CleanupItem
+import com.memdroid.app.data.SmartCleanup
 import com.memdroid.app.data.ShizukuShell
 import com.memdroid.app.data.ShizukuState
 import com.memdroid.app.data.StorageBreakdown
@@ -91,6 +95,9 @@ class StorageViewModel(app: Application) : AndroidViewModel(app) {
     private val _apps = MutableStateFlow<List<AppStorage>>(emptyList())
     val apps: StateFlow<List<AppStorage>> = _apps
 
+    private val _cleanup = MutableStateFlow<List<CleanupItem>>(emptyList())
+    val cleanup: StateFlow<List<CleanupItem>> = _cleanup
+
     private val _usageAccess = MutableStateFlow(hasUsageAccess(app))
     val usageAccess: StateFlow<Boolean> = _usageAccess
 
@@ -106,6 +113,7 @@ class StorageViewModel(app: Application) : AndroidViewModel(app) {
             _usageAccess.value = hasUsageAccess(getApplication())
             _apps.value = if (_usageAccess.value) repo.appStorage() else emptyList()
             _breakdown.value = repo.breakdown(_apps.value)
+            _cleanup.value = SmartCleanup.summarize(getApplication(), _apps.value)
             _loading.value = false
         }
     }
@@ -123,7 +131,7 @@ class StorageViewModel(app: Application) : AndroidViewModel(app) {
 }
 
 @Composable
-fun StorageScreen(modifier: Modifier = Modifier, vm: StorageViewModel = viewModel()) {
+fun StorageScreen(modifier: Modifier = Modifier, onOpenTool: (String) -> Unit = {}, vm: StorageViewModel = viewModel()) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     LifecycleResumeEffect(Unit) {
         vm.refresh()
@@ -136,7 +144,7 @@ fun StorageScreen(modifier: Modifier = Modifier, vm: StorageViewModel = viewMode
             }
         }
         when (tab) {
-            0 -> OverviewTab(vm) { tab = 1 }
+            0 -> OverviewTab(vm, onShowApps = { tab = 1 }, onOpenTool = onOpenTool)
             1 -> AppsTab(vm)
             else -> FolderBrowser()
         }
@@ -154,7 +162,8 @@ private fun UsageAccessCard() {
 }
 
 @Composable
-private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit) {
+private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit, onOpenTool: (String) -> Unit) {
+    val cleanup by vm.cleanup.collectAsState()
     val breakdown by vm.breakdown.collectAsState()
     val apps by vm.apps.collectAsState()
     val usageAccess by vm.usageAccess.collectAsState()
@@ -166,6 +175,13 @@ private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit) {
     val summary: @Composable () -> Unit = {
         if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
         if (!usageAccess) UsageAccessCard()
+        SmartCleanupCard(
+            cleanup,
+            canClearCaches = shizuku == ShizukuState.READY,
+            onClearCaches = { confirmClearCaches = true },
+            onShowApps = onShowApps,
+            onOpenTool = onOpenTool,
+        )
         breakdown?.let { BreakdownCard(it) }
         message?.let {
             Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
@@ -212,6 +228,55 @@ private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit) {
             onConfirm = { vm.clearAllCaches(); confirmClearCaches = false },
             onDismiss = { confirmClearCaches = false },
         )
+    }
+}
+
+@Composable
+private fun SmartCleanupCard(
+    items: List<CleanupItem>,
+    canClearCaches: Boolean,
+    onClearCaches: () -> Unit,
+    onShowApps: () -> Unit,
+    onOpenTool: (String) -> Unit,
+) {
+    Card(
+        Modifier.fillMaxWidth().padding(16.dp, 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                if (items.isEmpty()) "Smart cleanup" else "You could free ${formatBytes(items.sumOf { it.bytes })}",
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                "Review each one. Nothing is removed until you confirm.",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            items.forEach { item ->
+                val (label, action, onClick) = when (item.kind) {
+                    CleanupItem.Kind.CACHES -> Triple("App caches (${item.count} apps)",
+                        if (canClearCaches) "Clear" else "Review", if (canClearCaches) onClearCaches else onShowApps)
+                    CleanupItem.Kind.OLD_DOWNLOADS -> Triple("Downloads older than ${SmartCleanup.OLD_DOWNLOAD_DAYS} days (${item.count})",
+                        "Review", { onOpenTool("OLD_FILES") })
+                    CleanupItem.Kind.OLD_SCREENSHOTS -> Triple("Screenshots older than ${SmartCleanup.OLD_SCREENSHOT_DAYS} days (${item.count})",
+                        "Review", { onOpenTool("OLD_FILES") })
+                    CleanupItem.Kind.UNUSED_APPS -> Triple("Apps unused for ${SmartCleanup.UNUSED_DAYS} days (${item.count})",
+                        "Review", { onOpenTool("UNUSED_APPS") })
+                    CleanupItem.Kind.RECYCLE_BIN -> Triple("Recycle bin (${item.count})", "Review", { onOpenTool("RECYCLE_BIN") })
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(label, style = MaterialTheme.typography.bodyMedium)
+                        Text(formatBytes(item.bytes), style = MaterialTheme.typography.titleSmall)
+                    }
+                    TextButton(onClick = onClick) { Text(action) }
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Duplicate files", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                TextButton(onClick = { onOpenTool("DUPLICATES") }) { Text("Scan") }
+            }
+        }
     }
 }
 

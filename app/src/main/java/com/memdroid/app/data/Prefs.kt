@@ -108,6 +108,47 @@ class Prefs private constructor(context: Context) {
         sp.edit().putStringSet(KEY_IGNORED_UNUSED, updated).apply()
     }
 
+    /** Deleted files go to the recycle bin for 30 days instead of being removed straight away. */
+    private val _recycleBin = MutableStateFlow(sp.getBoolean(KEY_RECYCLE_BIN, true))
+    val recycleBinEnabled: StateFlow<Boolean> = _recycleBin
+
+    fun setRecycleBinEnabled(value: Boolean) {
+        _recycleBin.value = value
+        sp.edit().putBoolean(KEY_RECYCLE_BIN, value).apply()
+    }
+
+    private val _drainAlerts = MutableStateFlow(sp.getBoolean(KEY_DRAIN_ALERTS, false))
+    val drainAlertsEnabled: StateFlow<Boolean> = _drainAlerts
+
+    /** Alert when an app uses at least this many mAh per hour while not on screen. */
+    private val _drainThreshold = MutableStateFlow(sp.getInt(KEY_DRAIN_THRESHOLD, 100))
+    val drainThresholdMah: StateFlow<Int> = _drainThreshold
+
+    fun setDrainAlertsEnabled(value: Boolean) {
+        _drainAlerts.value = value
+        sp.edit().putBoolean(KEY_DRAIN_ALERTS, value).apply()
+    }
+
+    fun setDrainThresholdMah(value: Int) {
+        _drainThreshold.value = value
+        sp.edit().putInt(KEY_DRAIN_THRESHOLD, value).apply()
+    }
+
+    /** Day number an app was last reported for draining, so each app alerts at most once a day. */
+    fun drainNotifiedDay(pkg: String) = sp.getLong("drain_day_$pkg", -1)
+
+    fun setDrainNotifiedDay(pkg: String, day: Long) {
+        sp.edit().putLong("drain_day_$pkg", day).apply()
+    }
+
+    private val _onboarded = MutableStateFlow(sp.getBoolean(KEY_ONBOARDED, false))
+    val onboarded: StateFlow<Boolean> = _onboarded
+
+    fun setOnboarded(value: Boolean) {
+        _onboarded.value = value
+        sp.edit().putBoolean(KEY_ONBOARDED, value).apply()
+    }
+
     var lastAppSnapshot: Long
         get() = sp.getLong(KEY_LAST_APP_SNAPSHOT, 0)
         set(value) = sp.edit().putLong(KEY_LAST_APP_SNAPSHOT, value).apply()
@@ -144,6 +185,10 @@ class Prefs private constructor(context: Context) {
         private const val KEY_AUTO_KILL_LOG = "auto_kill_log"
         private const val KEY_LAST_APP_SNAPSHOT = "last_app_snapshot"
         private const val KEY_IGNORED_UNUSED = "ignored_unused"
+        private const val KEY_RECYCLE_BIN = "recycle_bin"
+        private const val KEY_DRAIN_ALERTS = "drain_alerts"
+        private const val KEY_DRAIN_THRESHOLD = "drain_threshold_mah"
+        private const val KEY_ONBOARDED = "onboarded"
 
         private val DEFAULT_WHITELIST = setOf(
             "com.google.android.apps.nexuslauncher",

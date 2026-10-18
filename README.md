@@ -12,7 +12,10 @@ An Android app for managing RAM and storage on a Pixel phone (built for the Pixe
 - **Auto-kill rules:** stop apps you choose when the screen turns off or RAM runs low (needs Shizuku).
 - **App growth:** which apps' storage grew the most over 7, 30 or 60 days.
 - **Community:** feature ideas to vote on, bug and feature reports (pre-filled GitHub issues), what's new, and the heroes wall.
-- **Alerts (optional, off by default):** a notification when free storage or available RAM drops below a level you choose.
+- **Smart cleanup:** one card on the Storage tab showing caches, old downloads, old screenshots, unused apps and the recycle bin, each with a review step.
+- **Recycle bin (optional, on by default):** deleted files are kept for 30 days in a hidden folder and can be restored.
+- **Crash reports:** after a crash, Memdroid offers to open a pre-filled GitHub issue with the error. Nothing is sent without a tap.
+- **Alerts (optional, off by default):** a notification when free storage or available RAM drops below a level you choose, or when an app drains the battery in the background.
 - **Widget:** RAM and storage on your home screen, with refresh and a Kill all button that opens the app to confirm.
 - **Tablets and foldables:** a side navigation rail on wide screens, and two-pane RAM, storage and battery screens on tablets and unfolded phones.
 
@@ -45,6 +48,8 @@ Shizuku stops when the phone restarts; open Shizuku and start it again.
 Memdroid has no internet permission; nothing leaves the phone.
 
 ## Building
+
+Every build runs the unit tests in `app/src/test` (battery stats, process list and history parsers) before packaging.
 
 Every push to `main` builds a signed APK with GitHub Actions and publishes it as a release. To build locally: `./gradlew assembleRelease` (needs the Android SDK).
 

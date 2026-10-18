@@ -24,6 +24,8 @@ class MonitorWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         HistoryStore.append(applicationContext, snapshot)
         Alerts.check(applicationContext, snapshot)
         AppHistoryStore.recordIfDue(applicationContext)
+        RecycleBin.purgeExpired(applicationContext)
+        DrainMonitor.check(applicationContext)
         MemdroidWidget.updateAll(applicationContext)
         return Result.success()
     }
@@ -64,7 +66,7 @@ object Alerts {
         if (low != wasLow) prefs.setAlertActive(key, low)
     }
 
-    private fun notify(context: Context, id: Int, title: String, text: String) {
+    fun notify(context: Context, id: Int, title: String, text: String) {
         val manager = NotificationManagerCompat.from(context)
         if (!manager.areNotificationsEnabled()) return
         context.getSystemService(NotificationManager::class.java).createNotificationChannel(
