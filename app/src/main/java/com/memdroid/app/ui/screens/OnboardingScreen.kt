@@ -81,7 +81,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 when (step) {
                     0 -> Step(
                         "Welcome to Memdroid",
-                        "Memdroid shows what's using your phone's memory, storage and battery, and helps you free it up. " +
+                        "Memdroid shows what's using your device's memory, storage and battery, and helps you free it up. " +
                             "Let's set up a few permissions. You can skip any of them and change them later in Settings.",
                     )
                     1 -> {

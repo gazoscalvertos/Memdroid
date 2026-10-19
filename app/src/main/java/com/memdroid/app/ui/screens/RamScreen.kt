@@ -57,7 +57,6 @@ import com.memdroid.app.ui.AppIcon
 import com.memdroid.app.ui.ConfirmDialog
 import com.memdroid.app.ui.NoticeCard
 import com.memdroid.app.ui.UsageCard
-import com.memdroid.app.ui.isExpandedWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -272,16 +271,10 @@ fun RamScreen(
         }
     }
 
-    if (isExpandedWidth()) {
-        Row(modifier.fillMaxSize()) {
-            Column(Modifier.width(380.dp)) { ramCard() }
-            Column(Modifier.weight(1f)) { appsPane() }
-        }
-    } else {
-        Column(modifier.fillMaxSize()) {
-            ramCard()
-            appsPane()
-        }
+    // The summary sits above the list at every width; a side column left empty space below it on tablets.
+    Column(modifier.fillMaxSize()) {
+        ramCard()
+        appsPane()
     }
 
     pendingKill?.let { targets ->

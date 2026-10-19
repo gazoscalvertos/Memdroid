@@ -8,6 +8,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.storage.StorageManager
+import android.util.SizeF
 import android.widget.RemoteViews
 import com.memdroid.app.MainActivity
 import com.memdroid.app.R
@@ -42,23 +43,36 @@ class MemdroidWidget : AppWidgetProvider() {
             val ramPercent = (ram.usedFraction * 100).toInt()
             val storagePercent = if (total > 0) ((total - free) * 100 / total).toInt() else 0
 
-            val views = RemoteViews(context.packageName, R.layout.widget).apply {
-                setTextViewText(R.id.ram_text, "RAM $ramPercent% · ${formatBytes(ram.availableBytes)} free")
+            val ramLine = "RAM $ramPercent% · ${formatBytes(ram.availableBytes)} free"
+            val storageLine = "Storage $storagePercent% · ${formatBytes(free)} free"
+
+            val full = RemoteViews(context.packageName, R.layout.widget).apply {
+                setTextViewText(R.id.ram_text, ramLine)
                 setProgressBar(R.id.ram_bar, 100, ramPercent, false)
-                setTextViewText(R.id.storage_text, "Storage $storagePercent% · ${formatBytes(free)} free")
+                setTextViewText(R.id.storage_text, storageLine)
                 setProgressBar(R.id.storage_bar, 100, storagePercent, false)
-                setOnClickPendingIntent(R.id.widget_root, openApp(context, killAll = false))
-                setOnClickPendingIntent(R.id.kill_all, openApp(context, killAll = true))
-                setOnClickPendingIntent(
-                    R.id.refresh,
-                    PendingIntent.getBroadcast(
-                        context, 0,
-                        Intent(context, MemdroidWidget::class.java).setAction(ACTION_REFRESH),
-                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                    ),
-                )
+                setActions(context)
             }
+            val small = RemoteViews(context.packageName, R.layout.widget_small).apply {
+                setTextViewText(R.id.summary_text, "RAM $ramPercent% · Storage $storagePercent%")
+                setActions(context)
+            }
+            // The launcher picks the biggest layout that fits as the widget is resized.
+            val views = RemoteViews(mapOf(SizeF(150f, 40f) to small, SizeF(150f, 90f) to full))
             manager.updateAppWidget(ids, views)
+        }
+
+        private fun RemoteViews.setActions(context: Context) {
+            setOnClickPendingIntent(R.id.widget_root, openApp(context, killAll = false))
+            setOnClickPendingIntent(R.id.kill_all, openApp(context, killAll = true))
+            setOnClickPendingIntent(
+                R.id.refresh,
+                PendingIntent.getBroadcast(
+                    context, 0,
+                    Intent(context, MemdroidWidget::class.java).setAction(ACTION_REFRESH),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            )
         }
 
         /** Kill all opens the app's confirmation dialog rather than killing straight from the widget. */

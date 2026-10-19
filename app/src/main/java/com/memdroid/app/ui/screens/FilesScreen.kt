@@ -114,7 +114,7 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
         if (!allFilesAccess) {
             PermissionCard(
                 "Allow all files access",
-                "To find large files anywhere on your phone, Memdroid needs permission to see all files. " +
+                "To find large files anywhere on your device, Memdroid needs permission to see all files. " +
                     "Nothing is ever deleted without asking you first.",
                 onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
             )

@@ -75,7 +75,7 @@ fun AutoKillScreen() {
                 if (shizuku != ShizukuState.READY) {
                     NoticeCard("Shizuku needed", "Auto-kill can only stop apps while Shizuku is running and Memdroid has access.")
                 }
-                RuleRow("When the screen turns off", "Stops your chosen apps 30 seconds after you lock the phone.", onScreenOff) {
+                RuleRow("When the screen turns off", "Stops your chosen apps 30 seconds after the screen locks.", onScreenOff) {
                     prefs.setAutoKillOnScreenOff(it)
                     AutoKillService.sync(context)
                 }

@@ -111,7 +111,7 @@ fun FeedbackScreen(startAsBug: Boolean = true) {
             modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp),
         )
         Text(
-            "This opens a pre-filled GitHub issue with your app version and phone model. " +
+            "This opens a pre-filled GitHub issue with your app version and device model. " +
                 "You'll need a free GitHub account to submit it. Reports are public, so leave out anything personal.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

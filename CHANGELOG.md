@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.13 (19 Oct 2026)
+- Widget buttons sit beside the bars, and a compact layout fits a one-row widget
+- RAM and Battery summaries sit above the list on tablets
+- Wording fits tablets and foldables as well as phones
+
 ## 1.0.12 (18 Oct 2026)
 - Fixed the privacy policy link
 

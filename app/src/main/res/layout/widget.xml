@@ -1,67 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Two rows or taller: RAM and storage bars, with the buttons beside them so nothing is clipped. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_background"
-    android:orientation="vertical"
-    android:padding="14dp">
-
-    <TextView
-        android:id="@+id/ram_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:text="RAM" />
-
-    <ProgressBar
-        android:id="@+id/ram_bar"
-        style="@android:style/Widget.Material.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="100" />
-
-    <TextView
-        android:id="@+id/storage_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:text="Storage" />
-
-    <ProgressBar
-        android:id="@+id/storage_bar"
-        style="@android:style/Widget.Material.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="100" />
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="end"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/refresh"
-            android:layout_width="wrap_content"
+            android:id="@+id/ram_text"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Refresh"
-            android:textColor="#C8E6C9"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/kill_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Kill all"
-            android:textColor="#FFCDD2"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:text="RAM" />
+
+        <ProgressBar
+            android:id="@+id/ram_bar"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/storage_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:text="Storage" />
+
+        <ProgressBar
+            android:id="@+id/storage_bar"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/widget_button"
+            android:contentDescription="Refresh"
+            android:padding="7dp"
+            android:src="@drawable/ic_widget_refresh" />
+
+        <ImageView
+            android:id="@+id/kill_all"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/widget_button"
+            android:contentDescription="Kill all"
+            android:padding="7dp"
+            android:src="@drawable/ic_widget_kill" />
     </LinearLayout>
 </LinearLayout>

@@ -53,7 +53,6 @@ import com.memdroid.app.ui.ConfirmDialog
 import com.memdroid.app.ui.NoticeCard
 import com.memdroid.app.ui.UsageCard
 import com.memdroid.app.ui.appDetailsIntent
-import com.memdroid.app.ui.isExpandedWidth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -192,16 +191,10 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
         }
     }
 
-    if (isExpandedWidth()) {
-        Row(modifier.fillMaxSize()) {
-            Column(Modifier.width(380.dp)) { statusPane() }
-            Column(Modifier.weight(1f)) { listPane() }
-        }
-    } else {
-        Column(modifier.fillMaxSize()) {
-            statusPane()
-            listPane()
-        }
+    // The summary sits above the list at every width; a side column left empty space below it on tablets.
+    Column(modifier.fillMaxSize()) {
+        statusPane()
+        listPane()
     }
 
     pendingStop?.let { app ->

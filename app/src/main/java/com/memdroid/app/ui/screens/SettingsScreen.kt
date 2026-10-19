@@ -216,7 +216,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 Column(Modifier.weight(1f)) {
                     Text("Include system apps in Kill all")
                     Text(
-                        "Off by default. Stopping system apps can make the phone misbehave until they restart.",
+                        "Off by default. Stopping system apps can make your device misbehave until they restart.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

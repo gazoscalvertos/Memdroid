@@ -170,7 +170,7 @@ private fun CrashReportPrompt() {
         text = {
             Text(
                 "Sorry about that. Reporting it opens a GitHub issue with the error details, your app " +
-                    "version and phone model, so it can be fixed. You can read it before submitting."
+                    "version and device model, so it can be fixed. You can read it before submitting."
             )
         },
         confirmButton = {

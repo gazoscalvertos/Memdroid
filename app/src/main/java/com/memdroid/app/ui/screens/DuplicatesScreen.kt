@@ -122,7 +122,7 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
     if (!allFiles) {
         PermissionCard(
             "Allow all files access",
-            "To compare files across your phone, Memdroid needs permission to see all files.",
+            "To compare files across your device, Memdroid needs permission to see all files.",
             onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
         )
         return
