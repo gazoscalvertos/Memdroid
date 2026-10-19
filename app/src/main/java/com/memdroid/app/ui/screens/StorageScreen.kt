@@ -51,6 +51,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.AppStorage
 import com.memdroid.app.data.CleanupItem
 import com.memdroid.app.data.SmartCleanup
@@ -123,6 +124,7 @@ class StorageViewModel(app: Application) : AndroidViewModel(app) {
             _loading.value = true
             val before = repo.freeBytes()
             val ok = repo.clearAllCaches()
+            if (ok) Prefs.get(getApplication()).recordWin()
             val freed = (repo.freeBytes() - before).coerceAtLeast(0)
             _message.value = if (ok) "Caches cleared, ${formatBytes(freed)} freed." else "Couldn't clear caches."
             refresh()

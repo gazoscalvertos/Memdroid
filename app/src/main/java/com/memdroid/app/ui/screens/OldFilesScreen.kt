@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.LargeFile
 import com.memdroid.app.data.OldFileSource
 import com.memdroid.app.data.StorageRepository
@@ -95,6 +96,7 @@ class OldFilesViewModel(app: Application) : AndroidViewModel(app) {
     fun delete(targets: List<LargeFile>) {
         viewModelScope.launch {
             val n = repo.delete(targets.map { it.file })
+            if (n > 0) Prefs.get(getApplication()).recordWin()
             _message.value = "Removed $n of ${targets.size} files."
             scan()
         }

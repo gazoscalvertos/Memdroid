@@ -169,6 +169,23 @@ class Prefs private constructor(context: Context) {
         sp.edit().putString(KEY_MY_HERO, shownAs).apply()
     }
 
+    /** Successful cleanups (files deleted, caches cleared, apps stopped). The third asks once for a Play rating. */
+    private val _reviewDue = MutableStateFlow(
+        !sp.getBoolean(KEY_REVIEW_ASKED, false) && sp.getInt(KEY_WINS, 0) >= REVIEW_AFTER_WINS
+    )
+    val reviewDue: StateFlow<Boolean> = _reviewDue
+
+    fun recordWin() {
+        val wins = sp.getInt(KEY_WINS, 0) + 1
+        sp.edit().putInt(KEY_WINS, wins).apply()
+        if (wins >= REVIEW_AFTER_WINS && !sp.getBoolean(KEY_REVIEW_ASKED, false)) _reviewDue.value = true
+    }
+
+    fun setReviewAsked() {
+        _reviewDue.value = false
+        sp.edit().putBoolean(KEY_REVIEW_ASKED, true).apply()
+    }
+
     fun setWhitelisted(pkg: String, whitelisted: Boolean) {
         if (pkg in locked) return
         val updated = if (whitelisted) _whitelist.value + pkg else _whitelist.value - pkg
@@ -199,6 +216,9 @@ class Prefs private constructor(context: Context) {
         private const val KEY_DRAIN_THRESHOLD = "drain_threshold_mah"
         private const val KEY_ONBOARDED = "onboarded"
         private const val KEY_MY_HERO = "my_hero"
+        private const val KEY_WINS = "cleanup_wins"
+        private const val KEY_REVIEW_ASKED = "review_asked"
+        private const val REVIEW_AFTER_WINS = 3
 
         private val DEFAULT_WHITELIST = setOf(
             "com.google.android.apps.nexuslauncher",

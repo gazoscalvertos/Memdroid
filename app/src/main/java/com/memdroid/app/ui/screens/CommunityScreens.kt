@@ -47,6 +47,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -197,8 +198,21 @@ fun HeroesScreen() {
     }
 }
 
+/** The Buy me a beer sheet behind the 🍺 button in the app bar. */
 @Composable
-private fun TipJar() {
+fun TipSheet(onDismiss: () -> Unit, onOpenHeroes: () -> Unit) {
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(Modifier.padding(bottom = 24.dp)) {
+            TipJar()
+            TextButton(onClick = onOpenHeroes, modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text("See the heroes wall")
+            }
+        }
+    }
+}
+
+@Composable
+fun TipJar() {
     val context = LocalContext.current
     val tips = remember { Tips(context) }
     DisposableEffect(tips) {

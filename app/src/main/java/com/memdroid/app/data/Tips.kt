@@ -144,9 +144,9 @@ class Tips(context: Context) : PurchasesUpdatedListener {
 
     companion object {
         val PRODUCTS = listOf(
-            Product("beer_half", "🍺", "Half pint"),
+            Product("tip_shot", "🥃", "A shot"),
+            Product("beer_half", "🍺", "A half"),
             Product("beer_pint", "🍻", "A pint"),
-            Product("beer_round", "🎉", "A round for the team"),
         )
     }
 }

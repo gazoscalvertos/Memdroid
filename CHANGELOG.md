@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.15 (19 Oct 2026)
+- Stop apps restarting: keep chosen apps from running in the background
+- Freeze apps you rarely use without uninstalling them
+- Quick Settings tile showing RAM, with Kill all
+- Tip a shot, a half or a pint from the 🍺 button
+- Memdroid asks once for a Play rating after a few cleanups
+
 ## 1.0.14 (19 Oct 2026)
 - A new welcome: privacy first, offline, no ads and free for everyone
 - Illustrations for each setup step

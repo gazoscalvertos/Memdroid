@@ -17,6 +17,11 @@ import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import android.app.Activity
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.ktx.launchReview
+import com.google.android.play.core.ktx.requestReview
+import com.memdroid.app.ui.screens.TipSheet
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -118,7 +123,29 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
 
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     var toolRequest by remember { mutableStateOf<String?>(null) }
+    var showTips by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(killAllRequested) { if (killAllRequested) tabIndex = Tab.RAM.ordinal }
+
+    // After a few successful cleanups, ask once for a Play rating. Play decides whether to show it.
+    val reviewDue by prefs.reviewDue.collectAsState()
+    LaunchedEffect(reviewDue) {
+        val activity = context as? Activity
+        if (reviewDue && activity != null) {
+            try {
+                val manager = ReviewManagerFactory.create(activity)
+                manager.launchReview(activity, manager.requestReview())
+            } catch (_: Exception) {
+                // Not installed from Play, or Play is unavailable.
+            }
+            prefs.setReviewAsked()
+        }
+    }
+    if (showTips) {
+        TipSheet(
+            onDismiss = { showTips = false },
+            onOpenHeroes = { showTips = false; toolRequest = "HEROES"; tabIndex = Tab.TOOLS.ordinal },
+        )
+    }
     val tab = Tab.entries[tabIndex]
     // Wide screens (unfolded foldables, tablets, landscape) get a side rail instead of a bottom bar.
     val wide = isMediumWidth()
@@ -127,8 +154,7 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
             TopAppBar(
                 title = { Text(if (tab == Tab.RAM) "Memdroid" else tab.title) },
                 actions = {
-                    // Opens the heroes wall, where the Buy me a beer card lives.
-                    IconButton(onClick = { toolRequest = "HEROES"; tabIndex = Tab.TOOLS.ordinal }) {
+                    IconButton(onClick = { showTips = true }) {
                         Text("🍺", fontSize = 22.sp, modifier = Modifier.semantics { contentDescription = "Buy me a beer" })
                     }
                 },

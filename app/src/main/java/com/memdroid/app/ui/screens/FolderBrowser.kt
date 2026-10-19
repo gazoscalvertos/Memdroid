@@ -40,6 +40,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.FolderEntry
 import com.memdroid.app.data.StorageRepository
 import com.memdroid.app.data.formatBytes
@@ -100,6 +101,7 @@ class FolderViewModel(app: Application) : AndroidViewModel(app) {
     fun delete(entry: FolderEntry) {
         viewModelScope.launch {
             val ok = repo.delete(listOf(entry.file)) == 1
+            if (ok) Prefs.get(getApplication()).recordWin()
             _message.value = if (ok) "Removed ${entry.file.name} (${formatBytes(entry.size)})."
             else "Couldn't delete ${entry.file.name}."
             load()

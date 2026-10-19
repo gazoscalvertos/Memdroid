@@ -70,4 +70,22 @@ class ParsersTest {
         assertEquals(1, parsed["com.google.android.gms.persistent"]!!.processes)
         assertFalse(parsed.containsKey("/system/bin/surfaceflinger"))
     }
+
+    @Test
+    fun packageListReadsFrozenApps() {
+        val out = "package:com.example.one\npackage:com.example.two\n\nWarning: junk line\n"
+        assertEquals(setOf("com.example.one", "com.example.two"), Parsers.packageList(out))
+    }
+
+    @Test
+    fun backgroundRestrictedFindsIgnoredApps() {
+        val out = """
+            com.example.one RUN_ANY_IN_BACKGROUND: ignore; time=+2d3h
+            com.example.two RUN_ANY_IN_BACKGROUND: allow
+            com.example.three No operations.
+            com.example.four RUN_ANY_IN_BACKGROUND: ignore
+        """.trimIndent()
+        assertEquals(setOf("com.example.one", "com.example.four"), Parsers.backgroundRestricted(out))
+    }
 }
+

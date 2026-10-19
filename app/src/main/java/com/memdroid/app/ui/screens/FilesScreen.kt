@@ -42,6 +42,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.LargeFile
 import com.memdroid.app.data.StorageRepository
 import com.memdroid.app.data.formatBytes
@@ -85,6 +86,7 @@ class FilesViewModel(app: Application) : AndroidViewModel(app) {
     fun delete(targets: List<LargeFile>) {
         viewModelScope.launch {
             val deleted = repo.delete(targets.map { it.file })
+            if (deleted > 0) Prefs.get(getApplication()).recordWin()
             _files.value = _files.value?.filter { it.file.exists() }
             _status.value = "Deleted $deleted of ${targets.size} files."
         }

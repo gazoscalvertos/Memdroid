@@ -41,6 +41,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.DuplicateFinder
 import com.memdroid.app.data.DuplicateGroup
 import com.memdroid.app.data.StorageRepository
@@ -102,6 +103,7 @@ class DuplicatesViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val targets = _groups.value.orEmpty().flatMap { it.files }.filter { it.absolutePath in _selected.value }
             val deleted = repo.delete(targets)
+            if (deleted > 0) Prefs.get(getApplication()).recordWin()
             _groups.value = _groups.value.orEmpty()
                 .map { g -> DuplicateGroup(g.size, g.files.filter { it.exists() }) }
                 .filter { it.files.size > 1 }

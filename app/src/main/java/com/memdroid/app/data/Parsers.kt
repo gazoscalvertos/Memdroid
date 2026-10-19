@@ -58,4 +58,21 @@ object Parsers {
         }
         return out
     }
+
+    /** `pm list packages -d` prints disabled (frozen) apps as `package:<name>`. */
+    fun packageList(output: String): Set<String> =
+        output.lineSequence()
+            .map { it.trim().removePrefix("package:") }
+            .filter { it.isNotEmpty() && isValidPackageName(it) }
+            .toSet()
+
+    /**
+     * Output of a loop printing `<package> <cmd appops get ... RUN_ANY_IN_BACKGROUND>` per line,
+     * e.g. `com.example RUN_ANY_IN_BACKGROUND: ignore; time=+2d`. Returns packages set to ignore.
+     */
+    fun backgroundRestricted(output: String): Set<String> =
+        output.lineSequence().mapNotNull { line ->
+            val pkg = line.substringBefore(' ').trim()
+            if (isValidPackageName(pkg) && line.contains("RUN_ANY_IN_BACKGROUND: ignore")) pkg else null
+        }.toSet()
 }

@@ -74,6 +74,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("com.android.billingclient:billing:8.0.0")
+    implementation("com.google.android.play:review-ktx:2.0.2")
     implementation("dev.rikka.shizuku:api:13.1.5")
     testImplementation("junit:junit:4.13.2")
     implementation("dev.rikka.shizuku:provider:13.1.5")

@@ -12,7 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.AutoMode
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -48,6 +50,8 @@ private enum class Tool(val title: String, val description: String, val icon: Im
     OLD_FILES("Old downloads and screenshots", "Clear out files you've kept for months", Icons.Filled.History),
     DUPLICATES("Duplicate files", "Find identical photos, videos and files", Icons.Filled.ContentCopy),
     UNUSED_APPS("Unused apps", "Apps you haven't opened in a while", Icons.Filled.HourglassEmpty),
+    BACKGROUND("Stop apps restarting", "Keep chosen apps from running in the background", Icons.Filled.Block),
+    FREEZE("Freeze apps", "Disable apps you rarely use without uninstalling them", Icons.Filled.AcUnit),
     RECYCLE_BIN("Recycle bin", "Restore deleted files for 30 days", Icons.Filled.DeleteSweep),
     IDEAS("Feature ideas", "Vote on what gets built next", Icons.Filled.Lightbulb),
     FEEDBACK("Report a bug or request a feature", "Opens a pre-filled GitHub issue", Icons.Filled.BugReport),
@@ -107,6 +111,8 @@ fun ToolsScreen(modifier: Modifier = Modifier, request: String? = null, onReques
             Tool.RECYCLE_BIN -> RecycleBinScreen()
             Tool.DUPLICATES -> DuplicatesScreen()
             Tool.UNUSED_APPS -> UnusedAppsScreen()
+            Tool.BACKGROUND -> AppControlScreen(AppControlMode.BACKGROUND)
+            Tool.FREEZE -> AppControlScreen(AppControlMode.FREEZE)
             Tool.IDEAS -> FeatureIdeasScreen(onSuggest = { open = Tool.FEEDBACK })
             Tool.FEEDBACK -> FeedbackScreen()
             Tool.CHANGELOG -> ChangelogScreen()

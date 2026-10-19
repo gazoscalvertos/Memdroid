@@ -19,13 +19,19 @@ object Community {
     /** Features not built yet. Each links to a GitHub issue people can vote on. */
     val ideas = listOf(
         Idea("App media cleanup", "See which apps, like WhatsApp or Telegram, store the most photos and videos, and clean them up.", 1),
-        Idea("Quick Settings tile", "Check RAM or kill all from the pull-down shade.", 2),
         Idea("Export a report", "A shareable summary of storage, RAM and battery.", 3),
     )
 
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.15", "19 Oct 2026", listOf(
+            "Stop apps restarting: keep chosen apps from running in the background",
+            "Freeze apps you rarely use without uninstalling them",
+            "Quick Settings tile showing RAM, with Kill all",
+            "Tip a shot, a half or a pint from the 🍺 button",
+            "Memdroid asks once for a Play rating after a few cleanups",
+        )),
         Release("1.0.14", "19 Oct 2026", listOf(
             "A new welcome: privacy first, offline, no ads and free for everyone",
             "Illustrations for each setup step",

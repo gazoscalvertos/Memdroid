@@ -113,6 +113,7 @@ class RamViewModel(app: Application) : AndroidViewModel(app) {
             val targets = packages.filter { it !in whitelist }
             val availableBefore = repo.systemRam().availableBytes
             val stopped = targets.count { repo.forceStop(it) }
+            if (stopped > 0) prefs.recordWin()
             delay(800)
             _ram.value = repo.systemRam()
             val freed = (_ram.value.availableBytes - availableBefore).coerceAtLeast(0)

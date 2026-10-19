@@ -75,7 +75,7 @@ Then add four secrets under the repo's Settings › Secrets and variables › Ac
 | `UPLOAD_KEY_ALIAS` | `upload` |
 | `UPLOAD_KEY_PASSWORD` | the key password (the same as the keystore password unless you set another) |
 
-Tips use Google Play Billing. Create three one-time in-app products in Play Console with these IDs: `beer_half`, `beer_pint`, `beer_round`. Until they exist, and in sideloaded copies, the heroes wall says tips work in the Play Store version.
+Tips use Google Play Billing. Create three one-time in-app products in Play Console with these IDs: `tip_shot` (99p), `beer_half` (£1.99), `beer_pint` (£3.99). Until they exist, and in sideloaded copies, the heroes wall says tips work in the Play Store version.
 
 The privacy policy is `docs/privacy.html`, served by GitHub Pages at https://gazoscalvertos.github.io/Memdroid/privacy.html.
 
