@@ -10,20 +10,22 @@ import android.os.Environment
 import android.os.Process
 import android.os.storage.StorageManager
 import android.provider.MediaStore
+import androidx.annotation.StringRes
+import com.memdroid.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-enum class StorageCategory(val label: String) {
-    APPS("Apps"),
-    APP_DATA("App data"),
-    APP_CACHE("App cache"),
-    IMAGES("Images"),
-    VIDEOS("Videos"),
-    AUDIO("Audio"),
-    OTHER_FILES("Other files"),
-    SYSTEM("System"),
+enum class StorageCategory(@StringRes val labelRes: Int) {
+    APPS(R.string.b_cat_apps),
+    APP_DATA(R.string.b_cat_app_data),
+    APP_CACHE(R.string.b_cat_app_cache),
+    IMAGES(R.string.b_cat_images),
+    VIDEOS(R.string.b_cat_videos),
+    AUDIO(R.string.b_cat_audio),
+    OTHER_FILES(R.string.b_cat_other_files),
+    SYSTEM(R.string.b_cat_system),
 }
 
 data class StorageBreakdown(

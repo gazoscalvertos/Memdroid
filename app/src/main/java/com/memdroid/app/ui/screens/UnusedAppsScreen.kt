@@ -25,14 +25,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.StorageRepository
 import com.memdroid.app.data.UnusedApp
@@ -76,6 +80,7 @@ class UnusedAppsViewModel(app: Application) : AndroidViewModel(app) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
     val context = LocalContext.current
@@ -93,8 +98,8 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
 
     if (!hasUsageAccess(context)) {
         PermissionCard(
-            "Allow usage access",
-            "Memdroid needs usage access to see when you last opened each app.",
+            stringResource(R.string.d_usage_access_title),
+            stringResource(R.string.d_unused_usage_access_text),
             onOpenSettings = { context.startActivity(usageAccessIntent()) },
         )
         return
@@ -103,7 +108,7 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.padding(16.dp, 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(30, 60, 90).forEach { d ->
-                FilterChip(selected = days == d, onClick = { vm.setDays(d) }, label = { Text("$d days") })
+                FilterChip(selected = days == d, onClick = { vm.setDays(d) }, label = { Text(pluralStringResource(R.plurals.d_days, d, d)) })
             }
         }
         if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -111,14 +116,20 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
         val shown = if (showIgnored) apps.filter { it.app.packageName in ignored } else active
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                if (showIgnored) "${shown.size} ignored apps. Tap Restore to show them again."
-                else "${active.size} apps not opened in $days days, using ${formatBytes(active.sumOf { it.app.totalBytes })}.",
+                if (showIgnored) pluralStringResource(R.plurals.d_unused_ignored_summary, shown.size, shown.size)
+                else pluralStringResource(
+                    R.plurals.d_unused_summary, active.size,
+                    active.size, days, formatBytes(active.sumOf { it.app.totalBytes }),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.weight(1f),
             )
             if (ignored.isNotEmpty()) {
                 TextButton(onClick = { showIgnored = !showIgnored }) {
-                    Text(if (showIgnored) "Back" else "Ignored (${ignored.size})")
+                    Text(
+                        if (showIgnored) stringResource(R.string.d_unused_back)
+                        else stringResource(R.string.d_unused_ignored, ignored.size)
+                    )
                 }
             }
         }
@@ -134,18 +145,19 @@ fun UnusedAppsScreen(vm: UnusedAppsViewModel = viewModel()) {
                         Text(u.app.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(
                             "${formatBytes(u.app.totalBytes)} · " +
-                                (u.app.lastUsed?.let { "Last used ${formatDate(it)}" } ?: "Not used in the last year"),
+                                (u.app.lastUsed?.let { stringResource(R.string.d_unused_last_used, formatDate(it)) }
+                                    ?: stringResource(R.string.d_unused_not_used_year)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     if (showIgnored) {
-                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, false) }) { Text("Restore") }
+                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, false) }) { Text(stringResource(R.string.d_unused_restore)) }
                     } else {
-                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, true) }) { Text("Ignore") }
+                        TextButton(onClick = { vm.prefs.setIgnoredUnused(u.app.packageName, true) }) { Text(stringResource(R.string.d_unused_ignore)) }
                         // Android shows its own confirmation before uninstalling.
                         OutlinedButton(onClick = { context.startActivity(uninstallIntent(u.app.packageName)) }) {
-                            Text("Uninstall")
+                            Text(stringResource(R.string.d_unused_uninstall))
                         }
                     }
                 }

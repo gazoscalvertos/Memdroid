@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Storage and files screens (group b). -->
+<resources>
+    <!-- Shared: ui/Common.kt -->
+    <string name="b_open_settings">Open settings</string>
+    <string name="b_hide_help">Hide help</string>
+    <string name="b_toggle_greyed_out">Toggle greyed out?</string>
+    <string name="b_restricted_settings_help">Android blocks this setting for apps installed outside the Play Store. To allow it:\n1. Tap Open settings and try the toggle once, so Android shows \"App was denied access\". Tap Close.\n2. Tap Open App info below.\n3. Tap ⋮ in the top right, then Allow restricted settings, and confirm with your PIN or fingerprint.\n4. Come back and tap Open settings again. The toggle now works.</string>
+    <string name="b_open_app_info">Open App info</string>
+    <string name="b_cancel">Cancel</string>
+    <string name="b_bullet_item">• %1$s</string>
+    <string name="b_delete_outcome_bin">will be moved to the recycle bin and deleted for good after 30 days. You can restore it until then.</string>
+    <string name="b_delete_outcome_permanent">will be permanently deleted. This can\'t be undone.</string>
+
+    <!-- ui/Files.kt -->
+    <string name="b_no_app_can_open">No app can open this file</string>
+    <string name="b_cd_video">Video</string>
+
+    <!-- Common to several screens -->
+    <string name="b_all_files_access_title">Allow all files access</string>
+    <string name="b_scan">Scan</string>
+    <string name="b_delete">Delete</string>
+    <string name="b_clear">Clear</string>
+    <string name="b_review">Review</string>
+    <string name="b_cd_open">Open</string>
+    <string name="b_name_size">%1$s (%2$s)</string>
+    <string name="b_size_outcome">%1$s %2$s</string>
+    <string name="b_delete_selected_count">Delete selected (%1$d)</string>
+    <string name="b_delete_selected_count_size">Delete selected (%1$d, %2$s)</string>
+    <plurals name="b_scanned_files">
+        <item quantity="one">Scanned %1$d file…</item>
+        <item quantity="other">Scanned %1$d files…</item>
+    </plurals>
+    <plurals name="b_deleted_x_of_y">
+        <item quantity="one">Deleted %1$d of %2$d file.</item>
+        <item quantity="other">Deleted %1$d of %2$d files.</item>
+    </plurals>
+
+    <!-- data/Storage.kt: storage categories -->
+    <string name="b_cat_apps">Apps</string>
+    <string name="b_cat_app_data">App data</string>
+    <string name="b_cat_app_cache">App cache</string>
+    <string name="b_cat_images">Images</string>
+    <string name="b_cat_videos">Videos</string>
+    <string name="b_cat_audio">Audio</string>
+    <string name="b_cat_other_files">Other files</string>
+    <string name="b_cat_system">System</string>
+
+    <!-- data/OldFiles.kt -->
+    <string name="b_source_downloads">Downloads</string>
+    <string name="b_source_screenshots">Screenshots</string>
+
+    <!-- data/Duplicates.kt -->
+    <string name="b_dup_progress_comparing">Comparing files… %1$d of %2$d</string>
+
+    <!-- StorageScreen -->
+    <string name="b_sort_size">Size</string>
+    <string name="b_sort_cache">Cache</string>
+    <string name="b_sort_name">Name</string>
+    <string name="b_caches_cleared">Caches cleared, %1$s freed.</string>
+    <string name="b_caches_clear_failed">Couldn\'t clear caches.</string>
+    <string name="b_tab_overview">Overview</string>
+    <string name="b_tab_apps">Apps</string>
+    <string name="b_tab_folders">Folders</string>
+    <string name="b_usage_access_title">Allow usage access</string>
+    <string name="b_usage_access_body">Memdroid needs usage access to measure apps, app data and caches. Until then, that space is counted as System.</string>
+    <string name="b_clear_all_caches_button">Clear all app caches (%1$s)</string>
+    <string name="b_biggest_apps">Biggest apps</string>
+    <string name="b_biggest_caches">Biggest caches</string>
+    <string name="b_clear_caches_title">Clear all app caches?</string>
+    <string name="b_cache_item">%1$s: %2$s</string>
+    <string name="b_clear_caches_summary">Cached files for every app will be deleted. Apps rebuild them as needed. Total: %1$s.</string>
+    <string name="b_delete_caches">Delete caches</string>
+    <string name="b_smart_cleanup">Smart cleanup</string>
+    <string name="b_you_could_free">You could free %1$s</string>
+    <string name="b_cleanup_review_hint">Review each one. Nothing is removed until you confirm.</string>
+    <plurals name="b_cleanup_app_caches">
+        <item quantity="one">App caches (%1$d app)</item>
+        <item quantity="other">App caches (%1$d apps)</item>
+    </plurals>
+    <string name="b_cleanup_old_downloads">Downloads older than %1$d days (%2$d)</string>
+    <string name="b_cleanup_old_screenshots">Screenshots older than %1$d days (%2$d)</string>
+    <string name="b_cleanup_unused_apps">Apps unused for %1$d days (%2$d)</string>
+    <string name="b_cleanup_recycle_bin">Recycle bin (%1$d)</string>
+    <string name="b_duplicate_files">Duplicate files</string>
+    <string name="b_used">%1$s used</string>
+    <string name="b_of_total_free">of %1$s · %2$s free</string>
+    <string name="b_percent">%1$s%%</string>
+    <string name="b_free">Free</string>
+    <string name="b_breakdown_incomplete">System includes space Memdroid can\'t measure yet. Allow usage access for a full breakdown.</string>
+    <string name="b_see_all">See all</string>
+    <string name="b_filter_user">User (%1$d)</string>
+    <string name="b_filter_system">System (%1$d)</string>
+    <string name="b_sort_by">Sort by</string>
+    <string name="b_app_sizes">App %1$s · Data %2$s · Cache %3$s</string>
+    <string name="b_last_used">Last used %1$s</string>
+    <string name="b_not_used_last_year">Not used in the last year</string>
+    <string name="b_app_info_menu">App info (clear cache or data)</string>
+    <string name="b_uninstall">Uninstall</string>
+
+    <!-- FilesScreen -->
+    <plurals name="b_found_large_files">
+        <item quantity="one">Found %1$d file of %2$d MB or more (%3$s in total).</item>
+        <item quantity="other">Found %1$d files of %2$d MB or more (%3$s in total).</item>
+    </plurals>
+    <string name="b_all_files_body_large">To find large files anywhere on your device, Memdroid needs permission to see all files. Nothing is ever deleted without asking you first.</string>
+    <string name="b_find_files_larger_than">Find files larger than</string>
+    <string name="b_size_mb">%1$d MB</string>
+    <plurals name="b_delete_files_title">
+        <item quantity="one">Delete %1$d file?</item>
+        <item quantity="other">Delete %1$d files?</item>
+    </plurals>
+
+    <!-- FolderBrowser -->
+    <string name="b_removed_entry">Removed %1$s (%2$s).</string>
+    <string name="b_couldnt_delete">Couldn\'t delete %1$s.</string>
+    <string name="b_all_files_body_folders">To show which folders use the most space, Memdroid needs permission to see all files. Nothing is deleted without asking you first.</string>
+    <string name="b_cd_up">Up</string>
+    <string name="b_internal_storage_path">Internal storage%1$s</string>
+    <plurals name="b_size_in_items">
+        <item quantity="one">%1$s in %2$d item</item>
+        <item quantity="other">%1$s in %2$d items</item>
+    </plurals>
+    <plurals name="b_file_count">
+        <item quantity="one">%1$d file</item>
+        <item quantity="other">%1$d files</item>
+    </plurals>
+    <string name="b_delete_folder_title">Delete folder %1$s?</string>
+    <string name="b_delete_name_title">Delete %1$s?</string>
+    <plurals name="b_folder_delete_summary">
+        <item quantity="one">The folder and the %1$d file in it (%2$s) %3$s</item>
+        <item quantity="other">The folder and all %1$d files in it (%2$s) %3$s</item>
+    </plurals>
+
+    <!-- DuplicatesScreen -->
+    <string name="b_no_duplicates">No duplicates found.</string>
+    <plurals name="b_duplicates_found">
+        <item quantity="one">%1$d set of duplicates, %2$s could be freed.</item>
+        <item quantity="other">%1$d sets of duplicates, %2$s could be freed.</item>
+    </plurals>
+    <string name="b_all_files_body_compare">To compare files across your device, Memdroid needs permission to see all files.</string>
+    <string name="b_duplicates_explainer">Files match only when their size and full contents are identical. The oldest copy in each set is kept by default, and at least one copy is always kept. Tap a thumbnail to open it.</string>
+    <plurals name="b_copies_each">
+        <item quantity="one">%1$d copy · %2$s each</item>
+        <item quantity="other">%1$d copies · %2$s each</item>
+    </plurals>
+    <plurals name="b_delete_duplicates_title">
+        <item quantity="one">Delete %1$d duplicate file?</item>
+        <item quantity="other">Delete %1$d duplicate files?</item>
+    </plurals>
+    <string name="b_dup_item">%1$s (%2$s) in %3$s</string>
+    <string name="b_dup_summary">%1$s %2$s One copy of each file is kept.</string>
+
+    <!-- RecycleBinScreen -->
+    <string name="b_use_recycle_bin">Use the recycle bin</string>
+    <string name="b_recycle_bin_desc">Deleted files are kept for 30 days so you can restore them. Turn off to delete straight away.</string>
+    <plurals name="b_bin_items_size">
+        <item quantity="one">%1$d item · %2$s</item>
+        <item quantity="other">%1$d items · %2$s</item>
+    </plurals>
+    <string name="b_empty_bin">Empty bin</string>
+    <string name="b_bin_needs_all_files">All files access is needed to use the recycle bin.</string>
+    <plurals name="b_bin_item_detail">
+        <item quantity="one">%1$s · deleted %2$s · %3$d day left\n%4$s</item>
+        <item quantity="other">%1$s · deleted %2$s · %3$d days left\n%4$s</item>
+    </plurals>
+    <string name="b_restored">Restored %1$s.</string>
+    <string name="b_couldnt_restore">Couldn\'t restore %1$s.</string>
+    <string name="b_restore">Restore</string>
+    <string name="b_delete_for_good_title">Delete %1$s for good?</string>
+    <string name="b_empty_bin_title">Empty the recycle bin?</string>
+    <string name="b_permanent_summary">%1$s will be permanently deleted. This can\'t be undone.</string>
+    <string name="b_delete_for_good">Delete for good</string>
+    <plurals name="b_permanently_deleted">
+        <item quantity="one">Permanently deleted %1$d item.</item>
+        <item quantity="other">Permanently deleted %1$d items.</item>
+    </plurals>
+
+    <!-- OldFilesScreen -->
+    <plurals name="b_removed_x_of_y">
+        <item quantity="one">Removed %1$d of %2$d file.</item>
+        <item quantity="other">Removed %1$d of %2$d files.</item>
+    </plurals>
+    <string name="b_all_files_body_old">To find old downloads and screenshots, Memdroid needs permission to see all files.</string>
+    <string name="b_older_than">Older than</string>
+    <string name="b_one_year">1 year</string>
+    <plurals name="b_n_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <plurals name="b_files_count_size">
+        <item quantity="one">%1$d file · %2$s</item>
+        <item quantity="other">%1$d files · %2$s</item>
+    </plurals>
+    <string name="b_select_all">Select all</string>
+    <plurals name="b_delete_old_files_title">
+        <item quantity="one">Delete %1$d old file?</item>
+        <item quantity="other">Delete %1$d old files?</item>
+    </plurals>
+</resources>

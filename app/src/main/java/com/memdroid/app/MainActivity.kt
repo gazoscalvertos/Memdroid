@@ -1,6 +1,8 @@
 package com.memdroid.app
 
 import android.content.Intent
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -102,12 +104,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Tab(val title: String, val icon: ImageVector) {
-    RAM("RAM", Icons.Filled.Memory),
-    STORAGE("Storage", Icons.Filled.Storage),
-    BATTERY("Battery", Icons.Filled.BatteryChargingFull),
-    TOOLS("Tools", Icons.Filled.Build),
-    SETTINGS("Settings", Icons.Filled.Settings),
+private enum class Tab(@StringRes val title: Int, val icon: ImageVector) {
+    RAM(R.string.a_tab_ram, Icons.Filled.Memory),
+    STORAGE(R.string.a_tab_storage, Icons.Filled.Storage),
+    BATTERY(R.string.a_tab_battery, Icons.Filled.BatteryChargingFull),
+    TOOLS(R.string.a_tab_tools, Icons.Filled.Build),
+    SETTINGS(R.string.a_tab_settings, Icons.Filled.Settings),
 }
 
 @Composable
@@ -152,10 +154,11 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (tab == Tab.RAM) "Memdroid" else tab.title) },
+                title = { Text(if (tab == Tab.RAM) "Memdroid" else stringResource(tab.title)) },
                 actions = {
                     IconButton(onClick = { showTips = true }) {
-                        Text("🍺", fontSize = 22.sp, modifier = Modifier.semantics { contentDescription = "Buy me a beer" })
+                        val beerDescription = stringResource(R.string.a_cd_buy_me_a_beer)
+                        Text("🍺", fontSize = 22.sp, modifier = Modifier.semantics { contentDescription = beerDescription })
                     }
                 },
             )
@@ -167,7 +170,7 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
                         selected = index == tabIndex,
                         onClick = { tabIndex = index },
                         icon = { Icon(t.icon, contentDescription = null) },
-                        label = { Text(t.title) },
+                        label = { Text(stringResource(t.title)) },
                     )
                 }
             }
@@ -181,7 +184,7 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
                             selected = index == tabIndex,
                             onClick = { tabIndex = index },
                             icon = { Icon(t.icon, contentDescription = null) },
-                            label = { Text(t.title) },
+                            label = { Text(stringResource(t.title)) },
                         )
                     }
                 }
@@ -206,22 +209,19 @@ private fun CrashReportPrompt() {
     val trace = crash ?: return
     AlertDialog(
         onDismissRequest = { CrashReports.clear(context); crash = null },
-        title = { Text("Memdroid crashed last time") },
+        title = { Text(stringResource(R.string.a_crash_title)) },
         text = {
-            Text(
-                "Sorry about that. Reporting it opens a GitHub issue with the error details, your app " +
-                    "version and device model, so it can be fixed. You can read it before submitting."
-            )
+            Text(stringResource(R.string.a_crash_text))
         },
         confirmButton = {
             TextButton(onClick = {
                 Community.open(context, CrashReports.issueUrl(context, "Crash: ${trace.lineSequence().drop(1).firstOrNull()?.take(80) ?: "unknown"}", trace))
                 CrashReports.clear(context)
                 crash = null
-            }) { Text("Report") }
+            }) { Text(stringResource(R.string.a_crash_report)) }
         },
         dismissButton = {
-            TextButton(onClick = { CrashReports.clear(context); crash = null }) { Text("Not now") }
+            TextButton(onClick = { CrashReports.clear(context); crash = null }) { Text(stringResource(R.string.a_crash_not_now)) }
         },
     )
 }

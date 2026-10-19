@@ -42,7 +42,7 @@ class AutoKillService : Service() {
                     // A short grace period so a quick glance-and-lock doesn't kill anything.
                     pendingScreenOff = scope.launch {
                         delay(SCREEN_OFF_DELAY_MS)
-                        runRules(context, "screen off")
+                        runRules(context, context.getString(R.string.c_autokill_reason_screen_off))
                     }
                 }
                 Intent.ACTION_SCREEN_ON -> pendingScreenOff?.cancel()
@@ -69,7 +69,7 @@ class AutoKillService : Service() {
                 if (!prefs.autoKillOnLowRam.value) continue
                 val ram = RamRepository(this@AutoKillService).systemRam()
                 val availablePercent = 100 - (ram.usedFraction * 100).toInt()
-                if (availablePercent < prefs.autoKillRamPercent.value) runRules(this@AutoKillService, "low RAM")
+                if (availablePercent < prefs.autoKillRamPercent.value) runRules(this@AutoKillService, getString(R.string.c_autokill_reason_low_ram))
             }
         }
     }
@@ -89,7 +89,7 @@ class AutoKillService : Service() {
 
     private fun notification(): Notification {
         getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, "Auto-kill", NotificationManager.IMPORTANCE_MIN)
+            NotificationChannel(CHANNEL, getString(R.string.c_autokill_channel), NotificationManager.IMPORTANCE_MIN)
         )
         val open = PendingIntent.getActivity(
             this, 3, Intent(this, MainActivity::class.java),
@@ -97,8 +97,8 @@ class AutoKillService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("Auto-kill is on")
-            .setContentText("Memdroid stops your chosen apps automatically.")
+            .setContentTitle(getString(R.string.c_autokill_notification_title))
+            .setContentText(getString(R.string.c_autokill_notification_text))
             .setContentIntent(open)
             .setOngoing(true)
             .build()
@@ -126,7 +126,9 @@ class AutoKillService : Service() {
             val ram = RamRepository(context)
             val stopped = targets.count { ram.forceStop(it) }
             val time = DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-            prefs.setAutoKillLog("Last run $time ($reason): stopped $stopped of ${targets.size} apps.")
+            prefs.setAutoKillLog(
+                context.resources.getQuantityString(R.plurals.c_autokill_log, targets.size, time, reason, stopped, targets.size)
+            )
             return stopped
         }
     }

@@ -31,11 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.LargeFile
 import com.memdroid.app.data.OldFileSource
@@ -97,7 +100,7 @@ class OldFilesViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val n = repo.delete(targets.map { it.file })
             if (n > 0) Prefs.get(getApplication()).recordWin()
-            _message.value = "Removed $n of ${targets.size} files."
+            _message.value = getApplication<Application>().resources.getQuantityString(R.plurals.b_removed_x_of_y, targets.size, n, targets.size)
             scan()
         }
     }
@@ -108,8 +111,8 @@ fun OldFilesScreen(vm: OldFilesViewModel = viewModel()) {
     val context = LocalContext.current
     if (!hasAllFilesAccess()) {
         PermissionCard(
-            "Allow all files access",
-            "To find old downloads and screenshots, Memdroid needs permission to see all files.",
+            stringResource(R.string.b_all_files_access_title),
+            stringResource(R.string.b_all_files_body_old),
             onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
         )
         return
@@ -130,32 +133,32 @@ fun OldFilesScreen(vm: OldFilesViewModel = viewModel()) {
             Column {
                 Row(Modifier.padding(16.dp, 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OldFileSource.entries.forEach { s ->
-                        FilterChip(selected = s in sources, onClick = { vm.toggleSource(s) }, label = { Text(s.label) })
+                        FilterChip(selected = s in sources, onClick = { vm.toggleSource(s) }, label = { Text(stringResource(s.labelRes)) })
                     }
                 }
                 Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Older than", style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.CenterVertically))
+                    Text(stringResource(R.string.b_older_than), style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.CenterVertically))
                     listOf(30, 90, 180, 365).forEach { d ->
                         FilterChip(selected = days == d, onClick = { vm.setDays(d) },
-                            label = { Text(if (d == 365) "1 year" else "$d days") })
+                            label = { Text(if (d == 365) stringResource(R.string.b_one_year) else pluralStringResource(R.plurals.b_n_days, d, d)) })
                     }
                 }
                 if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
                 Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "${files.size} files · ${formatBytes(files.sumOf { it.size })}",
+                        pluralStringResource(R.plurals.b_files_count_size, files.size, files.size, formatBytes(files.sumOf { it.size })),
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(onClick = {
                         selected = if (chosen.size == files.size) emptySet() else files.map { it.file.absolutePath }.toSet()
-                    }, enabled = files.isNotEmpty()) { Text(if (chosen.size == files.size && files.isNotEmpty()) "Clear" else "Select all") }
+                    }, enabled = files.isNotEmpty()) { Text(if (chosen.size == files.size && files.isNotEmpty()) stringResource(R.string.b_clear) else stringResource(R.string.b_select_all)) }
                 }
                 Button(
                     onClick = { pending = chosen },
                     enabled = chosen.isNotEmpty() && !loading,
                     modifier = Modifier.padding(horizontal = 16.dp),
-                ) { Text("Delete selected (${chosen.size}, ${formatBytes(chosen.sumOf { it.size })})") }
+                ) { Text(stringResource(R.string.b_delete_selected_count_size, chosen.size, formatBytes(chosen.sumOf { it.size }))) }
                 message?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp)) }
             }
         }
@@ -185,10 +188,10 @@ fun OldFilesScreen(vm: OldFilesViewModel = viewModel()) {
 
     pending?.let { targets ->
         ConfirmDialog(
-            title = "Delete ${targets.size} old files?",
-            items = targets.map { "${it.file.name} (${formatBytes(it.size)})" },
-            summary = "${formatBytes(targets.sumOf { it.size })} ${deleteOutcome()}",
-            confirmLabel = "Delete",
+            title = pluralStringResource(R.plurals.b_delete_old_files_title, targets.size, targets.size),
+            items = targets.map { stringResource(R.string.b_name_size, it.file.name, formatBytes(it.size)) },
+            summary = stringResource(R.string.b_size_outcome, formatBytes(targets.sumOf { it.size }), deleteOutcome()),
+            confirmLabel = stringResource(R.string.b_delete),
             onConfirm = { vm.delete(targets); selected = emptySet(); pending = null },
             onDismiss = { pending = null },
         )

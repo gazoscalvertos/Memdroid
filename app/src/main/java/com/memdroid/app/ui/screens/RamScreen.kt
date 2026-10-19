@@ -1,6 +1,7 @@
 package com.memdroid.app.ui.screens
 
 import android.app.Application
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,13 +40,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.RamRepository
 import com.memdroid.app.data.RunningApp
@@ -62,10 +67,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-private enum class SortOrder(val label: String) {
-    RAM_HIGH("Most RAM"),
-    RAM_LOW("Least RAM"),
-    NAME("Name"),
+private enum class SortOrder(@StringRes val label: Int) {
+    RAM_HIGH(R.string.d_ram_sort_most),
+    RAM_LOW(R.string.d_ram_sort_least),
+    NAME(R.string.d_ram_sort_name),
 }
 
 class RamViewModel(app: Application) : AndroidViewModel(app) {
@@ -101,7 +106,7 @@ class RamViewModel(app: Application) : AndroidViewModel(app) {
             _loading.value = true
             repo.runningApps()
                 .onSuccess { _apps.value = it; _message.value = null }
-                .onFailure { _message.value = "Couldn't list running apps: ${it.message}" }
+                .onFailure { _message.value = getApplication<Application>().getString(R.string.d_ram_list_error, it.message) }
             _loading.value = false
         }
     }
@@ -117,12 +122,15 @@ class RamViewModel(app: Application) : AndroidViewModel(app) {
             delay(800)
             _ram.value = repo.systemRam()
             val freed = (_ram.value.availableBytes - availableBefore).coerceAtLeast(0)
-            _message.value = "Stopped $stopped of ${targets.size} apps, about ${formatBytes(freed)} freed."
+            _message.value = getApplication<Application>().resources.getQuantityString(
+                R.plurals.d_ram_stopped, targets.size, stopped, targets.size, formatBytes(freed),
+            )
             refreshApps()
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RamScreen(
     modifier: Modifier = Modifier,
@@ -167,33 +175,34 @@ fun RamScreen(
 
     val ramCard: @Composable () -> Unit = {
         UsageCard(
-            title = "RAM",
+            title = stringResource(R.string.d_ram_title),
             fraction = ram.usedFraction,
-            detail = "${formatBytes(ram.usedBytes)} used of ${formatBytes(ram.totalBytes)} · " +
-                "${formatBytes(ram.availableBytes)} available",
-            warning = if (ram.lowMemory) "The system is low on memory." else null,
+            detail = stringResource(
+                R.string.d_ram_detail,
+                formatBytes(ram.usedBytes), formatBytes(ram.totalBytes), formatBytes(ram.availableBytes),
+            ),
+            warning = if (ram.lowMemory) stringResource(R.string.d_ram_low_memory) else null,
         )
     }
 
     val appsPane: @Composable ColumnScope.() -> Unit = {
         when (shizuku) {
             ShizukuState.NOT_RUNNING -> NoticeCard(
-                "Shizuku isn't running",
-                "To see running apps and stop them, install Shizuku from the Play Store and start it " +
-                    "with wireless debugging. Memdroid can still show overall RAM without it.",
+                stringResource(R.string.d_shizuku_not_running_title),
+                stringResource(R.string.d_ram_shizuku_not_running),
             )
             ShizukuState.NO_PERMISSION -> NoticeCard(
-                "Allow Memdroid in Shizuku",
-                "Shizuku is running. Grant Memdroid access to list and stop apps.",
-                action = "Grant access",
+                stringResource(R.string.d_shizuku_allow_title),
+                stringResource(R.string.d_ram_shizuku_no_permission),
+                action = stringResource(R.string.d_grant_access),
                 onAction = ShizukuShell::requestPermission,
             )
             ShizukuState.READY -> {
                 TabRow(selectedTabIndex = if (systemTab) 1 else 0) {
                     Tab(selected = !systemTab, onClick = { systemTab = false; selected = emptySet() },
-                        text = { Text("User apps (${apps.count { !it.isSystem }})") })
+                        text = { Text(stringResource(R.string.d_ram_tab_user, apps.count { !it.isSystem })) })
                     Tab(selected = systemTab, onClick = { systemTab = true; selected = emptySet() },
-                        text = { Text("System apps (${apps.count { it.isSystem }})") })
+                        text = { Text(stringResource(R.string.d_ram_tab_system, apps.count { it.isSystem })) })
                 }
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -203,15 +212,15 @@ fun RamScreen(
                     Button(
                         onClick = { pendingKill = selectedApps },
                         enabled = selectedApps.isNotEmpty() && !loading,
-                    ) { Text("Kill selected (${selectedApps.size})") }
+                    ) { Text(stringResource(R.string.d_ram_kill_selected, selectedApps.size)) }
                     val killAllAllowed = !systemTab || includeSystem
                     OutlinedButton(
                         onClick = { pendingKill = killable },
                         enabled = killAllAllowed && killable.isNotEmpty() && !loading,
-                    ) { Text("Kill all") }
+                    ) { Text(stringResource(R.string.d_ram_kill_all)) }
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = vm::refreshApps, enabled = !loading) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.d_refresh))
                     }
                 }
                 Row(
@@ -231,19 +240,19 @@ fun RamScreen(
                         },
                         enabled = killable.isNotEmpty(),
                     )
-                    Text("Select all", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.d_ram_select_all), style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.weight(1f))
                     SortOrder.entries.forEach { order ->
                         FilterChip(
                             selected = sort == order,
                             onClick = { sort = order },
-                            label = { Text(order.label, style = MaterialTheme.typography.labelSmall) },
+                            label = { Text(stringResource(order.label), style = MaterialTheme.typography.labelSmall) },
                         )
                     }
                 }
                 if (systemTab && !includeSystem) {
                     Text(
-                        "Kill all is off for system apps. You can turn it on in Settings.",
+                        stringResource(R.string.d_ram_kill_all_system_off),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
@@ -280,10 +289,10 @@ fun RamScreen(
 
     pendingKill?.let { targets ->
         ConfirmDialog(
-            title = "Force stop ${targets.size} apps?",
+            title = pluralStringResource(R.plurals.d_ram_confirm_title, targets.size, targets.size),
             items = targets.map { "${it.label} (${formatBytes(it.memoryBytes)})" },
-            summary = "These apps will be closed. Unsaved work in them may be lost, and some may restart on their own.",
-            confirmLabel = "Force stop",
+            summary = stringResource(R.string.d_ram_confirm_summary),
+            confirmLabel = stringResource(R.string.d_force_stop),
             onConfirm = {
                 vm.kill(targets.map { it.packageName })
                 selected = emptySet()
@@ -294,6 +303,7 @@ fun RamScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun RunningAppRow(
     app: RunningApp,
@@ -313,11 +323,13 @@ private fun RunningAppRow(
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            val processes = pluralStringResource(R.plurals.d_ram_processes, app.processCount, app.processCount)
+            val protectedLabel = stringResource(R.string.d_ram_protected)
             Text(
                 buildString {
                     append(formatBytes(app.memoryBytes))
-                    if (app.processCount > 1) append(" · ${app.processCount} processes")
-                    if (protected) append(" · Protected")
+                    if (app.processCount > 1) append(" · $processes")
+                    if (protected) append(" · $protectedLabel")
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -326,7 +338,7 @@ private fun RunningAppRow(
         IconButton(onClick = onToggleWhitelist, enabled = !locked) {
             Icon(
                 if (protected) Icons.Filled.Shield else Icons.Outlined.Shield,
-                contentDescription = if (protected) "Remove from whitelist" else "Add to whitelist",
+                contentDescription = stringResource(if (protected) R.string.d_ram_whitelist_remove else R.string.d_ram_whitelist_add),
                 tint = if (protected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

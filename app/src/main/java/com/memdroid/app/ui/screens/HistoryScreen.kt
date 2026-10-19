@@ -26,7 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.memdroid.app.R
 import com.memdroid.app.data.HistoryStore
 import com.memdroid.app.data.Snapshot
 import com.memdroid.app.data.formatBytes
@@ -34,7 +36,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
-private val RANGES = listOf(1 to "24 hours", 7 to "7 days", 30 to "30 days")
+private val RANGES = listOf(
+    1 to R.string.d_history_range_24h,
+    7 to R.string.d_history_range_7d,
+    30 to R.string.d_history_range_30d,
+)
 
 @Composable
 fun HistoryScreen() {
@@ -49,32 +55,35 @@ fun HistoryScreen() {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             RANGES.forEach { (d, label) ->
-                FilterChip(selected = days == d, onClick = { days = d }, label = { Text(label) })
+                FilterChip(selected = days == d, onClick = { days = d }, label = { Text(stringResource(label)) })
             }
         }
         if (history.size < 2) {
             Text(
-                "Memdroid records a reading every 30 minutes. Check back later to see trends.",
+                stringResource(R.string.d_history_empty),
                 modifier = Modifier.padding(16.dp),
             )
             return@Column
         }
         val last = history.last()
         ChartCard(
-            "RAM used",
-            "Now ${formatBytes(last.ramUsed)} of ${formatBytes(last.ramTotal)}",
+            stringResource(R.string.d_history_ram_title),
+            stringResource(R.string.d_history_ram_now, formatBytes(last.ramUsed), formatBytes(last.ramTotal)),
             history.map { it.time to it.ramUsed.toFloat() / it.ramTotal },
             Color(0xFF4285F4),
         )
         ChartCard(
-            "Storage used",
-            "Now ${formatBytes(last.storageUsed)} · changed ${signedBytes(last.storageUsed - history.first().storageUsed)} in this period",
+            stringResource(R.string.d_history_storage_title),
+            stringResource(
+                R.string.d_history_storage_now,
+                formatBytes(last.storageUsed), signedBytes(last.storageUsed - history.first().storageUsed),
+            ),
             history.map { it.time to it.storageUsed.toFloat() / it.storageTotal },
             Color(0xFF34A853),
         )
         ChartCard(
-            "Battery level",
-            "Now ${last.batteryLevel}%",
+            stringResource(R.string.d_history_battery_title),
+            stringResource(R.string.d_history_battery_now, last.batteryLevel),
             history.filter { it.batteryLevel >= 0 }.map { it.time to it.batteryLevel / 100f },
             Color(0xFFFBBC04),
         )
@@ -107,8 +116,8 @@ private fun ChartCard(title: String, subtitle: String, points: List<Pair<Long, F
                 drawPath(path, color, style = Stroke(width = 4f))
             }
             Row(Modifier.fillMaxWidth()) {
-                Text("0%", style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(1f))
-                Text("100% at top", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.d_history_axis_bottom), style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.d_history_axis_top), style = MaterialTheme.typography.labelSmall)
             }
         }
     }

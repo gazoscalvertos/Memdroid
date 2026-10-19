@@ -43,8 +43,8 @@ class MemdroidWidget : AppWidgetProvider() {
             val ramPercent = (ram.usedFraction * 100).toInt()
             val storagePercent = if (total > 0) ((total - free) * 100 / total).toInt() else 0
 
-            val ramLine = "RAM $ramPercent% · ${formatBytes(ram.availableBytes)} free"
-            val storageLine = "Storage $storagePercent% · ${formatBytes(free)} free"
+            val ramLine = context.getString(R.string.c_widget_ram_line, ramPercent, formatBytes(ram.availableBytes))
+            val storageLine = context.getString(R.string.c_widget_storage_line, storagePercent, formatBytes(free))
 
             val full = RemoteViews(context.packageName, R.layout.widget).apply {
                 setTextViewText(R.id.ram_text, ramLine)
@@ -54,7 +54,7 @@ class MemdroidWidget : AppWidgetProvider() {
                 setActions(context)
             }
             val small = RemoteViews(context.packageName, R.layout.widget_small).apply {
-                setTextViewText(R.id.summary_text, "RAM $ramPercent% · Storage $storagePercent%")
+                setTextViewText(R.id.summary_text, context.getString(R.string.c_widget_summary, ramPercent, storagePercent))
                 setActions(context)
             }
             // The launcher picks the biggest layout that fits as the widget is resized.

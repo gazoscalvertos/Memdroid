@@ -26,7 +26,7 @@
             android:ellipsize="end"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            android:text="RAM" />
+            android:text="@string/c_widget_ram_placeholder" />
 
         <ProgressBar
             android:id="@+id/ram_bar"
@@ -44,7 +44,7 @@
             android:ellipsize="end"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            android:text="Storage" />
+            android:text="@string/c_widget_storage_placeholder" />
 
         <ProgressBar
             android:id="@+id/storage_bar"
@@ -65,7 +65,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/widget_button"
-            android:contentDescription="Refresh"
+            android:contentDescription="@string/c_refresh"
             android:padding="7dp"
             android:src="@drawable/ic_widget_refresh" />
 
@@ -75,7 +75,7 @@
             android:layout_height="36dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/widget_button"
-            android:contentDescription="Kill all"
+            android:contentDescription="@string/c_kill_all"
             android:padding="7dp"
             android:src="@drawable/ic_widget_kill" />
     </LinearLayout>

@@ -35,12 +35,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.DuplicateFinder
 import com.memdroid.app.data.DuplicateGroup
@@ -77,11 +80,13 @@ class DuplicatesViewModel(app: Application) : AndroidViewModel(app) {
         if (_scanning.value) return
         viewModelScope.launch {
             _scanning.value = true
-            val found = DuplicateFinder().find { _status.value = it }
+            val found = DuplicateFinder(getApplication<Application>()).find { _status.value = it }
             _groups.value = found
             _selected.value = found.flatMap { g -> g.files.drop(1).map { it.absolutePath } }.toSet()
-            _status.value = if (found.isEmpty()) "No duplicates found."
-            else "${found.size} sets of duplicates, ${formatBytes(found.sumOf { it.wastedBytes })} could be freed."
+            _status.value = if (found.isEmpty()) getApplication<Application>().getString(R.string.b_no_duplicates)
+            else getApplication<Application>().resources.getQuantityString(
+                R.plurals.b_duplicates_found, found.size, found.size, formatBytes(found.sumOf { it.wastedBytes }),
+            )
             _scanning.value = false
         }
     }
@@ -108,7 +113,7 @@ class DuplicatesViewModel(app: Application) : AndroidViewModel(app) {
                 .map { g -> DuplicateGroup(g.size, g.files.filter { it.exists() }) }
                 .filter { it.files.size > 1 }
             _selected.value = emptySet()
-            _status.value = "Deleted $deleted of ${targets.size} files."
+            _status.value = getApplication<Application>().resources.getQuantityString(R.plurals.b_deleted_x_of_y, targets.size, deleted, targets.size)
         }
     }
 }
@@ -123,8 +128,8 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
     }
     if (!allFiles) {
         PermissionCard(
-            "Allow all files access",
-            "To compare files across your device, Memdroid needs permission to see all files.",
+            stringResource(R.string.b_all_files_access_title),
+            stringResource(R.string.b_all_files_body_compare),
             onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
         )
         return
@@ -141,15 +146,15 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
 
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.padding(16.dp, 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = vm::scan, enabled = !scanning) { Text("Scan") }
+            OutlinedButton(onClick = vm::scan, enabled = !scanning) { Text(stringResource(R.string.b_scan)) }
             Button(onClick = { confirm = true }, enabled = toDelete.isNotEmpty() && !scanning) {
-                Text("Delete selected (${toDelete.size}, ${formatBytes(toDelete.sumOf { it.second })})")
+                Text(stringResource(R.string.b_delete_selected_count_size, toDelete.size, formatBytes(toDelete.sumOf { it.second })))
             }
         }
         if (scanning) LinearProgressIndicator(Modifier.fillMaxWidth())
         status?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp)) }
         Text(
-            "Files match only when their size and full contents are identical. The oldest copy in each set is kept by default, and at least one copy is always kept. Tap a thumbnail to open it.",
+            stringResource(R.string.b_duplicates_explainer),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -159,7 +164,7 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
                 Card(Modifier.fillMaxWidth().padding(16.dp, 6.dp)) {
                     Column(Modifier.padding(vertical = 8.dp)) {
                         Text(
-                            "${group.files.size} copies · ${formatBytes(group.size)} each",
+                            pluralStringResource(R.plurals.b_copies_each, group.files.size, group.files.size, formatBytes(group.size)),
                             style = MaterialTheme.typography.titleSmall,
                             modifier = Modifier.padding(horizontal = 16.dp),
                         )
@@ -183,7 +188,7 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
                                     )
                                 }
                                 IconButton(onClick = { openFile(context, f) }) {
-                                    Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = "Open")
+                                    Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = stringResource(R.string.b_cd_open))
                                 }
                             }
                         }
@@ -195,10 +200,10 @@ fun DuplicatesScreen(vm: DuplicatesViewModel = viewModel()) {
 
     if (confirm) {
         ConfirmDialog(
-            title = "Delete ${toDelete.size} duplicate files?",
-            items = toDelete.map { "${it.first.name} (${formatBytes(it.second)}) in ${it.first.parent}" },
-            summary = "${formatBytes(toDelete.sumOf { it.second })} ${deleteOutcome()} One copy of each file is kept.",
-            confirmLabel = "Delete",
+            title = pluralStringResource(R.plurals.b_delete_duplicates_title, toDelete.size, toDelete.size),
+            items = toDelete.map { stringResource(R.string.b_dup_item, it.first.name, formatBytes(it.second), it.first.parent.toString()) },
+            summary = stringResource(R.string.b_dup_summary, formatBytes(toDelete.sumOf { it.second }), deleteOutcome()),
+            confirmLabel = stringResource(R.string.b_delete),
             onConfirm = { vm.deleteSelected(); confirm = false },
             onDismiss = { confirm = false },
         )

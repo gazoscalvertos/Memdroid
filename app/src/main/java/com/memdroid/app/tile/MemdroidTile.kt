@@ -6,6 +6,7 @@ import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.memdroid.app.MainActivity
+import com.memdroid.app.R
 import com.memdroid.app.data.RamRepository
 
 /** Quick Settings tile: shows RAM use, and a tap opens Memdroid's Kill all confirmation. */
@@ -14,8 +15,8 @@ class MemdroidTile : TileService() {
         super.onStartListening()
         val tile = qsTile ?: return
         val percent = (RamRepository(this).systemRam().usedFraction * 100).toInt()
-        tile.label = "Kill all"
-        tile.subtitle = "RAM $percent% used"
+        tile.label = getString(R.string.c_kill_all)
+        tile.subtitle = getString(R.string.c_tile_subtitle, percent)
         tile.state = Tile.STATE_INACTIVE
         tile.updateTile()
     }

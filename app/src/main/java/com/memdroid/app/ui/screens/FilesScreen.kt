@@ -36,12 +36,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.LargeFile
 import com.memdroid.app.data.StorageRepository
@@ -74,10 +77,11 @@ class FilesViewModel(app: Application) : AndroidViewModel(app) {
         if (_scanning.value) return
         viewModelScope.launch {
             _scanning.value = true
-            val found = repo.findLargeFiles(minMb * 1_000_000) { _status.value = "Scanned $it files…" }
+            val found = repo.findLargeFiles(minMb * 1_000_000) { _status.value = getApplication<Application>().resources.getQuantityString(R.plurals.b_scanned_files, it, it) }
             _files.value = found
-            _status.value = "Found ${found.size} files of $minMb MB or more " +
-                "(${formatBytes(found.sumOf { it.size })} in total)."
+            _status.value = getApplication<Application>().resources.getQuantityString(
+                R.plurals.b_found_large_files, found.size, found.size, minMb, formatBytes(found.sumOf { it.size }),
+            )
             _scanning.value = false
         }
     }
@@ -88,7 +92,7 @@ class FilesViewModel(app: Application) : AndroidViewModel(app) {
             val deleted = repo.delete(targets.map { it.file })
             if (deleted > 0) Prefs.get(getApplication()).recordWin()
             _files.value = _files.value?.filter { it.file.exists() }
-            _status.value = "Deleted $deleted of ${targets.size} files."
+            _status.value = getApplication<Application>().resources.getQuantityString(R.plurals.b_deleted_x_of_y, targets.size, deleted, targets.size)
         }
     }
 }
@@ -115,21 +119,20 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
     Column(modifier.fillMaxSize()) {
         if (!allFilesAccess) {
             PermissionCard(
-                "Allow all files access",
-                "To find large files anywhere on your device, Memdroid needs permission to see all files. " +
-                    "Nothing is ever deleted without asking you first.",
+                stringResource(R.string.b_all_files_access_title),
+                stringResource(R.string.b_all_files_body_large),
                 onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
             )
             return@Column
         }
 
-        Text("Find files larger than", modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 0.dp))
+        Text(stringResource(R.string.b_find_files_larger_than), modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 0.dp))
         Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             THRESHOLDS_MB.forEach { mb ->
                 FilterChip(
                     selected = thresholdMb == mb,
                     onClick = { thresholdMb = mb },
-                    label = { Text("$mb MB") },
+                    label = { Text(stringResource(R.string.b_size_mb, mb)) },
                 )
             }
         }
@@ -138,10 +141,10 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedButton(onClick = { selected = emptySet(); vm.scan(thresholdMb) }, enabled = !scanning) {
-                Text("Scan")
+                Text(stringResource(R.string.b_scan))
             }
             Button(onClick = { pendingDelete = selectedFiles }, enabled = selectedFiles.isNotEmpty() && !scanning) {
-                Text("Delete selected (${selectedFiles.size})")
+                Text(stringResource(R.string.b_delete_selected_count, selectedFiles.size))
             }
         }
         if (scanning) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -175,7 +178,7 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
                         )
                     }
                     IconButton(onClick = { openFile(context, f.file) }) {
-                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = "Open")
+                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = stringResource(R.string.b_cd_open))
                     }
                 }
                 HorizontalDivider()
@@ -185,10 +188,10 @@ fun FilesScreen(modifier: Modifier = Modifier, vm: FilesViewModel = viewModel())
 
     pendingDelete?.let { targets ->
         ConfirmDialog(
-            title = "Delete ${targets.size} files?",
-            items = targets.map { "${it.file.name} (${formatBytes(it.size)})" },
-            summary = "${formatBytes(targets.sumOf { it.size })} ${deleteOutcome()}",
-            confirmLabel = "Delete",
+            title = pluralStringResource(R.plurals.b_delete_files_title, targets.size, targets.size),
+            items = targets.map { stringResource(R.string.b_name_size, it.file.name, formatBytes(it.size)) },
+            summary = stringResource(R.string.b_size_outcome, formatBytes(targets.sumOf { it.size }), deleteOutcome()),
+            confirmLabel = stringResource(R.string.b_delete),
             onConfirm = {
                 vm.delete(targets)
                 selected = emptySet()

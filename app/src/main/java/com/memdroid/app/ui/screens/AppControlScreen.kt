@@ -25,11 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.AppControl
 import com.memdroid.app.data.AppLookup
 import com.memdroid.app.data.AppMeta
@@ -91,9 +93,11 @@ class AppControlViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             if (AppControl.setFrozen(app.packageName, frozen)) {
                 _frozen.value = if (frozen) _frozen.value + app.packageName else _frozen.value - app.packageName
-                _message.value = if (frozen) "${app.label} is frozen." else "${app.label} is back."
+                _message.value = getApplication<Application>().getString(
+                    if (frozen) R.string.d_appcontrol_frozen else R.string.d_appcontrol_unfrozen, app.label,
+                )
             } else {
-                _message.value = "Couldn't change ${app.label}."
+                _message.value = getApplication<Application>().getString(R.string.d_appcontrol_change_failed, app.label)
             }
         }
     }
@@ -105,7 +109,7 @@ class AppControlViewModel(app: Application) : AndroidViewModel(app) {
                     if (restricted) _restricted.value + app.packageName else _restricted.value - app.packageName
                 _message.value = null
             } else {
-                _message.value = "Couldn't change ${app.label}."
+                _message.value = getApplication<Application>().getString(R.string.d_appcontrol_change_failed, app.label)
             }
         }
     }
@@ -127,12 +131,8 @@ fun AppControlScreen(mode: AppControlMode, vm: AppControlViewModel = viewModel()
     Column(Modifier.fillMaxSize()) {
         Text(
             when (mode) {
-                AppControlMode.BACKGROUND ->
-                    "Apps you limit can still be opened normally, but Android won't let them run or restart in " +
-                        "the background. Messaging apps may deliver notifications late."
-                AppControlMode.FREEZE ->
-                    "A frozen app disappears from your home screen and can't run at all until you unfreeze it here. " +
-                        "Nothing is deleted."
+                AppControlMode.BACKGROUND -> stringResource(R.string.d_appcontrol_background_intro)
+                AppControlMode.FREEZE -> stringResource(R.string.d_appcontrol_freeze_intro)
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -140,14 +140,17 @@ fun AppControlScreen(mode: AppControlMode, vm: AppControlViewModel = viewModel()
         )
         when (shizuku) {
             ShizukuState.NOT_RUNNING -> {
-                NoticeCard("Shizuku isn't running", "This tool needs Shizuku. Start it with wireless debugging, then come back.")
+                NoticeCard(
+                    stringResource(R.string.d_shizuku_not_running_title),
+                    stringResource(R.string.d_appcontrol_shizuku_not_running),
+                )
                 return@Column
             }
             ShizukuState.NO_PERMISSION -> {
                 NoticeCard(
-                    "Allow Memdroid in Shizuku",
-                    "Grant access to change other apps.",
-                    action = "Grant access",
+                    stringResource(R.string.d_shizuku_allow_title),
+                    stringResource(R.string.d_appcontrol_shizuku_no_permission),
+                    action = stringResource(R.string.d_grant_access),
                     onAction = ShizukuShell::requestPermission,
                 )
                 return@Column
@@ -175,8 +178,8 @@ fun AppControlScreen(mode: AppControlMode, vm: AppControlViewModel = viewModel()
                             Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(
                                 when {
-                                    mode == AppControlMode.FREEZE && on -> "Frozen"
-                                    mode == AppControlMode.BACKGROUND && on -> "Limited in the background"
+                                    mode == AppControlMode.FREEZE && on -> stringResource(R.string.d_appcontrol_status_frozen)
+                                    mode == AppControlMode.BACKGROUND && on -> stringResource(R.string.d_appcontrol_status_limited)
                                     else -> app.packageName
                                 },
                                 style = MaterialTheme.typography.bodySmall,
@@ -190,9 +193,9 @@ fun AppControlScreen(mode: AppControlMode, vm: AppControlViewModel = viewModel()
                                 Switch(checked = on, onCheckedChange = { vm.setRestricted(app, it) })
                             AppControlMode.FREEZE ->
                                 if (on) {
-                                    Button(onClick = { vm.setFrozen(app, false) }) { Text("Unfreeze") }
+                                    Button(onClick = { vm.setFrozen(app, false) }) { Text(stringResource(R.string.d_appcontrol_unfreeze)) }
                                 } else {
-                                    OutlinedButton(onClick = { confirmFreeze = app }) { Text("Freeze") }
+                                    OutlinedButton(onClick = { confirmFreeze = app }) { Text(stringResource(R.string.d_appcontrol_freeze)) }
                                 }
                         }
                     }
@@ -204,11 +207,10 @@ fun AppControlScreen(mode: AppControlMode, vm: AppControlViewModel = viewModel()
 
     confirmFreeze?.let { app ->
         ConfirmDialog(
-            title = "Freeze ${app.label}?",
+            title = stringResource(R.string.d_appcontrol_confirm_title, app.label),
             items = listOf(app.label),
-            summary = "It will disappear from your home screen and stop running until you unfreeze it in Tools › Freeze apps. " +
-                "Its data is kept.",
-            confirmLabel = "Freeze",
+            summary = stringResource(R.string.d_appcontrol_confirm_summary),
+            confirmLabel = stringResource(R.string.d_appcontrol_freeze),
             onConfirm = { vm.setFrozen(app, true); confirmFreeze = null },
             onDismiss = { confirmFreeze = null },
         )

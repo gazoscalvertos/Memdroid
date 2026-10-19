@@ -50,13 +50,13 @@ object Alerts {
 
         val lowStorage = snapshot.storageFree < prefs.storageAlertGb.value * 1_000_000_000L
         update(context, prefs, STORAGE, lowStorage, 1,
-            "Storage is running low",
-            "Only ${formatBytes(snapshot.storageFree)} free. Open Memdroid to free up space.")
+            context.getString(R.string.c_alerts_storage_title),
+            context.getString(R.string.c_alerts_storage_text, formatBytes(snapshot.storageFree)))
 
         val lowRam = snapshot.ramAvailablePercent < prefs.ramAlertPercent.value
         update(context, prefs, RAM, lowRam, 2,
-            "Memory is running low",
-            "Only ${snapshot.ramAvailablePercent}% of RAM is available. Open Memdroid to stop apps.")
+            context.getString(R.string.c_alerts_ram_title),
+            context.getString(R.string.c_alerts_ram_text, snapshot.ramAvailablePercent))
     }
 
     /** Notifies once when a value first goes low, and again only after it has recovered. */
@@ -70,7 +70,7 @@ object Alerts {
         val manager = NotificationManagerCompat.from(context)
         if (!manager.areNotificationsEnabled()) return
         context.getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, "Low storage and memory", NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationChannel(CHANNEL, context.getString(R.string.c_alerts_channel), NotificationManager.IMPORTANCE_DEFAULT)
         )
         val open = PendingIntent.getActivity(
             context, 0, Intent(context, MainActivity::class.java),

@@ -37,6 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.compose.ui.res.stringResource
+import com.memdroid.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -99,22 +101,18 @@ fun PermissionCard(title: String, body: String, onOpenSettings: () -> Unit) {
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(body, style = MaterialTheme.typography.bodyMedium)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onOpenSettings) { Text("Open settings") }
+                Button(onClick = onOpenSettings) { Text(stringResource(R.string.b_open_settings)) }
                 TextButton(onClick = { showHelp = !showHelp }) {
-                    Text(if (showHelp) "Hide help" else "Toggle greyed out?")
+                    Text(if (showHelp) stringResource(R.string.b_hide_help) else stringResource(R.string.b_toggle_greyed_out))
                 }
             }
             if (showHelp) {
                 Text(
-                    "Android blocks this setting for apps installed outside the Play Store. To allow it:\n" +
-                        "1. Tap Open settings and try the toggle once, so Android shows \"App was denied access\". Tap Close.\n" +
-                        "2. Tap Open App info below.\n" +
-                        "3. Tap ⋮ in the top right, then Allow restricted settings, and confirm with your PIN or fingerprint.\n" +
-                        "4. Come back and tap Open settings again. The toggle now works.",
+                    stringResource(R.string.b_restricted_settings_help),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 OutlinedButton(onClick = { context.startActivity(appDetailsIntent(context.packageName)) }) {
-                    Text("Open App info")
+                    Text(stringResource(R.string.b_open_app_info))
                 }
             }
         }
@@ -140,7 +138,7 @@ fun ConfirmDialog(
                 Column(
                     Modifier.padding(top = 8.dp).heightIn(max = 300.dp).verticalScroll(rememberScrollState())
                 ) {
-                    items.forEach { Text("• $it", style = MaterialTheme.typography.bodySmall) }
+                    items.forEach { Text(stringResource(R.string.b_bullet_item, it), style = MaterialTheme.typography.bodySmall) }
                 }
             }
         },
@@ -149,7 +147,7 @@ fun ConfirmDialog(
                 Text(confirmLabel, color = MaterialTheme.colorScheme.error)
             }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.b_cancel)) } },
     )
 }
 
@@ -175,6 +173,6 @@ fun allFilesAccessIntent(pkg: String) =
 fun deleteOutcome(): String {
     val context = LocalContext.current
     val bin by com.memdroid.app.data.Prefs.get(context).recycleBinEnabled.collectAsState()
-    return if (bin) "will be moved to the recycle bin and deleted for good after 30 days. You can restore it until then."
-    else "will be permanently deleted. This can't be undone."
+    return if (bin) stringResource(R.string.b_delete_outcome_bin)
+    else stringResource(R.string.b_delete_outcome_permanent)
 }

@@ -19,14 +19,14 @@
         android:ellipsize="end"
         android:textColor="#FFFFFF"
         android:textSize="13sp"
-        android:text="RAM · Storage" />
+        android:text="@string/c_widget_summary_placeholder" />
 
     <ImageView
         android:id="@+id/refresh"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:background="@drawable/widget_button"
-        android:contentDescription="Refresh"
+        android:contentDescription="@string/c_refresh"
         android:padding="7dp"
         android:src="@drawable/ic_widget_refresh" />
 
@@ -36,7 +36,7 @@
         android:layout_height="34dp"
         android:layout_marginStart="6dp"
         android:background="@drawable/widget_button"
-        android:contentDescription="Kill all"
+        android:contentDescription="@string/c_kill_all"
         android:padding="7dp"
         android:src="@drawable/ic_widget_kill" />
 </LinearLayout>

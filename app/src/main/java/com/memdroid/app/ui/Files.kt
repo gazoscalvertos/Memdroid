@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import com.memdroid.app.R
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -47,7 +49,7 @@ fun openFile(context: Context, file: File) {
     try {
         context.startActivity(Intent.createChooser(intent, file.name).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     } catch (_: ActivityNotFoundException) {
-        Toast.makeText(context, "No app can open this file", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.b_no_app_can_open), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -78,7 +80,7 @@ fun FileThumbnail(file: File, size: Dp = 56.dp) {
         val image = thumb
         if (image != null) {
             Image(image, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.size(size))
-            if (isVideo) Icon(Icons.Filled.PlayCircle, contentDescription = "Video", tint = Color.White)
+            if (isVideo) Icon(Icons.Filled.PlayCircle, contentDescription = stringResource(R.string.b_cd_video), tint = Color.White)
         } else {
             Icon(Icons.Outlined.Description, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }

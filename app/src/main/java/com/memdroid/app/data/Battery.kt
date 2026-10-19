@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Process
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import com.memdroid.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -14,9 +16,9 @@ import java.util.concurrent.TimeUnit
 data class BatteryStatus(
     val level: Int,
     val charging: Boolean,
-    val source: String?,
+    @StringRes val source: Int?,
     val temperatureC: Float,
-    val health: String,
+    @StringRes val health: Int,
 )
 
 data class AppBattery(
@@ -43,19 +45,19 @@ class BatteryRepository(private val context: Context) {
             level = if (scale > 0) level * 100 / scale else level,
             charging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL,
             source = when (plugged) {
-                BatteryManager.BATTERY_PLUGGED_AC -> "charger"
-                BatteryManager.BATTERY_PLUGGED_USB -> "USB"
-                BatteryManager.BATTERY_PLUGGED_WIRELESS -> "wireless"
+                BatteryManager.BATTERY_PLUGGED_AC -> R.string.d_battery_source_charger
+                BatteryManager.BATTERY_PLUGGED_USB -> R.string.d_battery_source_usb
+                BatteryManager.BATTERY_PLUGGED_WIRELESS -> R.string.d_battery_source_wireless
                 else -> null
             },
             temperatureC = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10f,
             health = when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0)) {
-                BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheating"
-                BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-                BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over voltage"
-                else -> "Unknown"
+                BatteryManager.BATTERY_HEALTH_GOOD -> R.string.d_battery_health_good
+                BatteryManager.BATTERY_HEALTH_OVERHEAT -> R.string.d_battery_health_overheat
+                BatteryManager.BATTERY_HEALTH_COLD -> R.string.d_battery_health_cold
+                BatteryManager.BATTERY_HEALTH_DEAD -> R.string.d_battery_health_dead
+                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> R.string.d_battery_health_over_voltage
+                else -> R.string.d_battery_health_unknown
             },
         )
     }
@@ -73,7 +75,7 @@ class BatteryRepository(private val context: Context) {
     }
 
     private suspend fun readAppUsage(): Result<List<AppBattery>> {
-        val byPackage = usageByPackage() ?: return Result.failure(IllegalStateException("No battery stats found"))
+        val byPackage = usageByPackage() ?: return Result.failure(IllegalStateException(context.getString(R.string.d_battery_no_stats)))
         val foreground = foregroundTimes()
         val total = byPackage.values.sumOf { it.second }.coerceAtLeast(0.001)
         return Result.success(
@@ -126,11 +128,21 @@ class BatteryRepository(private val context: Context) {
     }
 }
 
+/** English-only form, kept for the unit tests; the UI uses the localized overload below. */
 fun formatDuration(ms: Long): String {
     val minutes = ms / 60_000
     return when {
         minutes < 1 -> "<1 min"
         minutes < 60 -> "$minutes min"
         else -> "${minutes / 60} h ${minutes % 60} min"
+    }
+}
+
+fun formatDuration(context: Context, ms: Long): String {
+    val minutes = ms / 60_000
+    return when {
+        minutes < 1 -> context.getString(R.string.d_duration_under_minute)
+        minutes < 60 -> context.getString(R.string.d_duration_minutes, minutes)
+        else -> context.getString(R.string.d_duration_hours_minutes, minutes / 60, minutes % 60)
     }
 }

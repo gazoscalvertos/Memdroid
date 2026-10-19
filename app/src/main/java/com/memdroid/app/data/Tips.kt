@@ -2,6 +2,7 @@ package com.memdroid.app.data
 
 import android.app.Activity
 import android.content.Context
+import androidx.annotation.StringRes
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.ProductType
@@ -15,6 +16,7 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
+import com.memdroid.app.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -27,7 +29,8 @@ class Tips(context: Context) : PurchasesUpdatedListener {
 
     enum class State { CONNECTING, READY, UNAVAILABLE }
 
-    data class Product(val id: String, val emoji: String, val title: String)
+    /** [title] is the English name, still used for the heroes wall link; [titleRes] is what the UI should show. */
+    data class Product(val id: String, val emoji: String, val title: String, @StringRes val titleRes: Int)
 
     data class Tip(val product: Product, val price: String, val details: ProductDetails)
 
@@ -144,9 +147,9 @@ class Tips(context: Context) : PurchasesUpdatedListener {
 
     companion object {
         val PRODUCTS = listOf(
-            Product("tip_shot", "🥃", "A shot"),
-            Product("beer_half", "🍺", "A half"),
-            Product("beer_pint", "🍻", "A pint"),
+            Product("tip_shot", "🥃", "A shot", R.string.d_tip_shot),
+            Product("beer_half", "🍺", "A half", R.string.d_tip_half),
+            Product("beer_pint", "🍻", "A pint", R.string.d_tip_pint),
         )
     }
 }

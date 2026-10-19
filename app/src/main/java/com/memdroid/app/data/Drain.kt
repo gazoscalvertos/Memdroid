@@ -3,6 +3,7 @@ package com.memdroid.app.data
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import com.memdroid.app.R
 import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -43,8 +44,8 @@ object DrainMonitor {
                 prefs.setDrainNotifiedDay(pkg, today)
                 Alerts.notify(
                     context, 1000 + (pkg.hashCode() and 0xfff),
-                    "${entry.first.label} is draining your battery",
-                    "It used about ${perHour.toInt()} mAh per hour in the background. Open Memdroid to stop it.",
+                    context.getString(R.string.c_drain_title, entry.first.label),
+                    context.getString(R.string.c_drain_text, perHour.toInt()),
                 )
             }
         }

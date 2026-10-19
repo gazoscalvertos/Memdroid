@@ -51,6 +51,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.memdroid.app.R
 import com.memdroid.app.data.Community
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.Tips
@@ -61,7 +64,7 @@ fun FeatureIdeasScreen(onSuggest: () -> Unit) {
     LazyColumn(Modifier.fillMaxSize()) {
         item {
             Text(
-                "Ideas for future versions. Vote with a 👍 on GitHub, and the most popular get built first.",
+                stringResource(R.string.a_ideas_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp, 8.dp),
             )
@@ -71,16 +74,16 @@ fun FeatureIdeasScreen(onSuggest: () -> Unit) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(idea.title, style = MaterialTheme.typography.titleMedium)
                     Text(idea.description, style = MaterialTheme.typography.bodyMedium)
-                    OutlinedButton(onClick = { Community.open(context, Community.ideaUrl(idea)) }) { Text("Vote on GitHub") }
+                    OutlinedButton(onClick = { Community.open(context, Community.ideaUrl(idea)) }) { Text(stringResource(R.string.a_ideas_vote)) }
                 }
             }
         }
         item {
             Row(Modifier.padding(16.dp, 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onSuggest) { Text("Suggest a feature") }
+                Button(onClick = onSuggest) { Text(stringResource(R.string.a_ideas_suggest)) }
                 TextButton(onClick = {
                     Community.open(context, "${Community.REPO_URL}/issues?q=is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc")
-                }) { Text("See all requests") }
+                }) { Text(stringResource(R.string.a_ideas_see_all)) }
             }
         }
     }
@@ -95,32 +98,31 @@ fun FeedbackScreen(startAsBug: Boolean = true) {
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(selected = bug, onClick = { bug = true }, label = { Text("Report a bug") })
-            FilterChip(selected = !bug, onClick = { bug = false }, label = { Text("Request a feature") })
+            FilterChip(selected = bug, onClick = { bug = true }, label = { Text(stringResource(R.string.a_feedback_bug)) })
+            FilterChip(selected = !bug, onClick = { bug = false }, label = { Text(stringResource(R.string.a_feedback_feature)) })
         }
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text(if (bug) "What went wrong?" else "What would you like?") },
+            label = { Text(if (bug) stringResource(R.string.a_feedback_title_bug) else stringResource(R.string.a_feedback_title_feature)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = details,
             onValueChange = { details = it },
-            label = { Text("Details") },
+            label = { Text(stringResource(R.string.a_feedback_details)) },
             modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp),
         )
         Text(
-            "This opens a pre-filled GitHub issue with your app version and device model. " +
-                "You'll need a free GitHub account to submit it. Reports are public, so leave out anything personal.",
+            stringResource(R.string.a_feedback_note),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Button(
             onClick = { Community.open(context, Community.newIssueUrl(context, bug, title, details)) },
             enabled = title.isNotBlank(),
-        ) { Text("Continue on GitHub") }
+        ) { Text(stringResource(R.string.a_feedback_continue)) }
     }
 }
 
@@ -131,10 +133,10 @@ fun ChangelogScreen() {
             Card(Modifier.fillMaxWidth().padding(16.dp, 6.dp)) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Version ${release.version}", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                        Text(stringResource(R.string.a_changelog_version, release.version), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                         Text(release.date, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    release.changes.forEach { Text("• $it", style = MaterialTheme.typography.bodyMedium) }
+                    release.changes.forEach { Text(stringResource(R.string.a_changelog_bullet, it), style = MaterialTheme.typography.bodyMedium) }
                 }
             }
         }
@@ -142,6 +144,9 @@ fun ChangelogScreen() {
 }
 
 private val GOLD = Color(0xFFFFC107)
+
+/** Stored in Prefs as the hero name for anonymous sign-ups; shown translated. */
+private const val ANONYMOUS_HERO = "Anonymous hero"
 private val AMBER = Color(0xFFFF8F00)
 
 @Composable
@@ -157,16 +162,15 @@ fun HeroesScreen() {
                     .padding(20.dp)
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("🍺 Heroes wall", style = MaterialTheme.typography.headlineSmall,
+                    Text(stringResource(R.string.a_heroes_title), style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold, color = Color(0xFF3E2723))
                     Text(
-                        "Memdroid is free, with no ads. These heroes keep it that way. " +
-                            "Supporters choose to be listed by name or anonymously.",
+                        stringResource(R.string.a_heroes_intro),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF3E2723),
                     )
                     Text(
-                        if (heroes.size == 1) "1 hero so far" else "${heroes.size} heroes so far",
+                        pluralStringResource(R.plurals.a_heroes_count, heroes.size, heroes.size),
                         style = MaterialTheme.typography.labelLarge,
                         color = Color(0xFF3E2723),
                     )
@@ -177,7 +181,7 @@ fun HeroesScreen() {
         myHero?.takeIf { mine -> heroes.none { it.name == mine } }?.let { mine ->
             item {
                 Text(
-                    "You're on your way to the wall as \"$mine\". You'll appear here for everyone after the next update.",
+                    stringResource(R.string.a_heroes_on_your_way, if (mine == ANONYMOUS_HERO) stringResource(R.string.a_hero_anonymous) else mine),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp, 4.dp),
@@ -187,7 +191,7 @@ fun HeroesScreen() {
         if (heroes.isEmpty()) {
             item {
                 Text(
-                    "No heroes yet. Be the first!",
+                    stringResource(R.string.a_heroes_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp),
@@ -205,7 +209,7 @@ fun TipSheet(onDismiss: () -> Unit, onOpenHeroes: () -> Unit) {
         Column(Modifier.padding(bottom = 24.dp)) {
             TipJar()
             TextButton(onClick = onOpenHeroes, modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text("See the heroes wall")
+                Text(stringResource(R.string.a_heroes_see_wall))
             }
         }
     }
@@ -226,22 +230,22 @@ fun TipJar() {
 
     Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("Buy me a beer", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.a_tip_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(
-                "A one-off tip through Google Play. Nothing is locked, and you can join the heroes wall afterwards.",
+                stringResource(R.string.a_tip_intro),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             when (state) {
-                Tips.State.CONNECTING -> Text("Loading…", style = MaterialTheme.typography.bodySmall)
+                Tips.State.CONNECTING -> Text(stringResource(R.string.a_tip_loading), style = MaterialTheme.typography.bodySmall)
                 Tips.State.UNAVAILABLE -> {
                     Text(
-                        "Tips work in the Play Store version of Memdroid.",
+                        stringResource(R.string.a_tip_unavailable),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     if (Community.DONATE_URL.isNotEmpty()) {
                         Button(onClick = { Community.open(context, Community.DONATE_URL) }) {
-                            Text("Buy me a beer 🍺")
+                            Text(stringResource(R.string.a_tip_donate))
                         }
                     }
                 }
@@ -250,14 +254,14 @@ fun TipJar() {
                         onClick = { context.findActivity()?.let { tips.buy(it, tip) } },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("${tip.product.emoji}  ${tip.product.title}", Modifier.weight(1f))
+                        Text("${tip.product.emoji}  ${stringResource(tip.product.titleRes)}", Modifier.weight(1f))
                         Text(tip.price, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
             if (pending) {
                 Text(
-                    "Your tip is waiting for the payment to clear. Thank you!",
+                    stringResource(R.string.a_tip_pending),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -275,11 +279,15 @@ private fun HeroOptInDialog(thanks: Tips.Thanks, onDone: () -> Unit) {
     var choice by rememberSaveable { mutableStateOf(0) } // 0 name, 1 anonymous, 2 don't list
     AlertDialog(
         onDismissRequest = onDone,
-        title = { Text("Cheers! 🍻") },
+        title = { Text(stringResource(R.string.a_optin_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Thank you for supporting Memdroid. Would you like to join the heroes wall?")
-                listOf("Show my name", "List me as an anonymous hero", "Don't list me").forEachIndexed { i, label ->
+                Text(stringResource(R.string.a_optin_text))
+                listOf(
+                    stringResource(R.string.a_optin_show_name),
+                    stringResource(R.string.a_optin_anonymous),
+                    stringResource(R.string.a_optin_dont_list),
+                ).forEachIndexed { i, label ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(selected = choice == i, onClick = { choice = i })
                         Text(label)
@@ -289,13 +297,13 @@ private fun HeroOptInDialog(thanks: Tips.Thanks, onDone: () -> Unit) {
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it.take(30) },
-                        label = { Text("Name or nickname") },
+                        label = { Text(stringResource(R.string.a_optin_name_label)) },
                         singleLine = true,
                     )
                 }
                 if (choice != 2) {
                     Text(
-                        "This opens a short request on GitHub. Heroes are added in the next update.",
+                        stringResource(R.string.a_optin_note),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -308,12 +316,12 @@ private fun HeroOptInDialog(thanks: Tips.Thanks, onDone: () -> Unit) {
                 onClick = {
                     if (choice != 2) {
                         val anonymous = choice == 1
-                        Prefs.get(context).setMyHero(if (anonymous) "Anonymous hero" else name.trim())
+                        Prefs.get(context).setMyHero(if (anonymous) ANONYMOUS_HERO else name.trim())
                         Community.open(context, Community.heroSignupUrl(name, anonymous, thanks))
                     }
                     onDone()
                 },
-            ) { Text(if (choice == 2) "Done" else "Join the wall") }
+            ) { Text(if (choice == 2) stringResource(R.string.a_optin_done) else stringResource(R.string.a_optin_join)) }
         },
     )
 }
@@ -353,7 +361,7 @@ private fun HeroCard(index: Int, hero: Community.Hero) {
             Column(Modifier.weight(1f).padding(start = 14.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        if (anonymous) "Anonymous hero" else hero.name,
+                        if (anonymous) stringResource(R.string.a_hero_anonymous) else hero.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -367,11 +375,10 @@ private fun HeroCard(index: Int, hero: Community.Hero) {
                         }
                     }
                 }
+                val heroNumber = stringResource(R.string.a_hero_number, index + 1)
+                val heroSince = if (hero.since.isNotBlank()) stringResource(R.string.a_hero_since, hero.since) else ""
                 Text(
-                    buildString {
-                        append(if (first) "Hero #1" else "Hero #${index + 1}")
-                        if (hero.since.isNotBlank()) append(" · since ${hero.since}")
-                    },
+                    heroNumber + heroSince,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

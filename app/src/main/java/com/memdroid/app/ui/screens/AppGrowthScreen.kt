@@ -21,10 +21,14 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.memdroid.app.R
 import com.memdroid.app.data.AppGrowth
 import com.memdroid.app.data.AppHistoryStore
 import com.memdroid.app.data.formatBytes
@@ -35,13 +39,14 @@ import com.memdroid.app.ui.usageAccessIntent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AppGrowthScreen() {
     val context = LocalContext.current
     if (!hasUsageAccess(context)) {
         PermissionCard(
-            "Allow usage access",
-            "Memdroid needs usage access to measure each app's storage over time.",
+            stringResource(R.string.d_usage_access_title),
+            stringResource(R.string.d_growth_usage_access_text),
             onOpenSettings = { context.startActivity(usageAccessIntent()) },
         )
         return
@@ -57,20 +62,19 @@ fun AppGrowthScreen() {
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.padding(16.dp, 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(7, 30, 60).forEach { d ->
-                FilterChip(selected = days == d, onClick = { days = d }, label = { Text("$d days") })
+                FilterChip(selected = days == d, onClick = { days = d }, label = { Text(pluralStringResource(R.plurals.d_days, d, d)) })
             }
         }
         val (records, growth) = state ?: return@Column
         if (growth.isEmpty()) {
             Text(
-                "Memdroid measures every app's size once a day ($records so far). " +
-                    "Come back tomorrow to see which apps are growing.",
+                stringResource(R.string.d_growth_empty, records),
                 modifier = Modifier.padding(16.dp),
             )
             return@Column
         }
         Text(
-            "Total change: ${signed(growth.sumOf { it.change })}",
+            stringResource(R.string.d_growth_total, signed(growth.sumOf { it.change })),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(horizontal = 16.dp),
         )

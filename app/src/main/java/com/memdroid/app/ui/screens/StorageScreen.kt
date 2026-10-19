@@ -1,6 +1,7 @@
 package com.memdroid.app.ui.screens
 
 import android.app.Application
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,12 +46,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.AppStorage
 import com.memdroid.app.data.CleanupItem
@@ -85,7 +89,7 @@ private val CATEGORY_COLORS = mapOf(
     StorageCategory.SYSTEM to Color(0xFF9AA0A6),
 )
 
-private enum class AppSort(val label: String) { SIZE("Size"), CACHE("Cache"), NAME("Name") }
+private enum class AppSort(@StringRes val labelRes: Int) { SIZE(R.string.b_sort_size), CACHE(R.string.b_sort_cache), NAME(R.string.b_sort_name) }
 
 class StorageViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = StorageRepository(app)
@@ -126,7 +130,8 @@ class StorageViewModel(app: Application) : AndroidViewModel(app) {
             val ok = repo.clearAllCaches()
             if (ok) Prefs.get(getApplication()).recordWin()
             val freed = (repo.freeBytes() - before).coerceAtLeast(0)
-            _message.value = if (ok) "Caches cleared, ${formatBytes(freed)} freed." else "Couldn't clear caches."
+            _message.value = if (ok) getApplication<Application>().getString(R.string.b_caches_cleared, formatBytes(freed))
+            else getApplication<Application>().getString(R.string.b_caches_clear_failed)
             refresh()
         }
     }
@@ -141,7 +146,7 @@ fun StorageScreen(modifier: Modifier = Modifier, onOpenTool: (String) -> Unit = 
     }
     Column(modifier.fillMaxSize()) {
         TabRow(selectedTabIndex = tab) {
-            listOf("Overview", "Apps", "Folders").forEachIndexed { i, title ->
+            listOf(stringResource(R.string.b_tab_overview), stringResource(R.string.b_tab_apps), stringResource(R.string.b_tab_folders)).forEachIndexed { i, title ->
                 Tab(selected = tab == i, onClick = { tab = i }, text = { Text(title) })
             }
         }
@@ -157,8 +162,8 @@ fun StorageScreen(modifier: Modifier = Modifier, onOpenTool: (String) -> Unit = 
 private fun UsageAccessCard() {
     val context = LocalContext.current
     PermissionCard(
-        "Allow usage access",
-        "Memdroid needs usage access to measure apps, app data and caches. Until then, that space is counted as System.",
+        stringResource(R.string.b_usage_access_title),
+        stringResource(R.string.b_usage_access_body),
         onOpenSettings = { context.startActivity(usageAccessIntent()) },
     )
 }
@@ -193,14 +198,14 @@ private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit, onOpenTool
                 onClick = { confirmClearCaches = true },
                 enabled = !loading,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-            ) { Text("Clear all app caches (${formatBytes(apps.sumOf { it.cacheBytes })})") }
+            ) { Text(stringResource(R.string.b_clear_all_caches_button, formatBytes(apps.sumOf { it.cacheBytes }))) }
         }
     }
     val topLists: @Composable () -> Unit = {
         if (apps.isNotEmpty()) {
-            TopList("Biggest apps", apps.take(5).map { it to it.totalBytes }, onShowApps)
+            TopList(stringResource(R.string.b_biggest_apps), apps.take(5).map { it to it.totalBytes }, onShowApps)
             TopList(
-                "Biggest caches",
+                stringResource(R.string.b_biggest_caches),
                 apps.sortedByDescending { it.cacheBytes }.take(5).map { it to it.cacheBytes },
                 onShowApps,
             )
@@ -221,12 +226,11 @@ private fun OverviewTab(vm: StorageViewModel, onShowApps: () -> Unit, onOpenTool
 
     if (confirmClearCaches) {
         ConfirmDialog(
-            title = "Clear all app caches?",
+            title = stringResource(R.string.b_clear_caches_title),
             items = apps.filter { it.cacheBytes > 0 }.sortedByDescending { it.cacheBytes }
-                .map { "${it.label}: ${formatBytes(it.cacheBytes)}" },
-            summary = "Cached files for every app will be deleted. Apps rebuild them as needed. " +
-                "Total: ${formatBytes(apps.sumOf { it.cacheBytes })}.",
-            confirmLabel = "Delete caches",
+                .map { stringResource(R.string.b_cache_item, it.label, formatBytes(it.cacheBytes)) },
+            summary = stringResource(R.string.b_clear_caches_summary, formatBytes(apps.sumOf { it.cacheBytes })),
+            confirmLabel = stringResource(R.string.b_delete_caches),
             onConfirm = { vm.clearAllCaches(); confirmClearCaches = false },
             onDismiss = { confirmClearCaches = false },
         )
@@ -247,24 +251,26 @@ private fun SmartCleanupCard(
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                if (items.isEmpty()) "Smart cleanup" else "You could free ${formatBytes(items.sumOf { it.bytes })}",
+                if (items.isEmpty()) stringResource(R.string.b_smart_cleanup) else stringResource(R.string.b_you_could_free, formatBytes(items.sumOf { it.bytes })),
                 style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                "Review each one. Nothing is removed until you confirm.",
+                stringResource(R.string.b_cleanup_review_hint),
                 style = MaterialTheme.typography.bodySmall,
             )
+            val review = stringResource(R.string.b_review)
+            val clear = stringResource(R.string.b_clear)
             items.forEach { item ->
                 val (label, action, onClick) = when (item.kind) {
-                    CleanupItem.Kind.CACHES -> Triple("App caches (${item.count} apps)",
-                        if (canClearCaches) "Clear" else "Review", if (canClearCaches) onClearCaches else onShowApps)
-                    CleanupItem.Kind.OLD_DOWNLOADS -> Triple("Downloads older than ${SmartCleanup.OLD_DOWNLOAD_DAYS} days (${item.count})",
-                        "Review", { onOpenTool("OLD_FILES") })
-                    CleanupItem.Kind.OLD_SCREENSHOTS -> Triple("Screenshots older than ${SmartCleanup.OLD_SCREENSHOT_DAYS} days (${item.count})",
-                        "Review", { onOpenTool("OLD_FILES") })
-                    CleanupItem.Kind.UNUSED_APPS -> Triple("Apps unused for ${SmartCleanup.UNUSED_DAYS} days (${item.count})",
-                        "Review", { onOpenTool("UNUSED_APPS") })
-                    CleanupItem.Kind.RECYCLE_BIN -> Triple("Recycle bin (${item.count})", "Review", { onOpenTool("RECYCLE_BIN") })
+                    CleanupItem.Kind.CACHES -> Triple(pluralStringResource(R.plurals.b_cleanup_app_caches, item.count, item.count),
+                        if (canClearCaches) clear else review, if (canClearCaches) onClearCaches else onShowApps)
+                    CleanupItem.Kind.OLD_DOWNLOADS -> Triple(stringResource(R.string.b_cleanup_old_downloads, SmartCleanup.OLD_DOWNLOAD_DAYS, item.count),
+                        review, { onOpenTool("OLD_FILES") })
+                    CleanupItem.Kind.OLD_SCREENSHOTS -> Triple(stringResource(R.string.b_cleanup_old_screenshots, SmartCleanup.OLD_SCREENSHOT_DAYS, item.count),
+                        review, { onOpenTool("OLD_FILES") })
+                    CleanupItem.Kind.UNUSED_APPS -> Triple(stringResource(R.string.b_cleanup_unused_apps, SmartCleanup.UNUSED_DAYS, item.count),
+                        review, { onOpenTool("UNUSED_APPS") })
+                    CleanupItem.Kind.RECYCLE_BIN -> Triple(stringResource(R.string.b_cleanup_recycle_bin, item.count), review, { onOpenTool("RECYCLE_BIN") })
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
@@ -275,8 +281,8 @@ private fun SmartCleanupCard(
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Duplicate files", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                TextButton(onClick = { onOpenTool("DUPLICATES") }) { Text("Scan") }
+                Text(stringResource(R.string.b_duplicate_files), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                TextButton(onClick = { onOpenTool("DUPLICATES") }) { Text(stringResource(R.string.b_scan)) }
             }
         }
     }
@@ -286,9 +292,9 @@ private fun SmartCleanupCard(
 private fun BreakdownCard(b: StorageBreakdown) {
     Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("${formatBytes(b.usedBytes)} used", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.b_used, formatBytes(b.usedBytes)), style = MaterialTheme.typography.headlineSmall)
             Text(
-                "of ${formatBytes(b.totalBytes)} · ${formatBytes(b.freeBytes)} free",
+                stringResource(R.string.b_of_total_free, formatBytes(b.totalBytes), formatBytes(b.freeBytes)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -310,9 +316,9 @@ private fun BreakdownCard(b: StorageBreakdown) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(12.dp).clip(CircleShape).background(CATEGORY_COLORS.getValue(cat)))
                     Spacer(Modifier.width(10.dp))
-                    Text(cat.label, Modifier.weight(1f))
+                    Text(stringResource(cat.labelRes), Modifier.weight(1f))
                     Text(
-                        "${(bytes * 100.0 / b.totalBytes).let { if (it < 1) "<1" else it.toInt().toString() }}%",
+                        stringResource(R.string.b_percent, (bytes * 100.0 / b.totalBytes).let { if (it < 1) "<1" else it.toInt().toString() }),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -323,12 +329,12 @@ private fun BreakdownCard(b: StorageBreakdown) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.size(12.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant))
                 Spacer(Modifier.width(10.dp))
-                Text("Free", Modifier.weight(1f))
+                Text(stringResource(R.string.b_free), Modifier.weight(1f))
                 Text(formatBytes(b.freeBytes), style = MaterialTheme.typography.titleSmall)
             }
             if (!b.complete) {
                 Text(
-                    "System includes space Memdroid can't measure yet. Allow usage access for a full breakdown.",
+                    stringResource(R.string.b_breakdown_incomplete),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -344,7 +350,7 @@ private fun TopList(title: String, rows: List<Pair<AppStorage, Long>>, onMore: (
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                 Text(
-                    "See all",
+                    stringResource(R.string.b_see_all),
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable(onClick = onMore).padding(4.dp),
                 )
@@ -400,18 +406,18 @@ private fun AppsTab(vm: StorageViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilterChip(selected = !systemTab, onClick = { systemTab = false },
-                    label = { Text("User (${apps.count { !it.isSystem }})") })
+                    label = { Text(stringResource(R.string.b_filter_user, apps.count { !it.isSystem })) })
                 FilterChip(selected = systemTab, onClick = { systemTab = true },
-                    label = { Text("System (${apps.count { it.isSystem }})") })
+                    label = { Text(stringResource(R.string.b_filter_system, apps.count { it.isSystem })) })
             }
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Sort by", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.b_sort_by), style = MaterialTheme.typography.bodySmall)
                 AppSort.entries.forEach { s ->
-                    FilterChip(selected = sort == s, onClick = { sort = s }, label = { Text(s.label) })
+                    FilterChip(selected = sort == s, onClick = { sort = s }, label = { Text(stringResource(s.labelRes)) })
                 }
             }
         } }
@@ -439,12 +445,12 @@ private fun AppStorageRow(app: AppStorage, onDetails: () -> Unit, onUninstall: (
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(
-                    "App ${formatBytes(app.appBytes)} · Data ${formatBytes(app.dataBytes - app.cacheBytes)} · Cache ${formatBytes(app.cacheBytes)}",
+                    stringResource(R.string.b_app_sizes, formatBytes(app.appBytes), formatBytes(app.dataBytes - app.cacheBytes), formatBytes(app.cacheBytes)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    app.lastUsed?.let { "Last used ${formatDate(it)}" } ?: "Not used in the last year",
+                    app.lastUsed?.let { stringResource(R.string.b_last_used, formatDate(it)) } ?: stringResource(R.string.b_not_used_last_year),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -452,9 +458,9 @@ private fun AppStorageRow(app: AppStorage, onDetails: () -> Unit, onUninstall: (
             Text(formatBytes(app.totalBytes), style = MaterialTheme.typography.titleSmall)
         }
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-            DropdownMenuItem(text = { Text("App info (clear cache or data)") }, onClick = { menu = false; onDetails() })
+            DropdownMenuItem(text = { Text(stringResource(R.string.b_app_info_menu)) }, onClick = { menu = false; onDetails() })
             onUninstall?.let {
-                DropdownMenuItem(text = { Text("Uninstall") }, onClick = { menu = false; it() })
+                DropdownMenuItem(text = { Text(stringResource(R.string.b_uninstall)) }, onClick = { menu = false; it() })
             }
         }
     }

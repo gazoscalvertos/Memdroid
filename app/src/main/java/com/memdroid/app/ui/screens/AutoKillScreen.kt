@@ -30,8 +30,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.memdroid.app.R
 import com.memdroid.app.data.AppLookup
 import com.memdroid.app.data.AppMeta
 import com.memdroid.app.data.AutoKillService
@@ -73,13 +76,13 @@ fun AutoKillScreen() {
         item {
             Column {
                 if (shizuku != ShizukuState.READY) {
-                    NoticeCard("Shizuku needed", "Auto-kill can only stop apps while Shizuku is running and Memdroid has access.")
+                    NoticeCard(stringResource(R.string.c_autokill_shizuku_needed), stringResource(R.string.c_autokill_shizuku_needed_body))
                 }
-                RuleRow("When the screen turns off", "Stops your chosen apps 30 seconds after the screen locks.", onScreenOff) {
+                RuleRow(stringResource(R.string.c_autokill_screen_off_title), stringResource(R.string.c_autokill_screen_off_body), onScreenOff) {
                     prefs.setAutoKillOnScreenOff(it)
                     AutoKillService.sync(context)
                 }
-                RuleRow("When RAM runs low", "Checks every minute and stops your chosen apps when available RAM is below $ramPercent%.", onLowRam) {
+                RuleRow(stringResource(R.string.c_autokill_low_ram_title), stringResource(R.string.c_autokill_low_ram_body, ramPercent), onLowRam) {
                     prefs.setAutoKillOnLowRam(it)
                     AutoKillService.sync(context)
                 }
@@ -87,28 +90,28 @@ fun AutoKillScreen() {
                     Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(10, 15, 20, 25).forEach { pct ->
                             FilterChip(selected = ramPercent == pct, onClick = { prefs.setAutoKillRamPercent(pct) },
-                                label = { Text("$pct%") })
+                                label = { Text(stringResource(R.string.c_percent, pct)) })
                         }
                     }
                 }
                 Text(
-                    "While a rule is on, Memdroid keeps a small notification so Android lets it keep watching.",
+                    stringResource(R.string.c_autokill_notification_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp, 8.dp),
                 )
                 log?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 16.dp)) }
                 Row(Modifier.padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Apps to stop (${chosen.size})", style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.c_autokill_apps_to_stop, chosen.size), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                     OutlinedButton(
                         onClick = { confirmRunNow = true },
                         enabled = shizuku == ShizukuState.READY && (chosen - whitelist).isNotEmpty(),
-                    ) { Text("Run now") }
+                    ) { Text(stringResource(R.string.c_autokill_run_now)) }
                 }
                 OutlinedTextField(
                     value = filter,
                     onValueChange = { filter = it },
-                    label = { Text("Search apps") },
+                    label = { Text(stringResource(R.string.c_autokill_search_apps)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 )
@@ -128,7 +131,7 @@ fun AutoKillScreen() {
                 Column(Modifier.weight(1f)) {
                     Text(app.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     if (protected) {
-                        Text("Whitelisted, never stopped", style = MaterialTheme.typography.bodySmall,
+                        Text(stringResource(R.string.c_autokill_whitelisted), style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -140,13 +143,13 @@ fun AutoKillScreen() {
     if (confirmRunNow) {
         val targets = apps.filter { it.packageName in chosen && it.packageName !in whitelist }
         ConfirmDialog(
-            title = "Stop ${targets.size} apps now?",
+            title = pluralStringResource(R.plurals.c_autokill_confirm_title, targets.size, targets.size),
             items = targets.map { it.label },
-            summary = "These apps will be force stopped. Unsaved work in them may be lost.",
-            confirmLabel = "Force stop",
+            summary = stringResource(R.string.c_autokill_confirm_summary),
+            confirmLabel = stringResource(R.string.c_autokill_force_stop),
             onConfirm = {
                 confirmRunNow = false
-                scope.launch { AutoKillService.runRules(context, "run now") }
+                scope.launch { AutoKillService.runRules(context, context.getString(R.string.c_autokill_reason_run_now)) }
             },
             onDismiss = { confirmRunNow = false },
         )

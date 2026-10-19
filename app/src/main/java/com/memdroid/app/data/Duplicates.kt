@@ -1,6 +1,8 @@
 package com.memdroid.app.data
 
+import android.content.Context
 import android.os.Environment
+import com.memdroid.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -14,7 +16,7 @@ data class DuplicateGroup(val size: Long, val files: List<File>) {
 }
 
 /** Finds files with identical contents on shared storage. Needs all files access. */
-class DuplicateFinder {
+class DuplicateFinder(private val context: Context) {
     private val root = Environment.getExternalStorageDirectory()
     private val androidDir = File(root, "Android")
 
@@ -27,7 +29,7 @@ class DuplicateFinder {
                 .filter { it.isFile }
                 .forEach { f ->
                     scanned++
-                    if (scanned % 500 == 0) onProgress("Scanned $scanned files…")
+                    if (scanned % 500 == 0) onProgress(context.resources.getQuantityString(R.plurals.b_scanned_files, scanned, scanned))
                     val size = f.length()
                     if (size >= minBytes) bySize.getOrPut(size) { mutableListOf() } += f
                 }
@@ -38,7 +40,7 @@ class DuplicateFinder {
             candidates.forEach { (size, files) ->
                 ensureActive()
                 checked++
-                if (checked % 20 == 0) onProgress("Comparing files… $checked of ${candidates.size}")
+                if (checked % 20 == 0) onProgress(context.getString(R.string.b_dup_progress_comparing, checked, candidates.size))
                 // A cheap sample of the start and end first, then the full contents.
                 files.groupBy { sampleHash(it) }.values.filter { it.size > 1 }.forEach { sampled ->
                     sampled.groupBy { fullHash(it) }.values.filter { it.size > 1 }.forEach {

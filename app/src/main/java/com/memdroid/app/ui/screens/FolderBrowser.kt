@@ -34,12 +34,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.FolderEntry
 import com.memdroid.app.data.StorageRepository
@@ -102,8 +105,8 @@ class FolderViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             val ok = repo.delete(listOf(entry.file)) == 1
             if (ok) Prefs.get(getApplication()).recordWin()
-            _message.value = if (ok) "Removed ${entry.file.name} (${formatBytes(entry.size)})."
-            else "Couldn't delete ${entry.file.name}."
+            _message.value = if (ok) getApplication<Application>().getString(R.string.b_removed_entry, entry.file.name, formatBytes(entry.size))
+            else getApplication<Application>().getString(R.string.b_couldnt_delete, entry.file.name)
             load()
         }
     }
@@ -119,9 +122,8 @@ fun FolderBrowser(vm: FolderViewModel = viewModel()) {
     }
     if (!allFiles) {
         PermissionCard(
-            "Allow all files access",
-            "To show which folders use the most space, Memdroid needs permission to see all files. " +
-                "Nothing is deleted without asking you first.",
+            stringResource(R.string.b_all_files_access_title),
+            stringResource(R.string.b_all_files_body_folders),
             onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
         )
         return
@@ -139,16 +141,16 @@ fun FolderBrowser(vm: FolderViewModel = viewModel()) {
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = vm::up, enabled = dir != vm.root) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Up")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.b_cd_up))
             }
             Column(Modifier.weight(1f)) {
                 Text(
-                    "Internal storage" + dir.absolutePath.removePrefix(vm.root.absolutePath),
+                    stringResource(R.string.b_internal_storage_path, dir.absolutePath.removePrefix(vm.root.absolutePath)),
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
                 if (!loading) {
                     Text(
-                        "${formatBytes(entries.sumOf { it.size })} in ${entries.size} items",
+                        pluralStringResource(R.plurals.b_size_in_items, entries.size, formatBytes(entries.sumOf { it.size }), entries.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -186,14 +188,14 @@ fun FolderBrowser(vm: FolderViewModel = viewModel()) {
                         )
                         if (entry.isDirectory) {
                             Text(
-                                "${entry.fileCount} files",
+                                pluralStringResource(R.plurals.b_file_count, entry.fileCount, entry.fileCount),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                     IconButton(onClick = { pendingDelete = entry }, enabled = vm.canDelete(entry)) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.b_delete))
                     }
                 }
                 HorizontalDivider()
@@ -203,14 +205,14 @@ fun FolderBrowser(vm: FolderViewModel = viewModel()) {
 
     pendingDelete?.let { entry ->
         ConfirmDialog(
-            title = if (entry.isDirectory) "Delete folder ${entry.file.name}?" else "Delete ${entry.file.name}?",
+            title = if (entry.isDirectory) stringResource(R.string.b_delete_folder_title, entry.file.name) else stringResource(R.string.b_delete_name_title, entry.file.name),
             items = listOf(entry.file.absolutePath.removePrefix(vm.root.absolutePath + "/")),
             summary = if (entry.isDirectory) {
-                "The folder and all ${entry.fileCount} files in it (${formatBytes(entry.size)}) ${deleteOutcome()}"
+                pluralStringResource(R.plurals.b_folder_delete_summary, entry.fileCount, entry.fileCount, formatBytes(entry.size), deleteOutcome())
             } else {
-                "${formatBytes(entry.size)} ${deleteOutcome()}"
+                stringResource(R.string.b_size_outcome, formatBytes(entry.size), deleteOutcome())
             },
-            confirmLabel = "Delete",
+            confirmLabel = stringResource(R.string.b_delete),
             onConfirm = { vm.delete(entry); pendingDelete = null },
             onDismiss = { pendingDelete = null },
         )

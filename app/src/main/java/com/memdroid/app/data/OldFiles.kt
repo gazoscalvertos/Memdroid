@@ -1,12 +1,14 @@
 package com.memdroid.app.data
 
 import android.os.Environment
+import androidx.annotation.StringRes
+import com.memdroid.app.R
 import java.io.File
 
 /** Folders the old-files cleaner looks in. */
-enum class OldFileSource(val label: String) {
-    DOWNLOADS("Downloads"),
-    SCREENSHOTS("Screenshots");
+enum class OldFileSource(@StringRes val labelRes: Int) {
+    DOWNLOADS(R.string.b_source_downloads),
+    SCREENSHOTS(R.string.b_source_screenshots);
 
     val dirs: List<File>
         get() {

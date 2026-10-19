@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MainActivity: tabs -->
+    <string name="a_tab_ram">RAM</string>
+    <string name="a_tab_storage">Storage</string>
+    <string name="a_tab_battery">Battery</string>
+    <string name="a_tab_tools">Tools</string>
+    <string name="a_tab_settings">Settings</string>
+    <string name="a_cd_buy_me_a_beer">Buy me a beer</string>
+
+    <!-- MainActivity: crash report prompt -->
+    <string name="a_crash_title">Memdroid crashed last time</string>
+    <string name="a_crash_text">Sorry about that. Reporting it opens a GitHub issue with the error details, your app version and device model, so it can be fixed. You can read it before submitting.</string>
+    <string name="a_crash_report">Report</string>
+    <string name="a_crash_not_now">Not now</string>
+
+    <!-- ToolsScreen -->
+    <string name="a_tool_auto_kill_title">Auto-kill rules</string>
+    <string name="a_tool_auto_kill_desc">Stop chosen apps when the screen turns off or RAM runs low</string>
+    <string name="a_tool_history_title">Usage history</string>
+    <string name="a_tool_history_desc">RAM, storage and battery over the last 30 days</string>
+    <string name="a_tool_app_growth_title">App growth</string>
+    <string name="a_tool_app_growth_desc">Which apps\' storage is growing fastest</string>
+    <string name="a_tool_large_files_title">Large files</string>
+    <string name="a_tool_large_files_desc">Find and delete files over 50 MB</string>
+    <string name="a_tool_old_files_title">Old downloads and screenshots</string>
+    <string name="a_tool_old_files_desc">Clear out files you\'ve kept for months</string>
+    <string name="a_tool_duplicates_title">Duplicate files</string>
+    <string name="a_tool_duplicates_desc">Find identical photos, videos and files</string>
+    <string name="a_tool_unused_apps_title">Unused apps</string>
+    <string name="a_tool_unused_apps_desc">Apps you haven\'t opened in a while</string>
+    <string name="a_tool_background_title">Stop apps restarting</string>
+    <string name="a_tool_background_desc">Keep chosen apps from running in the background</string>
+    <string name="a_tool_freeze_title">Freeze apps</string>
+    <string name="a_tool_freeze_desc">Disable apps you rarely use without uninstalling them</string>
+    <string name="a_tool_recycle_bin_title">Recycle bin</string>
+    <string name="a_tool_recycle_bin_desc">Restore deleted files for 30 days</string>
+    <string name="a_tool_ideas_title">Feature ideas</string>
+    <string name="a_tool_ideas_desc">Vote on what gets built next</string>
+    <string name="a_tool_feedback_title">Report a bug or request a feature</string>
+    <string name="a_tool_feedback_desc">Opens a pre-filled GitHub issue</string>
+    <string name="a_tool_changelog_title">What\'s new</string>
+    <string name="a_tool_changelog_desc">Changes in each version</string>
+    <string name="a_tool_heroes_title">Heroes wall</string>
+    <string name="a_tool_heroes_desc">The people supporting Memdroid</string>
+    <string name="a_tools_community_header">Community</string>
+    <string name="a_cd_back_to_tools">Back to tools</string>
+
+    <!-- CommunityScreens: feature ideas -->
+    <string name="a_ideas_intro">Ideas for future versions. Vote with a 👍 on GitHub, and the most popular get built first.</string>
+    <string name="a_ideas_vote">Vote on GitHub</string>
+    <string name="a_ideas_suggest">Suggest a feature</string>
+    <string name="a_ideas_see_all">See all requests</string>
+
+    <!-- CommunityScreens: feedback -->
+    <string name="a_feedback_bug">Report a bug</string>
+    <string name="a_feedback_feature">Request a feature</string>
+    <string name="a_feedback_title_bug">What went wrong?</string>
+    <string name="a_feedback_title_feature">What would you like?</string>
+    <string name="a_feedback_details">Details</string>
+    <string name="a_feedback_note">This opens a pre-filled GitHub issue with your app version and device model. You\'ll need a free GitHub account to submit it. Reports are public, so leave out anything personal.</string>
+    <string name="a_feedback_continue">Continue on GitHub</string>
+
+    <!-- CommunityScreens: changelog -->
+    <string name="a_changelog_version">Version %1$s</string>
+    <string name="a_changelog_bullet">• %1$s</string>
+
+    <!-- CommunityScreens: heroes -->
+    <string name="a_heroes_title">🍺 Heroes wall</string>
+    <string name="a_heroes_intro">Memdroid is free, with no ads. These heroes keep it that way. Supporters choose to be listed by name or anonymously.</string>
+    <plurals name="a_heroes_count">
+        <item quantity="one">%1$d hero so far</item>
+        <item quantity="other">%1$d heroes so far</item>
+    </plurals>
+    <string name="a_heroes_on_your_way">You\'re on your way to the wall as \"%1$s\". You\'ll appear here for everyone after the next update.</string>
+    <string name="a_heroes_empty">No heroes yet. Be the first!</string>
+    <string name="a_heroes_see_wall">See the heroes wall</string>
+    <string name="a_hero_anonymous">Anonymous hero</string>
+    <string name="a_hero_number">Hero #%1$d</string>
+    <string name="a_hero_since"> · since %1$s</string>
+
+    <!-- CommunityScreens: tip jar -->
+    <string name="a_tip_title">Buy me a beer</string>
+    <string name="a_tip_intro">A one-off tip through Google Play. Nothing is locked, and you can join the heroes wall afterwards.</string>
+    <string name="a_tip_loading">Loading…</string>
+    <string name="a_tip_unavailable">Tips work in the Play Store version of Memdroid.</string>
+    <string name="a_tip_donate">Buy me a beer 🍺</string>
+    <string name="a_tip_pending">Your tip is waiting for the payment to clear. Thank you!</string>
+
+    <!-- CommunityScreens: hero opt-in dialog -->
+    <string name="a_optin_title">Cheers! 🍻</string>
+    <string name="a_optin_text">Thank you for supporting Memdroid. Would you like to join the heroes wall?</string>
+    <string name="a_optin_show_name">Show my name</string>
+    <string name="a_optin_anonymous">List me as an anonymous hero</string>
+    <string name="a_optin_dont_list">Don\'t list me</string>
+    <string name="a_optin_name_label">Name or nickname</string>
+    <string name="a_optin_note">This opens a short request on GitHub. Heroes are added in the next update.</string>
+    <string name="a_optin_done">Done</string>
+    <string name="a_optin_join">Join the wall</string>
+</resources>

@@ -1,6 +1,7 @@
 package com.memdroid.app.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,23 +41,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.memdroid.app.R
 
-private enum class Tool(val title: String, val description: String, val icon: ImageVector) {
-    AUTO_KILL("Auto-kill rules", "Stop chosen apps when the screen turns off or RAM runs low", Icons.Filled.AutoMode),
-    HISTORY("Usage history", "RAM, storage and battery over the last 30 days", Icons.Filled.Timeline),
-    APP_GROWTH("App growth", "Which apps' storage is growing fastest", Icons.AutoMirrored.Filled.TrendingUp),
-    LARGE_FILES("Large files", "Find and delete files over 50 MB", Icons.Filled.FilePresent),
-    OLD_FILES("Old downloads and screenshots", "Clear out files you've kept for months", Icons.Filled.History),
-    DUPLICATES("Duplicate files", "Find identical photos, videos and files", Icons.Filled.ContentCopy),
-    UNUSED_APPS("Unused apps", "Apps you haven't opened in a while", Icons.Filled.HourglassEmpty),
-    BACKGROUND("Stop apps restarting", "Keep chosen apps from running in the background", Icons.Filled.Block),
-    FREEZE("Freeze apps", "Disable apps you rarely use without uninstalling them", Icons.Filled.AcUnit),
-    RECYCLE_BIN("Recycle bin", "Restore deleted files for 30 days", Icons.Filled.DeleteSweep),
-    IDEAS("Feature ideas", "Vote on what gets built next", Icons.Filled.Lightbulb),
-    FEEDBACK("Report a bug or request a feature", "Opens a pre-filled GitHub issue", Icons.Filled.BugReport),
-    CHANGELOG("What's new", "Changes in each version", Icons.Filled.NewReleases),
-    HEROES("Heroes wall", "The people supporting Memdroid", Icons.Filled.Favorite),
+private enum class Tool(@StringRes val title: Int, @StringRes val description: Int, val icon: ImageVector) {
+    AUTO_KILL(R.string.a_tool_auto_kill_title, R.string.a_tool_auto_kill_desc, Icons.Filled.AutoMode),
+    HISTORY(R.string.a_tool_history_title, R.string.a_tool_history_desc, Icons.Filled.Timeline),
+    APP_GROWTH(R.string.a_tool_app_growth_title, R.string.a_tool_app_growth_desc, Icons.AutoMirrored.Filled.TrendingUp),
+    LARGE_FILES(R.string.a_tool_large_files_title, R.string.a_tool_large_files_desc, Icons.Filled.FilePresent),
+    OLD_FILES(R.string.a_tool_old_files_title, R.string.a_tool_old_files_desc, Icons.Filled.History),
+    DUPLICATES(R.string.a_tool_duplicates_title, R.string.a_tool_duplicates_desc, Icons.Filled.ContentCopy),
+    UNUSED_APPS(R.string.a_tool_unused_apps_title, R.string.a_tool_unused_apps_desc, Icons.Filled.HourglassEmpty),
+    BACKGROUND(R.string.a_tool_background_title, R.string.a_tool_background_desc, Icons.Filled.Block),
+    FREEZE(R.string.a_tool_freeze_title, R.string.a_tool_freeze_desc, Icons.Filled.AcUnit),
+    RECYCLE_BIN(R.string.a_tool_recycle_bin_title, R.string.a_tool_recycle_bin_desc, Icons.Filled.DeleteSweep),
+    IDEAS(R.string.a_tool_ideas_title, R.string.a_tool_ideas_desc, Icons.Filled.Lightbulb),
+    FEEDBACK(R.string.a_tool_feedback_title, R.string.a_tool_feedback_desc, Icons.Filled.BugReport),
+    CHANGELOG(R.string.a_tool_changelog_title, R.string.a_tool_changelog_desc, Icons.Filled.NewReleases),
+    HEROES(R.string.a_tool_heroes_title, R.string.a_tool_heroes_desc, Icons.Filled.Favorite),
 }
 
 @Composable
@@ -77,7 +80,7 @@ fun ToolsScreen(modifier: Modifier = Modifier, request: String? = null, onReques
             items(Tool.entries) { t -> Column {
                 if (t == Tool.IDEAS) {
                     Text(
-                        "Community",
+                        stringResource(R.string.a_tools_community_header),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp),
@@ -85,8 +88,8 @@ fun ToolsScreen(modifier: Modifier = Modifier, request: String? = null, onReques
                 }
                 Card(Modifier.fillMaxWidth().padding(16.dp, 6.dp).clickable { open = t }) {
                     ListItem(
-                        headlineContent = { Text(t.title) },
-                        supportingContent = { Text(t.description) },
+                        headlineContent = { Text(stringResource(t.title)) },
+                        supportingContent = { Text(stringResource(t.description)) },
                         leadingContent = { Icon(t.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     )
                 }
@@ -98,9 +101,9 @@ fun ToolsScreen(modifier: Modifier = Modifier, request: String? = null, onReques
     Column(modifier.fillMaxSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { open = null }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back to tools")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.a_cd_back_to_tools))
             }
-            Text(tool.title, style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(tool.title), style = MaterialTheme.typography.titleMedium)
         }
         when (tool) {
             Tool.AUTO_KILL -> AutoKillScreen()

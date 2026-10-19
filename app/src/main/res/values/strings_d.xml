@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the RAM, battery and app screens -->
+    <string name="d_shizuku_not_running_title">Shizuku isn\'t running</string>
+    <string name="d_shizuku_allow_title">Allow Memdroid in Shizuku</string>
+    <string name="d_grant_access">Grant access</string>
+    <string name="d_refresh">Refresh</string>
+    <string name="d_force_stop">Force stop</string>
+    <string name="d_usage_access_title">Allow usage access</string>
+    <plurals name="d_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+
+    <!-- RAM -->
+    <string name="d_ram_sort_most">Most RAM</string>
+    <string name="d_ram_sort_least">Least RAM</string>
+    <string name="d_ram_sort_name">Name</string>
+    <string name="d_ram_list_error">Couldn\'t list running apps: %1$s</string>
+    <plurals name="d_ram_stopped">
+        <item quantity="one">Stopped %1$d of %2$d app, about %3$s freed.</item>
+        <item quantity="other">Stopped %1$d of %2$d apps, about %3$s freed.</item>
+    </plurals>
+    <string name="d_ram_title">RAM</string>
+    <string name="d_ram_detail">%1$s used of %2$s · %3$s available</string>
+    <string name="d_ram_low_memory">The system is low on memory.</string>
+    <string name="d_ram_shizuku_not_running">To see running apps and stop them, install Shizuku from the Play Store and start it with wireless debugging. Memdroid can still show overall RAM without it.</string>
+    <string name="d_ram_shizuku_no_permission">Shizuku is running. Grant Memdroid access to list and stop apps.</string>
+    <string name="d_ram_tab_user">User apps (%1$d)</string>
+    <string name="d_ram_tab_system">System apps (%1$d)</string>
+    <string name="d_ram_kill_selected">Kill selected (%1$d)</string>
+    <string name="d_ram_kill_all">Kill all</string>
+    <string name="d_ram_select_all">Select all</string>
+    <string name="d_ram_kill_all_system_off">Kill all is off for system apps. You can turn it on in Settings.</string>
+    <plurals name="d_ram_confirm_title">
+        <item quantity="one">Force stop %1$d app?</item>
+        <item quantity="other">Force stop %1$d apps?</item>
+    </plurals>
+    <string name="d_ram_confirm_summary">These apps will be closed. Unsaved work in them may be lost, and some may restart on their own.</string>
+    <plurals name="d_ram_processes">
+        <item quantity="one">%1$d process</item>
+        <item quantity="other">%1$d processes</item>
+    </plurals>
+    <string name="d_ram_protected">Protected</string>
+    <string name="d_ram_whitelist_remove">Remove from whitelist</string>
+    <string name="d_ram_whitelist_add">Add to whitelist</string>
+
+    <!-- Battery -->
+    <string name="d_battery_stats_error">Couldn\'t read battery stats: %1$s</string>
+    <string name="d_battery_no_stats">No battery stats found</string>
+    <string name="d_battery_stopped">Stopped %1$s.</string>
+    <string name="d_battery_stop_failed">Couldn\'t stop %1$s.</string>
+    <string name="d_battery_title">Battery %1$d%%</string>
+    <string name="d_battery_charging">Charging</string>
+    <string name="d_battery_charging_via">Charging via %1$s</string>
+    <string name="d_battery_on_battery">On battery</string>
+    <string name="d_battery_detail">%1$s · %2$s°C · Health %3$s</string>
+    <string name="d_battery_hot">The battery is hot.</string>
+    <string name="d_battery_source_charger">charger</string>
+    <string name="d_battery_source_usb">USB</string>
+    <string name="d_battery_source_wireless">wireless</string>
+    <string name="d_battery_health_good">Good</string>
+    <string name="d_battery_health_overheat">Overheating</string>
+    <string name="d_battery_health_cold">Cold</string>
+    <string name="d_battery_health_dead">Dead</string>
+    <string name="d_battery_health_over_voltage">Over voltage</string>
+    <string name="d_battery_health_unknown">Unknown</string>
+    <string name="d_battery_shizuku_not_running">Android only shows battery use per app to the system. Start Shizuku to see it here.</string>
+    <string name="d_battery_shizuku_no_permission">Grant access to read battery use by app.</string>
+    <string name="d_battery_since_full_charge">Since last full charge</string>
+    <string name="d_battery_filter_user">User (%1$d)</string>
+    <string name="d_battery_filter_system">System (%1$d)</string>
+    <string name="d_battery_report_problem">Report this problem</string>
+    <string name="d_battery_confirm_title">Force stop %1$s?</string>
+    <string name="d_battery_confirm_summary">The app will be closed. Unsaved work in it may be lost, and it may restart on its own.</string>
+    <string name="d_battery_mah">%1$d mAh</string>
+    <string name="d_battery_on_screen">On screen %1$s in the last 24 h</string>
+    <string name="d_duration_under_minute">&lt;1 min</string>
+    <string name="d_duration_minutes">%1$d min</string>
+    <string name="d_duration_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Freeze apps and background limits -->
+    <string name="d_appcontrol_frozen">%1$s is frozen.</string>
+    <string name="d_appcontrol_unfrozen">%1$s is back.</string>
+    <string name="d_appcontrol_change_failed">Couldn\'t change %1$s.</string>
+    <string name="d_appcontrol_background_intro">Apps you limit can still be opened normally, but Android won\'t let them run or restart in the background. Messaging apps may deliver notifications late.</string>
+    <string name="d_appcontrol_freeze_intro">A frozen app disappears from your home screen and can\'t run at all until you unfreeze it here. Nothing is deleted.</string>
+    <string name="d_appcontrol_shizuku_not_running">This tool needs Shizuku. Start it with wireless debugging, then come back.</string>
+    <string name="d_appcontrol_shizuku_no_permission">Grant access to change other apps.</string>
+    <string name="d_appcontrol_status_frozen">Frozen</string>
+    <string name="d_appcontrol_status_limited">Limited in the background</string>
+    <string name="d_appcontrol_unfreeze">Unfreeze</string>
+    <string name="d_appcontrol_freeze">Freeze</string>
+    <string name="d_appcontrol_confirm_title">Freeze %1$s?</string>
+    <string name="d_appcontrol_confirm_summary">It will disappear from your home screen and stop running until you unfreeze it in Tools › Freeze apps. Its data is kept.</string>
+
+    <!-- Unused apps -->
+    <string name="d_unused_usage_access_text">Memdroid needs usage access to see when you last opened each app.</string>
+    <plurals name="d_unused_ignored_summary">
+        <item quantity="one">%1$d ignored app. Tap Restore to show it again.</item>
+        <item quantity="other">%1$d ignored apps. Tap Restore to show them again.</item>
+    </plurals>
+    <plurals name="d_unused_summary">
+        <item quantity="one">%1$d app not opened in %2$d days, using %3$s.</item>
+        <item quantity="other">%1$d apps not opened in %2$d days, using %3$s.</item>
+    </plurals>
+    <string name="d_unused_back">Back</string>
+    <string name="d_unused_ignored">Ignored (%1$d)</string>
+    <string name="d_unused_last_used">Last used %1$s</string>
+    <string name="d_unused_not_used_year">Not used in the last year</string>
+    <string name="d_unused_restore">Restore</string>
+    <string name="d_unused_ignore">Ignore</string>
+    <string name="d_unused_uninstall">Uninstall</string>
+
+    <!-- History -->
+    <string name="d_history_range_24h">24 hours</string>
+    <string name="d_history_range_7d">7 days</string>
+    <string name="d_history_range_30d">30 days</string>
+    <string name="d_history_empty">Memdroid records a reading every 30 minutes. Check back later to see trends.</string>
+    <string name="d_history_ram_title">RAM used</string>
+    <string name="d_history_ram_now">Now %1$s of %2$s</string>
+    <string name="d_history_storage_title">Storage used</string>
+    <string name="d_history_storage_now">Now %1$s · changed %2$s in this period</string>
+    <string name="d_history_battery_title">Battery level</string>
+    <string name="d_history_battery_now">Now %1$d%%</string>
+    <string name="d_history_axis_bottom" formatted="false">0%</string>
+    <string name="d_history_axis_top" formatted="false">100% at top</string>
+
+    <!-- App growth -->
+    <string name="d_growth_usage_access_text">Memdroid needs usage access to measure each app\'s storage over time.</string>
+    <string name="d_growth_empty">Memdroid measures every app\'s size once a day (%1$d so far). Come back tomorrow to see which apps are growing.</string>
+    <string name="d_growth_total">Total change: %1$s</string>
+
+    <!-- Tip jar products -->
+    <string name="d_tip_shot">A shot</string>
+    <string name="d_tip_half">A half</string>
+    <string name="d_tip_pint">A pint</string>
+</resources>

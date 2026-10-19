@@ -33,11 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.memdroid.app.R
 import com.memdroid.app.data.AppBattery
 import com.memdroid.app.data.BatteryRepository
 import com.memdroid.app.data.BatteryStatus
@@ -76,6 +78,10 @@ class BatteryViewModel(app: Application) : AndroidViewModel(app) {
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message
 
+    // True when the message reports a failure, so the screen can offer to report it.
+    private val _messageIsError = MutableStateFlow(false)
+    val messageIsError: StateFlow<Boolean> = _messageIsError
+
     init {
         viewModelScope.launch {
             while (true) {
@@ -92,8 +98,11 @@ class BatteryViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             _loading.value = true
             repo.appUsage()
-                .onSuccess { _apps.value = it; _message.value = null }
-                .onFailure { _message.value = "Couldn't read battery stats: ${it.message}" }
+                .onSuccess { _apps.value = it; _message.value = null; _messageIsError.value = false }
+                .onFailure {
+                    _message.value = getApplication<Application>().getString(R.string.d_battery_stats_error, it.message)
+                    _messageIsError.value = true
+                }
             _loading.value = false
         }
     }
@@ -101,7 +110,10 @@ class BatteryViewModel(app: Application) : AndroidViewModel(app) {
     fun forceStop(app: AppBattery) {
         viewModelScope.launch {
             val ok = app.packageName !in prefs.whitelist.value && ram.forceStop(app.packageName)
-            _message.value = if (ok) "Stopped ${app.label}." else "Couldn't stop ${app.label}."
+            _message.value = getApplication<Application>().getString(
+                if (ok) R.string.d_battery_stopped else R.string.d_battery_stop_failed, app.label,
+            )
+            _messageIsError.value = !ok
         }
     }
 }
@@ -113,6 +125,7 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
     val apps by vm.apps.collectAsState()
     val loading by vm.loading.collectAsState()
     val message by vm.message.collectAsState()
+    val messageIsError by vm.messageIsError.collectAsState()
     val shizuku by ShizukuShell.state.collectAsState()
     val whitelist by vm.prefs.whitelist.collectAsState()
     var systemTab by rememberSaveable { mutableStateOf(false) }
@@ -123,24 +136,30 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
     val statusPane: @Composable () -> Unit = {
         status?.let { s ->
             UsageCard(
-                title = "Battery ${s.level}%",
+                title = stringResource(R.string.d_battery_title, s.level),
                 fraction = s.level / 100f,
-                detail = buildString {
-                    append(if (s.charging) "Charging" + (s.source?.let { " via $it" } ?: "") else "On battery")
-                    append(" · ${String.format(Locale.getDefault(), "%.1f", s.temperatureC)}°C · Health ${s.health}")
-                },
-                warning = if (s.temperatureC >= 42f) "The battery is hot." else null,
+                detail = stringResource(
+                    R.string.d_battery_detail,
+                    when {
+                        !s.charging -> stringResource(R.string.d_battery_on_battery)
+                        s.source != null -> stringResource(R.string.d_battery_charging_via, stringResource(s.source))
+                        else -> stringResource(R.string.d_battery_charging)
+                    },
+                    String.format(Locale.getDefault(), "%.1f", s.temperatureC),
+                    stringResource(s.health),
+                ),
+                warning = if (s.temperatureC >= 42f) stringResource(R.string.d_battery_hot) else null,
             )
         }
         when (shizuku) {
             ShizukuState.NOT_RUNNING -> NoticeCard(
-                "Shizuku isn't running",
-                "Android only shows battery use per app to the system. Start Shizuku to see it here.",
+                stringResource(R.string.d_shizuku_not_running_title),
+                stringResource(R.string.d_battery_shizuku_not_running),
             )
             ShizukuState.NO_PERMISSION -> NoticeCard(
-                "Allow Memdroid in Shizuku",
-                "Grant access to read battery use by app.",
-                action = "Grant access",
+                stringResource(R.string.d_shizuku_allow_title),
+                stringResource(R.string.d_battery_shizuku_no_permission),
+                action = stringResource(R.string.d_grant_access),
                 onAction = ShizukuShell::requestPermission,
             )
             ShizukuState.READY -> Unit
@@ -155,25 +174,25 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Since last full charge", style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.d_battery_since_full_charge), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                     IconButton(onClick = vm::refresh, enabled = !loading) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.d_refresh))
                     }
                 }
                 Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     FilterChip(selected = !systemTab, onClick = { systemTab = false },
-                        label = { Text("User (${apps.count { !it.isSystem }})") })
+                        label = { Text(stringResource(R.string.d_battery_filter_user, apps.count { !it.isSystem })) })
                     FilterChip(selected = systemTab, onClick = { systemTab = true },
-                        label = { Text("System (${apps.count { it.isSystem }})") })
+                        label = { Text(stringResource(R.string.d_battery_filter_system, apps.count { it.isSystem })) })
                 }
                 if (loading) LinearProgressIndicator(Modifier.fillMaxWidth())
                 message?.let { msg ->
                     Text(msg, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp))
-                    if (msg.startsWith("Couldn't")) {
+                    if (messageIsError) {
                         TextButton(
                             onClick = { Community.open(context, CrashReports.issueUrl(context, "Battery stats error", msg)) },
                             modifier = Modifier.padding(horizontal = 8.dp),
-                        ) { Text("Report this problem") }
+                        ) { Text(stringResource(R.string.d_battery_report_problem)) }
                     }
                 }
                 LazyColumn(Modifier.fillMaxSize()) {
@@ -199,10 +218,10 @@ fun BatteryScreen(modifier: Modifier = Modifier, vm: BatteryViewModel = viewMode
 
     pendingStop?.let { app ->
         ConfirmDialog(
-            title = "Force stop ${app.label}?",
+            title = stringResource(R.string.d_battery_confirm_title, app.label),
             items = listOf(app.label),
-            summary = "The app will be closed. Unsaved work in it may be lost, and it may restart on its own.",
-            confirmLabel = "Force stop",
+            summary = stringResource(R.string.d_battery_confirm_summary),
+            confirmLabel = stringResource(R.string.d_force_stop),
             onConfirm = { vm.forceStop(app); pendingStop = null },
             onDismiss = { pendingStop = null },
         )
@@ -215,6 +234,7 @@ private fun BatteryRow(app: AppBattery, canStop: Boolean, onClick: () -> Unit, o
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val context = LocalContext.current
         AppIcon(app.packageName)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
@@ -230,17 +250,19 @@ private fun BatteryRow(app: AppBattery, canStop: Boolean, onClick: () -> Unit, o
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                 drawStopIndicator = {},
             )
+            val mah = stringResource(R.string.d_battery_mah, app.mah.toInt())
+            val onScreen = app.foregroundMs?.let { stringResource(R.string.d_battery_on_screen, formatDuration(context, it)) }
             Text(
                 buildString {
-                    append("${app.mah.toInt()} mAh")
-                    app.foregroundMs?.let { append(" · On screen ${formatDuration(it)} in the last 24 h") }
+                    append(mah)
+                    onScreen?.let { append(" · $it") }
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         IconButton(onClick = onStop, enabled = canStop) {
-            Icon(Icons.Filled.StopCircle, contentDescription = "Force stop")
+            Icon(Icons.Filled.StopCircle, contentDescription = stringResource(R.string.d_force_stop))
         }
     }
 }

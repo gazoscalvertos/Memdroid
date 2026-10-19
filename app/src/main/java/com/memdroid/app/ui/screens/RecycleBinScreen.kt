@@ -33,8 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.memdroid.app.R
 import com.memdroid.app.data.BinItem
 import com.memdroid.app.data.Prefs
 import com.memdroid.app.data.RecycleBin
@@ -67,9 +70,9 @@ fun RecycleBinScreen() {
             Column {
                 Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Use the recycle bin")
+                        Text(stringResource(R.string.b_use_recycle_bin))
                         Text(
-                            "Deleted files are kept for 30 days so you can restore them. Turn off to delete straight away.",
+                            stringResource(R.string.b_recycle_bin_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -82,15 +85,15 @@ fun RecycleBinScreen() {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        "${items.size} items · ${formatBytes(items.sumOf { it.size })}",
+                        pluralStringResource(R.plurals.b_bin_items_size, items.size, items.size, formatBytes(items.sumOf { it.size })),
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.weight(1f),
                     )
-                    OutlinedButton(onClick = { pendingDelete = items }, enabled = items.isNotEmpty()) { Text("Empty bin") }
+                    OutlinedButton(onClick = { pendingDelete = items }, enabled = items.isNotEmpty()) { Text(stringResource(R.string.b_empty_bin)) }
                 }
                 message?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(16.dp, 4.dp)) }
                 if (!hasAllFilesAccess()) {
-                    Text("All files access is needed to use the recycle bin.", modifier = Modifier.padding(16.dp))
+                    Text(stringResource(R.string.b_bin_needs_all_files), modifier = Modifier.padding(16.dp))
                 }
             }
         }
@@ -109,7 +112,10 @@ fun RecycleBinScreen() {
                     Text(item.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     val daysLeft = TimeUnit.MILLISECONDS.toDays(item.expiresAt - System.currentTimeMillis()).coerceAtLeast(0)
                     Text(
-                        "${formatBytes(item.size)} · deleted ${formatDate(item.deletedAt)} · $daysLeft days left\n${File(item.originalPath).parent}",
+                        pluralStringResource(
+                            R.plurals.b_bin_item_detail, daysLeft.toInt(),
+                            formatBytes(item.size), formatDate(item.deletedAt), daysLeft, File(item.originalPath).parent.toString(),
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,
@@ -120,11 +126,11 @@ fun RecycleBinScreen() {
                     TextButton(onClick = {
                         scope.launch {
                             val ok = withContext(Dispatchers.IO) { RecycleBin.restore(context, item) }
-                            message = if (ok) "Restored ${item.name}." else "Couldn't restore ${item.name}."
+                            message = if (ok) context.getString(R.string.b_restored, item.name) else context.getString(R.string.b_couldnt_restore, item.name)
                             version++
                         }
-                    }) { Text("Restore") }
-                    TextButton(onClick = { pendingDelete = listOf(item) }) { Text("Delete") }
+                    }) { Text(stringResource(R.string.b_restore)) }
+                    TextButton(onClick = { pendingDelete = listOf(item) }) { Text(stringResource(R.string.b_delete)) }
                 }
             }
             HorizontalDivider()
@@ -133,15 +139,15 @@ fun RecycleBinScreen() {
 
     pendingDelete?.let { targets ->
         ConfirmDialog(
-            title = if (targets.size == 1) "Delete ${targets.first().name} for good?" else "Empty the recycle bin?",
-            items = targets.map { "${it.name} (${formatBytes(it.size)})" },
-            summary = "${formatBytes(targets.sumOf { it.size })} will be permanently deleted. This can't be undone.",
-            confirmLabel = "Delete for good",
+            title = if (targets.size == 1) stringResource(R.string.b_delete_for_good_title, targets.first().name) else stringResource(R.string.b_empty_bin_title),
+            items = targets.map { stringResource(R.string.b_name_size, it.name, formatBytes(it.size)) },
+            summary = stringResource(R.string.b_permanent_summary, formatBytes(targets.sumOf { it.size })),
+            confirmLabel = stringResource(R.string.b_delete_for_good),
             onConfirm = {
                 pendingDelete = null
                 scope.launch {
                     val n = withContext(Dispatchers.IO) { RecycleBin.deleteForever(context, targets) }
-                    message = "Permanently deleted $n items."
+                    message = context.resources.getQuantityString(R.plurals.b_permanently_deleted, n, n)
                     version++
                 }
             },

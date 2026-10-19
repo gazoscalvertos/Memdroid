@@ -68,9 +68,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.memdroid.app.R
 import com.memdroid.app.data.Community
 import com.memdroid.app.data.ShizukuShell
 import com.memdroid.app.data.ShizukuState
@@ -114,86 +116,82 @@ fun OnboardingScreen(onDone: () -> Unit) {
                     0 -> {
                         StepArt(Icons.Filled.Memory, listOf(Color(0xFF00C853), Color(0xFF00897B)))
                         Text(
-                            "Welcome to Memdroid",
+                            stringResource(R.string.c_onboarding_welcome),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )
                         Text(
-                            "A privacy-first, offline app with no ads, bringing useful tools to everyone for free.",
+                            stringResource(R.string.c_onboarding_tagline),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )
-                        Pillar(Icons.Filled.Lock, "Privacy first", "Nothing you do in Memdroid leaves your device.")
-                        Pillar(Icons.Filled.CloudOff, "Works offline", "No account and no tracking. It doesn't need the internet.")
-                        Pillar(Icons.Filled.Block, "No ads, ever", "No banners, no pop-ups, no paid features.")
-                        Pillar(Icons.Filled.VolunteerActivism, "Free for everyone", "Kept going by supporters on the heroes wall.")
+                        Pillar(Icons.Filled.Lock, stringResource(R.string.c_onboarding_privacy_title), stringResource(R.string.c_onboarding_privacy_body))
+                        Pillar(Icons.Filled.CloudOff, stringResource(R.string.c_onboarding_offline_title), stringResource(R.string.c_onboarding_offline_body))
+                        Pillar(Icons.Filled.Block, stringResource(R.string.c_onboarding_no_ads_title), stringResource(R.string.c_onboarding_no_ads_body))
+                        Pillar(Icons.Filled.VolunteerActivism, stringResource(R.string.c_onboarding_free_title), stringResource(R.string.c_onboarding_free_body))
                     }
                     1 -> {
                         StepArt(Icons.Filled.Insights, listOf(Color(0xFF2979FF), Color(0xFF7C4DFF)))
                         Step(
-                            "What Memdroid does",
-                            "Memdroid shows what's using your device's memory, storage and battery, and helps you free it up. " +
-                                "Let's set up a few permissions. You can skip any of them and change them later in Settings.",
+                            stringResource(R.string.c_onboarding_what_title),
+                            stringResource(R.string.c_onboarding_what_body),
                         )
                     }
                     2 -> {
                         StepArt(Icons.Filled.QueryStats, listOf(Color(0xFF00B0FF), Color(0xFF0091EA)))
-                        Step("Usage access", "Lets Memdroid measure each app's storage, see when you last used it and spot battery drain.", done = usage)
+                        Step(stringResource(R.string.c_onboarding_usage_title), stringResource(R.string.c_onboarding_usage_body), done = usage)
                         if (!usage) {
-                            PermissionCard("Allow usage access", "Find Memdroid in the list and turn it on.") {
+                            PermissionCard(stringResource(R.string.c_onboarding_usage_card_title), stringResource(R.string.c_onboarding_usage_card_body)) {
                                 context.startActivity(usageAccessIntent())
                             }
                         }
                     }
                     3 -> {
                         StepArt(Icons.Filled.FolderOpen, listOf(Color(0xFFFFB300), Color(0xFFFF6D00)))
-                        Step("All files access", "Needed for large files, duplicates, old downloads, the folder view and the recycle bin.", done = files)
+                        Step(stringResource(R.string.c_onboarding_files_title), stringResource(R.string.c_onboarding_files_body), done = files)
                         if (!files) {
-                            PermissionCard("Allow all files access", "Turn on Allow access to manage all files.") {
+                            PermissionCard(stringResource(R.string.c_onboarding_files_card_title), stringResource(R.string.c_onboarding_files_card_body)) {
                                 context.startActivity(allFilesAccessIntent(context.packageName))
                             }
                         }
                     }
                     4 -> {
                         StepArt(Icons.Filled.NotificationsActive, listOf(Color(0xFFFF4081), Color(0xFFD500F9)))
-                        Step("Notifications", "Used for the optional low storage, low RAM and battery drain alerts. They're all off until you turn them on.", done = notifications)
+                        Step(stringResource(R.string.c_onboarding_notifications_title), stringResource(R.string.c_onboarding_notifications_body), done = notifications)
                         if (!notifications) {
-                            Button(onClick = { notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }) { Text("Allow notifications") }
+                            Button(onClick = { notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }) { Text(stringResource(R.string.c_onboarding_allow_notifications)) }
                         }
                     }
                     5 -> {
                         StepArt(Icons.Filled.AdminPanelSettings, listOf(Color(0xFF536DFE), Color(0xFF304FFE)))
                         Step(
-                            "Shizuku (optional)",
-                            "Android doesn't let normal apps see or stop other apps. Shizuku gives Memdroid that access without rooting, " +
-                                "for the running apps list, kill, auto-kill, battery by app and clearing caches. " +
-                                "Install it, start it with wireless debugging, then come back here.",
+                            stringResource(R.string.c_onboarding_shizuku_title),
+                            stringResource(R.string.c_onboarding_shizuku_body),
                             done = shizuku == ShizukuState.READY,
                         )
                         when (shizuku) {
                             ShizukuState.NOT_RUNNING -> OutlinedButton(onClick = {
                                 Community.open(context, "https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
-                            }) { Text("Get Shizuku") }
-                            ShizukuState.NO_PERMISSION -> Button(onClick = ShizukuShell::requestPermission) { Text("Allow Memdroid in Shizuku") }
+                            }) { Text(stringResource(R.string.c_onboarding_get_shizuku)) }
+                            ShizukuState.NO_PERMISSION -> Button(onClick = ShizukuShell::requestPermission) { Text(stringResource(R.string.c_onboarding_allow_in_shizuku)) }
                             ShizukuState.READY -> Unit
                         }
                     }
                     else -> {
                         StepArt(Icons.Filled.Celebration, listOf(Color(0xFFFFC107), Color(0xFFFF8F00)))
                         Step(
-                            "You're all set",
-                            "Start with the Storage tab's smart cleanup to see what you can free. " +
-                                "You can run this setup again from Settings.",
+                            stringResource(R.string.c_onboarding_done_title),
+                            stringResource(R.string.c_onboarding_done_body),
                         )
                     }
                 }
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    if (step in 1 until STEPS - 1) TextButton(onClick = { step++ }) { Text("Skip") } else Spacer(Modifier)
+                    if (step in 1 until STEPS - 1) TextButton(onClick = { step++ }) { Text(stringResource(R.string.c_onboarding_skip)) } else Spacer(Modifier)
                     Button(onClick = { if (step == STEPS - 1) onDone() else step++ }) {
-                        Text(if (step == STEPS - 1) "Start" else "Next")
+                        Text(if (step == STEPS - 1) stringResource(R.string.c_onboarding_start) else stringResource(R.string.c_onboarding_next))
                     }
                 }
             }
@@ -254,7 +252,7 @@ private fun Pillar(icon: ImageVector, title: String, body: String) {
 private fun Step(title: String, body: String, done: Boolean = false) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(title, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-        if (done) Icon(Icons.Filled.CheckCircle, contentDescription = "Done", tint = MaterialTheme.colorScheme.primary)
+        if (done) Icon(Icons.Filled.CheckCircle, contentDescription = stringResource(R.string.c_onboarding_done), tint = MaterialTheme.colorScheme.primary)
     }
     Text(body, style = MaterialTheme.typography.bodyLarge)
 }

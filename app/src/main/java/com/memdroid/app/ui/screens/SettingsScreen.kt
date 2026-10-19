@@ -35,9 +35,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.memdroid.app.R
 import com.memdroid.app.data.AppLookup
 import com.memdroid.app.data.Community
 import com.memdroid.app.data.Prefs
@@ -77,50 +79,49 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
     }
 
     LazyColumn(modifier.fillMaxSize()) {
-        item { SectionTitle("Access") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_access)) }
         item {
             StatusRow(
-                "Shizuku",
+                stringResource(R.string.c_settings_shizuku),
                 when (shizuku) {
-                    ShizukuState.READY -> "Connected. Memdroid can list and stop apps."
-                    ShizukuState.NO_PERMISSION -> "Running, but Memdroid isn't allowed yet."
-                    ShizukuState.NOT_RUNNING -> "Not running. Start it in the Shizuku app with wireless debugging. " +
-                        "It needs starting again after each reboot."
+                    ShizukuState.READY -> stringResource(R.string.c_settings_shizuku_ready)
+                    ShizukuState.NO_PERMISSION -> stringResource(R.string.c_settings_shizuku_no_permission)
+                    ShizukuState.NOT_RUNNING -> stringResource(R.string.c_settings_shizuku_not_running)
                 },
-                action = if (shizuku == ShizukuState.NO_PERMISSION) "Grant" else null,
+                action = if (shizuku == ShizukuState.NO_PERMISSION) stringResource(R.string.c_settings_grant) else null,
                 onAction = ShizukuShell::requestPermission,
             )
         }
         item {
             if (usageAccess) {
-                StatusRow("Usage access", "Allowed", action = null, onAction = {})
+                StatusRow(stringResource(R.string.c_settings_usage_access), stringResource(R.string.c_settings_allowed), action = null, onAction = {})
             } else {
                 PermissionCard(
-                    "Usage access",
-                    "Needed for app, app data and cache sizes.",
+                    stringResource(R.string.c_settings_usage_access),
+                    stringResource(R.string.c_settings_usage_access_body),
                     onOpenSettings = { context.startActivity(usageAccessIntent()) },
                 )
             }
         }
         item {
             if (allFiles) {
-                StatusRow("All files access", "Allowed", action = null, onAction = {})
+                StatusRow(stringResource(R.string.c_settings_all_files_access), stringResource(R.string.c_settings_allowed), action = null, onAction = {})
             } else {
                 PermissionCard(
-                    "All files access",
-                    "Needed for the folder breakdown and finding large files.",
+                    stringResource(R.string.c_settings_all_files_access),
+                    stringResource(R.string.c_settings_all_files_access_body),
                     onOpenSettings = { context.startActivity(allFilesAccessIntent(context.packageName)) },
                 )
             }
         }
 
-        item { SectionTitle("Alerts") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_alerts)) }
         item {
             Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Low storage and memory alerts")
+                    Text(stringResource(R.string.c_settings_alerts_title))
                     Text(
-                        "Off by default. Memdroid checks every 30 minutes and notifies you once when space or memory runs low.",
+                        stringResource(R.string.c_settings_alerts_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -136,18 +137,18 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         if (alertsEnabled) {
             item {
                 Column(Modifier.padding(16.dp, 4.dp)) {
-                    Text("Alert when free storage is below", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.c_settings_storage_below), style = MaterialTheme.typography.bodyMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(5, 10, 20, 50).forEach { gb ->
                             FilterChip(selected = storageAlertGb == gb, onClick = { prefs.setStorageAlertGb(gb) },
-                                label = { Text("$gb GB") })
+                                label = { Text(stringResource(R.string.c_settings_gb, gb)) })
                         }
                     }
-                    Text("Alert when available RAM is below", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.c_settings_ram_below), style = MaterialTheme.typography.bodyMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(5, 10, 15, 20).forEach { pct ->
                             FilterChip(selected = ramAlertPercent == pct, onClick = { prefs.setRamAlertPercent(pct) },
-                                label = { Text("$pct%") })
+                                label = { Text(stringResource(R.string.c_percent, pct)) })
                         }
                     }
                 }
@@ -158,10 +159,9 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             item {
                 Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Background battery drain")
+                        Text(stringResource(R.string.c_settings_drain_title))
                         Text(
-                            "Alerts when an app you haven't opened uses at least $drainThreshold mAh per hour. " +
-                                "Needs Shizuku and usage access.",
+                            stringResource(R.string.c_settings_drain_body, drainThreshold),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -174,20 +174,20 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     Row(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(50, 100, 200).forEach { mah ->
                             FilterChip(selected = drainThreshold == mah, onClick = { prefs.setDrainThresholdMah(mah) },
-                                label = { Text("$mah mAh/h") })
+                                label = { Text(stringResource(R.string.c_settings_mah_per_hour, mah)) })
                         }
                     }
                 }
             }
         }
 
-        item { SectionTitle("Deleting files") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_deleting)) }
         item {
             Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Recycle bin")
+                    Text(stringResource(R.string.c_settings_recycle_bin))
                     Text(
-                        "Deleted files are kept for 30 days so you can restore them (Tools › Recycle bin).",
+                        stringResource(R.string.c_settings_recycle_bin_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -196,27 +196,27 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        item { SectionTitle("Setup") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_setup)) }
         item {
             OutlinedButton(onClick = { prefs.setOnboarded(false) }, modifier = Modifier.padding(16.dp, 4.dp)) {
-                Text("Run setup again")
+                Text(stringResource(R.string.c_settings_run_setup_again))
             }
         }
 
-        item { SectionTitle("About") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_about)) }
         item {
             OutlinedButton(onClick = { Community.open(context, Community.PRIVACY_URL) }, modifier = Modifier.padding(16.dp, 4.dp)) {
-                Text("Privacy policy")
+                Text(stringResource(R.string.c_settings_privacy_policy))
             }
         }
 
-        item { SectionTitle("Killing apps") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_killing)) }
         item {
             Row(Modifier.fillMaxWidth().padding(16.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Include system apps in Kill all")
+                    Text(stringResource(R.string.c_settings_include_system))
                     Text(
-                        "Off by default. Stopping system apps can make your device misbehave until they restart.",
+                        stringResource(R.string.c_settings_include_system_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -225,10 +225,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        item { SectionTitle("Whitelist (${whitelist.size})") }
+        item { SectionTitle(stringResource(R.string.c_settings_section_whitelist, whitelist.size)) }
         item {
             Text(
-                "Whitelisted apps are never killed. Add apps with the shield icon on the RAM screen.",
+                stringResource(R.string.c_settings_whitelist_body),
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -243,11 +243,11 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                     Text(pkg, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (pkg in prefs.locked) {
-                    Icon(Icons.Filled.Lock, contentDescription = "Always protected",
+                    Icon(Icons.Filled.Lock, contentDescription = stringResource(R.string.c_settings_always_protected),
                         modifier = Modifier.padding(12.dp))
                 } else {
                     IconButton(onClick = { prefs.setWhitelisted(pkg, false) }) {
-                        Icon(Icons.Filled.Close, contentDescription = "Remove from whitelist")
+                        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.c_settings_remove_from_whitelist))
                     }
                 }
             }
