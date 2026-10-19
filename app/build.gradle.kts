@@ -60,6 +60,10 @@ android {
     buildFeatures {
         compose = true
     }
+    // Lets people pick Memdroid's language in Android's per-app language settings.
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 dependencies {
