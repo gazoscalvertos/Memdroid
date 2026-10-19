@@ -26,6 +26,11 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.14", "19 Oct 2026", listOf(
+            "A new welcome: privacy first, offline, no ads and free for everyone",
+            "Illustrations for each setup step",
+            "A beer button at the top right opens Buy me a beer",
+        )),
         Release("1.0.13", "19 Oct 2026", listOf(
             "Widget buttons sit beside the bars, and a compact layout fits a one-row widget",
             "RAM and Battery summaries sit above the list on tablets",

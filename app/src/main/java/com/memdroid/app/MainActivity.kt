@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,6 +25,9 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -119,7 +123,17 @@ private fun MemdroidApp(killAllRequested: Boolean, onKillAllHandled: () -> Unit)
     // Wide screens (unfolded foldables, tablets, landscape) get a side rail instead of a bottom bar.
     val wide = isMediumWidth()
     Scaffold(
-        topBar = { TopAppBar(title = { Text(if (tab == Tab.RAM) "Memdroid" else tab.title) }) },
+        topBar = {
+            TopAppBar(
+                title = { Text(if (tab == Tab.RAM) "Memdroid" else tab.title) },
+                actions = {
+                    // Opens the heroes wall, where the Buy me a beer card lives.
+                    IconButton(onClick = { toolRequest = "HEROES"; tabIndex = Tab.TOOLS.ordinal }) {
+                        Text("🍺", fontSize = 22.sp, modifier = Modifier.semantics { contentDescription = "Buy me a beer" })
+                    }
+                },
+            )
+        },
         bottomBar = {
             if (!wide) NavigationBar {
                 Tab.entries.forEachIndexed { index, t ->
