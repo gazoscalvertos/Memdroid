@@ -25,6 +25,9 @@ object Community {
     data class Release(val version: String, val date: String, val changes: List<String>)
 
     val changelog = listOf(
+        Release("1.0.17", "19 Oct 2026", listOf(
+            "Now in Spanish, German, French and Portuguese. Pick Memdroid's language in Android's app language settings",
+        )),
         Release("1.0.15", "19 Oct 2026", listOf(
             "Stop apps restarting: keep chosen apps from running in the background",
             "Freeze apps you rarely use without uninstalling them",

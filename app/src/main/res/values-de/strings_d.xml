@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the RAM, battery and app screens -->
+    <string name="d_shizuku_not_running_title">Shizuku läuft nicht</string>
+    <string name="d_shizuku_allow_title">Memdroid in Shizuku erlauben</string>
+    <string name="d_grant_access">Zugriff erlauben</string>
+    <string name="d_refresh">Aktualisieren</string>
+    <string name="d_force_stop">Beenden erzwingen</string>
+    <string name="d_usage_access_title">Nutzungszugriff erlauben</string>
+    <plurals name="d_days">
+        <item quantity="one">%1$d Tag</item>
+        <item quantity="other">%1$d Tage</item>
+    </plurals>
+
+    <!-- RAM -->
+    <string name="d_ram_sort_most">Höchster RAM</string>
+    <string name="d_ram_sort_least">Niedrigster RAM</string>
+    <string name="d_ram_sort_name">Name</string>
+    <string name="d_ram_list_error">Laufende Apps konnten nicht aufgelistet werden: %1$s</string>
+    <plurals name="d_ram_stopped">
+        <item quantity="one">%1$d von %2$d App beendet, etwa %3$s frei geworden.</item>
+        <item quantity="other">%1$d von %2$d Apps beendet, etwa %3$s frei geworden.</item>
+    </plurals>
+    <string name="d_ram_title">RAM</string>
+    <string name="d_ram_detail">%1$s von %2$s belegt · %3$s verfügbar</string>
+    <string name="d_ram_low_memory">Das System hat wenig Arbeitsspeicher.</string>
+    <string name="d_ram_shizuku_not_running">Um laufende Apps zu sehen und zu beenden, installiere Shizuku aus dem Play Store und starte es per kabellosem Debugging. Den gesamten RAM kann Memdroid auch ohne anzeigen.</string>
+    <string name="d_ram_shizuku_no_permission">Shizuku läuft. Erlaube Memdroid den Zugriff, um Apps aufzulisten und zu beenden.</string>
+    <string name="d_ram_tab_user">Nutzer-Apps (%1$d)</string>
+    <string name="d_ram_tab_system">System-Apps (%1$d)</string>
+    <string name="d_ram_kill_selected">Auswahl beenden (%1$d)</string>
+    <string name="d_ram_kill_all">Alle beenden</string>
+    <string name="d_ram_select_all">Alle auswählen</string>
+    <string name="d_ram_kill_all_system_off">Alle beenden ist für System-Apps aus. Du kannst es in den Einstellungen einschalten.</string>
+    <plurals name="d_ram_confirm_title">
+        <item quantity="one">%1$d App beenden erzwingen?</item>
+        <item quantity="other">%1$d Apps beenden erzwingen?</item>
+    </plurals>
+    <string name="d_ram_confirm_summary">Diese Apps werden geschlossen. Ungespeicherte Arbeit darin kann verloren gehen, und manche starten vielleicht von selbst neu.</string>
+    <plurals name="d_ram_processes">
+        <item quantity="one">%1$d Prozess</item>
+        <item quantity="other">%1$d Prozesse</item>
+    </plurals>
+    <string name="d_ram_protected">Geschützt</string>
+    <string name="d_ram_whitelist_remove">Von Whitelist entfernen</string>
+    <string name="d_ram_whitelist_add">Zur Whitelist hinzufügen</string>
+
+    <!-- Battery -->
+    <string name="d_battery_stats_error">Akkustatistik konnte nicht gelesen werden: %1$s</string>
+    <string name="d_battery_no_stats">Keine Akkustatistik gefunden</string>
+    <string name="d_battery_stopped">%1$s beendet.</string>
+    <string name="d_battery_stop_failed">%1$s konnte nicht beendet werden.</string>
+    <string name="d_battery_title">Akku %1$d %%</string>
+    <string name="d_battery_charging">Wird geladen</string>
+    <string name="d_battery_charging_via">Wird geladen über %1$s</string>
+    <string name="d_battery_on_battery">Akkubetrieb</string>
+    <string name="d_battery_detail">%1$s · %2$s °C · Zustand %3$s</string>
+    <string name="d_battery_hot">Der Akku ist heiß.</string>
+    <string name="d_battery_source_charger">Ladegerät</string>
+    <string name="d_battery_source_usb">USB</string>
+    <string name="d_battery_source_wireless">kabellos</string>
+    <string name="d_battery_health_good">Gut</string>
+    <string name="d_battery_health_overheat">Überhitzt</string>
+    <string name="d_battery_health_cold">Kalt</string>
+    <string name="d_battery_health_dead">Defekt</string>
+    <string name="d_battery_health_over_voltage">Überspannung</string>
+    <string name="d_battery_health_unknown">Unbekannt</string>
+    <string name="d_battery_shizuku_not_running">Android zeigt den Akkuverbrauch pro App nur dem System. Starte Shizuku, um ihn hier zu sehen.</string>
+    <string name="d_battery_shizuku_no_permission">Erlaube den Zugriff, um den Akkuverbrauch pro App zu lesen.</string>
+    <string name="d_battery_since_full_charge">Seit der letzten vollen Ladung</string>
+    <string name="d_battery_filter_user">Nutzer (%1$d)</string>
+    <string name="d_battery_filter_system">System (%1$d)</string>
+    <string name="d_battery_report_problem">Dieses Problem melden</string>
+    <string name="d_battery_confirm_title">%1$s beenden erzwingen?</string>
+    <string name="d_battery_confirm_summary">Die App wird geschlossen. Ungespeicherte Arbeit darin kann verloren gehen, und sie startet vielleicht von selbst neu.</string>
+    <string name="d_battery_mah">%1$d mAh</string>
+    <string name="d_battery_on_screen">%1$s Bildschirmzeit in den letzten 24 h</string>
+    <string name="d_duration_under_minute">&lt;1 Min.</string>
+    <string name="d_duration_minutes">%1$d Min.</string>
+    <string name="d_duration_hours_minutes">%1$d Std. %2$d Min.</string>
+
+    <!-- Freeze apps and background limits -->
+    <string name="d_appcontrol_frozen">%1$s ist eingefroren.</string>
+    <string name="d_appcontrol_unfrozen">%1$s ist wieder da.</string>
+    <string name="d_appcontrol_change_failed">%1$s konnte nicht geändert werden.</string>
+    <string name="d_appcontrol_background_intro">Eingeschränkte Apps lassen sich weiterhin normal öffnen, aber Android lässt sie nicht im Hintergrund laufen oder neu starten. Messenger stellen Benachrichtigungen dann eventuell verspätet zu.</string>
+    <string name="d_appcontrol_freeze_intro">Eine eingefrorene App verschwindet vom Startbildschirm und kann gar nicht mehr laufen, bis du sie hier auftaust. Es wird nichts gelöscht.</string>
+    <string name="d_appcontrol_shizuku_not_running">Dieses Tool braucht Shizuku. Starte es per kabellosem Debugging und komm dann zurück.</string>
+    <string name="d_appcontrol_shizuku_no_permission">Erlaube den Zugriff, um andere Apps zu ändern.</string>
+    <string name="d_appcontrol_status_frozen">Eingefroren</string>
+    <string name="d_appcontrol_status_limited">Im Hintergrund eingeschränkt</string>
+    <string name="d_appcontrol_unfreeze">Auftauen</string>
+    <string name="d_appcontrol_freeze">Einfrieren</string>
+    <string name="d_appcontrol_confirm_title">%1$s einfrieren?</string>
+    <string name="d_appcontrol_confirm_summary">Die App verschwindet vom Startbildschirm und läuft nicht mehr, bis du sie unter Tools › Apps einfrieren wieder auftaust. Ihre Daten bleiben erhalten.</string>
+
+    <!-- Unused apps -->
+    <string name="d_unused_usage_access_text">Memdroid braucht Nutzungszugriff, um zu sehen, wann du jede App zuletzt geöffnet hast.</string>
+    <plurals name="d_unused_ignored_summary">
+        <item quantity="one">%1$d ignorierte App. Tippe auf Wiederherstellen, um sie wieder anzuzeigen.</item>
+        <item quantity="other">%1$d ignorierte Apps. Tippe auf Wiederherstellen, um sie wieder anzuzeigen.</item>
+    </plurals>
+    <plurals name="d_unused_summary">
+        <item quantity="one">%1$d App seit %2$d Tagen nicht geöffnet, belegt %3$s.</item>
+        <item quantity="other">%1$d Apps seit %2$d Tagen nicht geöffnet, belegen %3$s.</item>
+    </plurals>
+    <string name="d_unused_back">Zurück</string>
+    <string name="d_unused_ignored">Ignoriert (%1$d)</string>
+    <string name="d_unused_last_used">Zuletzt genutzt %1$s</string>
+    <string name="d_unused_not_used_year">Im letzten Jahr nicht genutzt</string>
+    <string name="d_unused_restore">Wiederherstellen</string>
+    <string name="d_unused_ignore">Ignorieren</string>
+    <string name="d_unused_uninstall">Deinstallieren</string>
+
+    <!-- History -->
+    <string name="d_history_range_24h">24 Stunden</string>
+    <string name="d_history_range_7d">7 Tage</string>
+    <string name="d_history_range_30d">30 Tage</string>
+    <string name="d_history_empty">Memdroid misst alle 30 Minuten. Schau später wieder vorbei, um Verläufe zu sehen.</string>
+    <string name="d_history_ram_title">RAM belegt</string>
+    <string name="d_history_ram_now">Jetzt %1$s von %2$s</string>
+    <string name="d_history_storage_title">Speicher belegt</string>
+    <string name="d_history_storage_now">Jetzt %1$s · in diesem Zeitraum %2$s verändert</string>
+    <string name="d_history_battery_title">Akkustand</string>
+    <string name="d_history_battery_now">Jetzt %1$d %%</string>
+    <string name="d_history_axis_bottom" formatted="false">0 %</string>
+    <string name="d_history_axis_top" formatted="false">100 % oben</string>
+
+    <!-- App growth -->
+    <string name="d_growth_usage_access_text">Memdroid braucht Nutzungszugriff, um den Speicher jeder App über die Zeit zu messen.</string>
+    <string name="d_growth_empty">Memdroid misst einmal am Tag die Größe jeder App (bisher %1$d). Schau morgen wieder vorbei, um zu sehen, welche Apps wachsen.</string>
+    <string name="d_growth_total">Gesamtänderung: %1$s</string>
+
+    <!-- Tip jar products -->
+    <string name="d_tip_shot">Ein Kurzer</string>
+    <string name="d_tip_half">Ein Kleines</string>
+    <string name="d_tip_pint">Ein Großes</string>
+</resources>

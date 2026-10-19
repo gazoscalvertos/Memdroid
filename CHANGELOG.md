@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.17 (19 Oct 2026)
+- Now in Spanish, German, French and Portuguese. Pick Memdroid's language in Android's app language settings
+
 ## 1.0.15 (19 Oct 2026)
 - Stop apps restarting: keep chosen apps from running in the background
 - Freeze apps you rarely use without uninstalling them

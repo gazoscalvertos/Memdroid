@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MainActivity: tabs -->
+    <string name="a_tab_ram">RAM</string>
+    <string name="a_tab_storage">Almacenamiento</string>
+    <string name="a_tab_battery">Batería</string>
+    <string name="a_tab_tools">Herramientas</string>
+    <string name="a_tab_settings">Ajustes</string>
+    <string name="a_cd_buy_me_a_beer">Invítame a una cerveza</string>
+
+    <!-- MainActivity: crash report prompt -->
+    <string name="a_crash_title">Memdroid se cerró inesperadamente la última vez</string>
+    <string name="a_crash_text">Lo sentimos. Al informar, se abre una incidencia en GitHub con los detalles del error, la versión de la app y el modelo de tu dispositivo, para poder solucionarlo. Puedes revisarla antes de enviarla.</string>
+    <string name="a_crash_report">Informar</string>
+    <string name="a_crash_not_now">Ahora no</string>
+
+    <!-- ToolsScreen -->
+    <string name="a_tool_auto_kill_title">Reglas de cierre automático</string>
+    <string name="a_tool_auto_kill_desc">Detén las apps que elijas cuando se apague la pantalla o quede poca RAM</string>
+    <string name="a_tool_history_title">Historial de uso</string>
+    <string name="a_tool_history_desc">RAM, almacenamiento y batería de los últimos 30 días</string>
+    <string name="a_tool_app_growth_title">Crecimiento de apps</string>
+    <string name="a_tool_app_growth_desc">Qué apps aumentan más rápido su almacenamiento</string>
+    <string name="a_tool_large_files_title">Archivos grandes</string>
+    <string name="a_tool_large_files_desc">Busca y elimina archivos de más de 50 MB</string>
+    <string name="a_tool_old_files_title">Descargas y capturas antiguas</string>
+    <string name="a_tool_old_files_desc">Elimina archivos que llevas meses guardando</string>
+    <string name="a_tool_duplicates_title">Archivos duplicados</string>
+    <string name="a_tool_duplicates_desc">Busca fotos, vídeos y archivos idénticos</string>
+    <string name="a_tool_unused_apps_title">Apps sin usar</string>
+    <string name="a_tool_unused_apps_desc">Apps que hace tiempo que no abres</string>
+    <string name="a_tool_background_title">Evitar que las apps se reinicien</string>
+    <string name="a_tool_background_desc">Impide que las apps que elijas se ejecuten en segundo plano</string>
+    <string name="a_tool_freeze_title">Congelar apps</string>
+    <string name="a_tool_freeze_desc">Desactiva apps que usas poco sin desinstalarlas</string>
+    <string name="a_tool_recycle_bin_title">Papelera de reciclaje</string>
+    <string name="a_tool_recycle_bin_desc">Restaura archivos eliminados durante 30 días</string>
+    <string name="a_tool_ideas_title">Ideas de funciones</string>
+    <string name="a_tool_ideas_desc">Vota qué se desarrolla a continuación</string>
+    <string name="a_tool_feedback_title">Informar de un error o pedir una función</string>
+    <string name="a_tool_feedback_desc">Abre una incidencia de GitHub ya rellenada</string>
+    <string name="a_tool_changelog_title">Novedades</string>
+    <string name="a_tool_changelog_desc">Cambios de cada versión</string>
+    <string name="a_tool_heroes_title">Muro de héroes</string>
+    <string name="a_tool_heroes_desc">Las personas que apoyan Memdroid</string>
+    <string name="a_tools_community_header">Comunidad</string>
+    <string name="a_cd_back_to_tools">Volver a herramientas</string>
+
+    <!-- CommunityScreens: feature ideas -->
+    <string name="a_ideas_intro">Ideas para próximas versiones. Vota con un 👍 en GitHub; las más populares se desarrollan primero.</string>
+    <string name="a_ideas_vote">Votar en GitHub</string>
+    <string name="a_ideas_suggest">Sugerir una función</string>
+    <string name="a_ideas_see_all">Ver todas las solicitudes</string>
+
+    <!-- CommunityScreens: feedback -->
+    <string name="a_feedback_bug">Informar de un error</string>
+    <string name="a_feedback_feature">Pedir una función</string>
+    <string name="a_feedback_title_bug">¿Qué ha fallado?</string>
+    <string name="a_feedback_title_feature">¿Qué te gustaría?</string>
+    <string name="a_feedback_details">Detalles</string>
+    <string name="a_feedback_note">Se abrirá una incidencia de GitHub ya rellenada con la versión de la app y el modelo de tu dispositivo. Necesitas una cuenta gratuita de GitHub para enviarla. Los informes son públicos, así que no incluyas nada personal.</string>
+    <string name="a_feedback_continue">Continuar en GitHub</string>
+
+    <!-- CommunityScreens: changelog -->
+    <string name="a_changelog_version">Versión %1$s</string>
+    <string name="a_changelog_bullet">• %1$s</string>
+
+    <!-- CommunityScreens: heroes -->
+    <string name="a_heroes_title">🍺 Muro de héroes</string>
+    <string name="a_heroes_intro">Memdroid es gratis y sin anuncios. Estos héroes hacen que siga así. Quienes apoyan eligen aparecer con su nombre o de forma anónima.</string>
+    <plurals name="a_heroes_count">
+        <item quantity="one">%1$d héroe hasta ahora</item>
+        <item quantity="other">%1$d héroes hasta ahora</item>
+    </plurals>
+    <string name="a_heroes_on_your_way">Vas camino del muro como \"%1$s\". Aparecerás aquí para todos tras la próxima actualización.</string>
+    <string name="a_heroes_empty">Aún no hay héroes. ¡Sé el primero!</string>
+    <string name="a_heroes_see_wall">Ver el muro de héroes</string>
+    <string name="a_hero_anonymous">Héroe anónimo</string>
+    <string name="a_hero_number">Héroe n.º %1$d</string>
+    <string name="a_hero_since"> · desde %1$s</string>
+
+    <!-- CommunityScreens: tip jar -->
+    <string name="a_tip_title">Invítame a una cerveza</string>
+    <string name="a_tip_intro">Una propina única a través de Google Play. No hay nada bloqueado y después puedes unirte al muro de héroes.</string>
+    <string name="a_tip_loading">Cargando…</string>
+    <string name="a_tip_unavailable">Las propinas funcionan en la versión de Memdroid de Play Store.</string>
+    <string name="a_tip_donate">Invítame a una cerveza 🍺</string>
+    <string name="a_tip_pending">Tu propina está esperando a que se confirme el pago. ¡Gracias!</string>
+
+    <!-- CommunityScreens: hero opt-in dialog -->
+    <string name="a_optin_title">¡Salud! 🍻</string>
+    <string name="a_optin_text">Gracias por apoyar Memdroid. ¿Quieres unirte al muro de héroes?</string>
+    <string name="a_optin_show_name">Mostrar mi nombre</string>
+    <string name="a_optin_anonymous">Incluirme como héroe anónimo</string>
+    <string name="a_optin_dont_list">No incluirme</string>
+    <string name="a_optin_name_label">Nombre o apodo</string>
+    <string name="a_optin_note">Se abrirá una breve solicitud en GitHub. Los héroes se añaden en la próxima actualización.</string>
+    <string name="a_optin_done">Hecho</string>
+    <string name="a_optin_join">Unirme al muro</string>
+</resources>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared: widget, tile -->
+    <string name="c_kill_all">Encerrar tudo</string>
+    <string name="c_refresh">Atualizar</string>
+
+    <!-- Settings -->
+    <string name="c_settings_section_access">Acesso</string>
+    <string name="c_settings_shizuku">Shizuku</string>
+    <string name="c_settings_shizuku_ready">Conectado. O Memdroid pode listar e encerrar apps.</string>
+    <string name="c_settings_shizuku_no_permission">Em execução, mas o Memdroid ainda não tem permissão.</string>
+    <string name="c_settings_shizuku_not_running">Não está em execução. Inicie-o no app Shizuku com a depuração por Wi-Fi. É preciso iniciá-lo de novo após cada reinicialização.</string>
+    <string name="c_settings_grant">Permitir</string>
+    <string name="c_settings_usage_access">Acesso ao uso</string>
+    <string name="c_settings_allowed">Permitido</string>
+    <string name="c_settings_usage_access_body">Necessário para o tamanho dos apps, dos dados e do cache.</string>
+    <string name="c_settings_all_files_access">Acesso a todos os arquivos</string>
+    <string name="c_settings_all_files_access_body">Necessário para o detalhamento por pasta e para encontrar arquivos grandes.</string>
+    <string name="c_settings_section_alerts">Alertas</string>
+    <string name="c_settings_alerts_title">Alertas de pouco armazenamento e memória</string>
+    <string name="c_settings_alerts_body">Desativado por padrão. O Memdroid verifica a cada 30 minutos e avisa você uma vez quando o espaço ou a memória ficarem baixos.</string>
+    <string name="c_settings_storage_below">Alertar quando o armazenamento livre for menor que</string>
+    <string name="c_settings_gb">%1$d GB</string>
+    <string name="c_settings_ram_below">Alertar quando a RAM disponível for menor que</string>
+    <string name="c_percent">%1$d%%</string>
+    <string name="c_settings_drain_title">Consumo de bateria em segundo plano</string>
+    <string name="c_settings_drain_body">Alerta quando um app que você não abriu gasta pelo menos %1$d mAh por hora. Requer o Shizuku e o acesso ao uso.</string>
+    <string name="c_settings_mah_per_hour">%1$d mAh/h</string>
+    <string name="c_settings_section_deleting">Exclusão de arquivos</string>
+    <string name="c_settings_recycle_bin">Lixeira</string>
+    <string name="c_settings_recycle_bin_body">Os arquivos excluídos ficam guardados por 30 dias para você poder restaurá-los (Ferramentas › Lixeira).</string>
+    <string name="c_settings_section_setup">Configuração inicial</string>
+    <string name="c_settings_run_setup_again">Refazer a configuração inicial</string>
+    <string name="c_settings_section_about">Sobre</string>
+    <string name="c_settings_privacy_policy">Política de privacidade</string>
+    <string name="c_settings_section_killing">Encerrar apps</string>
+    <string name="c_settings_include_system">Incluir apps do sistema em Encerrar tudo</string>
+    <string name="c_settings_include_system_body">Desativado por padrão. Encerrar apps do sistema pode fazer o aparelho funcionar mal até eles reiniciarem.</string>
+    <string name="c_settings_section_whitelist">Lista de permissões (%1$d)</string>
+    <string name="c_settings_whitelist_body">Os apps da lista de permissões nunca são encerrados. Adicione apps com o ícone de escudo na tela de RAM.</string>
+    <string name="c_settings_always_protected">Sempre protegido</string>
+    <string name="c_settings_remove_from_whitelist">Remover da lista de permissões</string>
+
+    <!-- Onboarding -->
+    <string name="c_onboarding_welcome">Boas-vindas ao Memdroid</string>
+    <string name="c_onboarding_tagline">Um app offline, com privacidade em primeiro lugar e sem anúncios, que leva ferramentas úteis a todos de graça.</string>
+    <string name="c_onboarding_privacy_title">Privacidade em primeiro lugar</string>
+    <string name="c_onboarding_privacy_body">Nada do que você faz no Memdroid sai do seu aparelho.</string>
+    <string name="c_onboarding_offline_title">Funciona offline</string>
+    <string name="c_onboarding_offline_body">Sem conta e sem rastreamento. Não precisa de internet.</string>
+    <string name="c_onboarding_no_ads_title">Sem anúncios, nunca</string>
+    <string name="c_onboarding_no_ads_body">Sem banners, sem pop-ups, sem recursos pagos.</string>
+    <string name="c_onboarding_free_title">Gratuito para todos</string>
+    <string name="c_onboarding_free_body">Mantido pelos apoiadores do mural dos heróis.</string>
+    <string name="c_onboarding_what_title">O que o Memdroid faz</string>
+    <string name="c_onboarding_what_body">O Memdroid mostra o que está usando a memória, o armazenamento e a bateria do seu aparelho, e ajuda você a liberá-los. Vamos configurar algumas permissões. Você pode pular qualquer uma e mudá-las depois em Configurações.</string>
+    <string name="c_onboarding_usage_title">Acesso ao uso</string>
+    <string name="c_onboarding_usage_body">Permite que o Memdroid meça o armazenamento de cada app, veja quando você o usou pela última vez e identifique o consumo de bateria.</string>
+    <string name="c_onboarding_usage_card_title">Permitir acesso ao uso</string>
+    <string name="c_onboarding_usage_card_body">Encontre o Memdroid na lista e ative-o.</string>
+    <string name="c_onboarding_files_title">Acesso a todos os arquivos</string>
+    <string name="c_onboarding_files_body">Necessário para arquivos grandes, duplicados, downloads antigos, a visão por pastas e a lixeira.</string>
+    <string name="c_onboarding_files_card_title">Permitir acesso a todos os arquivos</string>
+    <string name="c_onboarding_files_card_body">Ative Permitir acesso para gerenciar todos os arquivos.</string>
+    <string name="c_onboarding_notifications_title">Notificações</string>
+    <string name="c_onboarding_notifications_body">Usadas para os alertas opcionais de pouco armazenamento, pouca RAM e consumo de bateria. Todos ficam desativados até você ativá-los.</string>
+    <string name="c_onboarding_allow_notifications">Permitir notificações</string>
+    <string name="c_onboarding_shizuku_title">Shizuku (opcional)</string>
+    <string name="c_onboarding_shizuku_body">O Android não deixa apps comuns verem ou encerrarem outros apps. O Shizuku dá esse acesso ao Memdroid sem root, para a lista de apps em execução, encerrar, encerrar automaticamente, bateria por app e limpar caches. Instale-o, inicie-o com a depuração por Wi-Fi e depois volte aqui.</string>
+    <string name="c_onboarding_get_shizuku">Baixar o Shizuku</string>
+    <string name="c_onboarding_allow_in_shizuku">Permitir o Memdroid no Shizuku</string>
+    <string name="c_onboarding_done_title">Tudo pronto</string>
+    <string name="c_onboarding_done_body">Comece pela limpeza inteligente na aba Armazenamento para ver o que dá para liberar. Você pode refazer esta configuração em Configurações.</string>
+    <string name="c_onboarding_skip">Pular</string>
+    <string name="c_onboarding_start">Começar</string>
+    <string name="c_onboarding_next">Próximo</string>
+    <string name="c_onboarding_done">Concluído</string>
+
+    <!-- Auto-kill screen -->
+    <string name="c_autokill_shizuku_needed">Requer o Shizuku</string>
+    <string name="c_autokill_shizuku_needed_body">O encerramento automático só consegue parar apps enquanto o Shizuku está em execução e o Memdroid tem acesso.</string>
+    <string name="c_autokill_screen_off_title">Quando a tela apagar</string>
+    <string name="c_autokill_screen_off_body">Encerra os apps escolhidos 30 segundos depois que a tela bloqueia.</string>
+    <string name="c_autokill_low_ram_title">Quando a RAM ficar baixa</string>
+    <string name="c_autokill_low_ram_body">Verifica a cada minuto e encerra os apps escolhidos quando a RAM disponível fica abaixo de %1$d%%.</string>
+    <string name="c_autokill_notification_note">Enquanto uma regra estiver ativa, o Memdroid mantém uma pequena notificação para que o Android o deixe continuar monitorando.</string>
+    <string name="c_autokill_apps_to_stop">Apps para encerrar (%1$d)</string>
+    <string name="c_autokill_run_now">Executar agora</string>
+    <string name="c_autokill_search_apps">Pesquisar apps</string>
+    <string name="c_autokill_whitelisted">Na lista de permissões, nunca encerrado</string>
+    <plurals name="c_autokill_confirm_title">
+        <item quantity="one">Encerrar %1$d app agora?</item>
+        <item quantity="many">Encerrar %1$d apps agora?</item>
+        <item quantity="other">Encerrar %1$d apps agora?</item>
+    </plurals>
+    <string name="c_autokill_confirm_summary">Estes apps serão forçados a parar. Trabalhos não salvos neles podem ser perdidos.</string>
+    <string name="c_autokill_force_stop">Forçar parada</string>
+
+    <!-- Auto-kill service -->
+    <string name="c_autokill_reason_run_now">executado agora</string>
+    <string name="c_autokill_reason_screen_off">tela apagada</string>
+    <string name="c_autokill_reason_low_ram">RAM baixa</string>
+    <plurals name="c_autokill_log">
+        <item quantity="one">Última execução %1$s (%2$s): %3$d de %4$d app encerrado.</item>
+        <item quantity="many">Última execução %1$s (%2$s): %3$d de %4$d apps encerrados.</item>
+        <item quantity="other">Última execução %1$s (%2$s): %3$d de %4$d apps encerrados.</item>
+    </plurals>
+    <string name="c_autokill_channel">Encerramento automático</string>
+    <string name="c_autokill_notification_title">Encerramento automático ativado</string>
+    <string name="c_autokill_notification_text">O Memdroid encerra os apps escolhidos automaticamente.</string>
+
+    <!-- Alerts -->
+    <string name="c_alerts_channel">Pouco armazenamento e memória</string>
+    <string name="c_alerts_storage_title">O armazenamento está acabando</string>
+    <string name="c_alerts_storage_text">Só %1$s livres. Abra o Memdroid para liberar espaço.</string>
+    <string name="c_alerts_ram_title">A memória está acabando</string>
+    <string name="c_alerts_ram_text">Só %1$d%% da RAM está disponível. Abra o Memdroid para encerrar apps.</string>
+    <string name="c_drain_title">%1$s está gastando sua bateria</string>
+    <string name="c_drain_text">Ele gastou cerca de %1$d mAh por hora em segundo plano. Abra o Memdroid para encerrá-lo.</string>
+
+    <!-- Widget -->
+    <string name="c_widget_ram_line">RAM %1$d%% · %2$s livres</string>
+    <string name="c_widget_storage_line">Armazenamento %1$d%% · %2$s livres</string>
+    <string name="c_widget_summary">RAM %1$d%% · Armazenamento %2$d%%</string>
+    <string name="c_widget_ram_placeholder">RAM</string>
+    <string name="c_widget_storage_placeholder">Armazenamento</string>
+    <string name="c_widget_summary_placeholder">RAM · Armazenamento</string>
+
+    <!-- Tile -->
+    <string name="c_tile_subtitle">RAM %1$d%% usada</string>
+</resources>

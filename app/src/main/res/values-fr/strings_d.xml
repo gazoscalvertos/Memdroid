@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the RAM, battery and app screens -->
+    <string name="d_shizuku_not_running_title">Shizuku n\'est pas actif</string>
+    <string name="d_shizuku_allow_title">Autoriser Memdroid dans Shizuku</string>
+    <string name="d_grant_access">Autoriser l\'accès</string>
+    <string name="d_refresh">Actualiser</string>
+    <string name="d_force_stop">Forcer l\'arrêt</string>
+    <string name="d_usage_access_title">Autoriser l\'accès aux données d\'utilisation</string>
+    <plurals name="d_days">
+        <item quantity="one">%1$d jour</item>
+        <item quantity="many">%1$d jours</item>
+        <item quantity="other">%1$d jours</item>
+    </plurals>
+
+    <!-- RAM -->
+    <string name="d_ram_sort_most">Plus de RAM</string>
+    <string name="d_ram_sort_least">Moins de RAM</string>
+    <string name="d_ram_sort_name">Nom</string>
+    <string name="d_ram_list_error">Impossible de lister les applis actives : %1$s</string>
+    <plurals name="d_ram_stopped">
+        <item quantity="one">%1$d appli arrêtée sur %2$d, environ %3$s libérés.</item>
+        <item quantity="many">%1$d applis arrêtées sur %2$d, environ %3$s libérés.</item>
+        <item quantity="other">%1$d applis arrêtées sur %2$d, environ %3$s libérés.</item>
+    </plurals>
+    <string name="d_ram_title">RAM</string>
+    <string name="d_ram_detail">%1$s utilisés sur %2$s · %3$s disponibles</string>
+    <string name="d_ram_low_memory">Le système manque de mémoire.</string>
+    <string name="d_ram_shizuku_not_running">Pour voir et arrêter les applis actives, installez Shizuku depuis le Play Store et lancez-le avec le débogage sans fil. Sans lui, Memdroid peut quand même afficher la RAM globale.</string>
+    <string name="d_ram_shizuku_no_permission">Shizuku est actif. Autorisez Memdroid à lister et arrêter les applis.</string>
+    <string name="d_ram_tab_user">Applis utilisateur (%1$d)</string>
+    <string name="d_ram_tab_system">Applis système (%1$d)</string>
+    <string name="d_ram_kill_selected">Arrêter la sélection (%1$d)</string>
+    <string name="d_ram_kill_all">Tout arrêter</string>
+    <string name="d_ram_select_all">Tout sélectionner</string>
+    <string name="d_ram_kill_all_system_off">Tout arrêter est désactivé pour les applis système. Vous pouvez l\'activer dans Paramètres.</string>
+    <plurals name="d_ram_confirm_title">
+        <item quantity="one">Forcer l\'arrêt de %1$d appli ?</item>
+        <item quantity="many">Forcer l\'arrêt de %1$d applis ?</item>
+        <item quantity="other">Forcer l\'arrêt de %1$d applis ?</item>
+    </plurals>
+    <string name="d_ram_confirm_summary">Ces applis seront fermées. Le travail non enregistré peut être perdu, et certaines peuvent redémarrer d\'elles-mêmes.</string>
+    <plurals name="d_ram_processes">
+        <item quantity="one">%1$d processus</item>
+        <item quantity="many">%1$d processus</item>
+        <item quantity="other">%1$d processus</item>
+    </plurals>
+    <string name="d_ram_protected">Protégée</string>
+    <string name="d_ram_whitelist_remove">Retirer de la liste blanche</string>
+    <string name="d_ram_whitelist_add">Ajouter à la liste blanche</string>
+
+    <!-- Battery -->
+    <string name="d_battery_stats_error">Impossible de lire les statistiques de batterie : %1$s</string>
+    <string name="d_battery_no_stats">Aucune statistique de batterie trouvée</string>
+    <string name="d_battery_stopped">%1$s arrêtée.</string>
+    <string name="d_battery_stop_failed">Impossible d\'arrêter %1$s.</string>
+    <string name="d_battery_title">Batterie %1$d %%</string>
+    <string name="d_battery_charging">En charge</string>
+    <string name="d_battery_charging_via">En charge via %1$s</string>
+    <string name="d_battery_on_battery">Sur batterie</string>
+    <string name="d_battery_detail">%1$s · %2$s °C · État %3$s</string>
+    <string name="d_battery_hot">La batterie est chaude.</string>
+    <string name="d_battery_source_charger">chargeur</string>
+    <string name="d_battery_source_usb">USB</string>
+    <string name="d_battery_source_wireless">sans fil</string>
+    <string name="d_battery_health_good">Bon</string>
+    <string name="d_battery_health_overheat">Surchauffe</string>
+    <string name="d_battery_health_cold">Froide</string>
+    <string name="d_battery_health_dead">Hors service</string>
+    <string name="d_battery_health_over_voltage">Surtension</string>
+    <string name="d_battery_health_unknown">Inconnu</string>
+    <string name="d_battery_shizuku_not_running">Android ne montre la consommation par appli qu\'au système. Lancez Shizuku pour la voir ici.</string>
+    <string name="d_battery_shizuku_no_permission">Autorisez l\'accès pour lire la consommation par appli.</string>
+    <string name="d_battery_since_full_charge">Depuis la dernière charge complète</string>
+    <string name="d_battery_filter_user">Utilisateur (%1$d)</string>
+    <string name="d_battery_filter_system">Système (%1$d)</string>
+    <string name="d_battery_report_problem">Signaler ce problème</string>
+    <string name="d_battery_confirm_title">Forcer l\'arrêt de %1$s ?</string>
+    <string name="d_battery_confirm_summary">L\'appli sera fermée. Le travail non enregistré peut être perdu, et elle peut redémarrer d\'elle-même.</string>
+    <string name="d_battery_mah">%1$d mAh</string>
+    <string name="d_battery_on_screen">À l\'écran %1$s ces dernières 24 h</string>
+    <string name="d_duration_under_minute">&lt;1 min</string>
+    <string name="d_duration_minutes">%1$d min</string>
+    <string name="d_duration_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Freeze apps and background limits -->
+    <string name="d_appcontrol_frozen">%1$s est gelée.</string>
+    <string name="d_appcontrol_unfrozen">%1$s est de retour.</string>
+    <string name="d_appcontrol_change_failed">Impossible de modifier %1$s.</string>
+    <string name="d_appcontrol_background_intro">Les applis limitées s\'ouvrent toujours normalement, mais Android les empêche de tourner ou de redémarrer en arrière-plan. Les messageries peuvent afficher leurs notifications en retard.</string>
+    <string name="d_appcontrol_freeze_intro">Une appli gelée disparaît de l\'écran d\'accueil et ne peut plus du tout fonctionner tant que vous ne la dégelez pas ici. Rien n\'est supprimé.</string>
+    <string name="d_appcontrol_shizuku_not_running">Cet outil nécessite Shizuku. Lancez-le avec le débogage sans fil, puis revenez.</string>
+    <string name="d_appcontrol_shizuku_no_permission">Autorisez l\'accès pour modifier les autres applis.</string>
+    <string name="d_appcontrol_status_frozen">Gelée</string>
+    <string name="d_appcontrol_status_limited">Limitée en arrière-plan</string>
+    <string name="d_appcontrol_unfreeze">Dégeler</string>
+    <string name="d_appcontrol_freeze">Geler</string>
+    <string name="d_appcontrol_confirm_title">Geler %1$s ?</string>
+    <string name="d_appcontrol_confirm_summary">Elle disparaîtra de l\'écran d\'accueil et cessera de fonctionner jusqu\'à ce que vous la dégeliez dans Outils › Geler des applis. Ses données sont conservées.</string>
+
+    <!-- Unused apps -->
+    <string name="d_unused_usage_access_text">Memdroid a besoin de l\'accès aux données d\'utilisation pour savoir quand vous avez ouvert chaque appli pour la dernière fois.</string>
+    <plurals name="d_unused_ignored_summary">
+        <item quantity="one">%1$d appli ignorée. Appuyez sur Restaurer pour l\'afficher à nouveau.</item>
+        <item quantity="many">%1$d applis ignorées. Appuyez sur Restaurer pour les afficher à nouveau.</item>
+        <item quantity="other">%1$d applis ignorées. Appuyez sur Restaurer pour les afficher à nouveau.</item>
+    </plurals>
+    <plurals name="d_unused_summary">
+        <item quantity="one">%1$d appli pas ouverte depuis %2$d jours, qui occupe %3$s.</item>
+        <item quantity="many">%1$d applis pas ouvertes depuis %2$d jours, qui occupent %3$s.</item>
+        <item quantity="other">%1$d applis pas ouvertes depuis %2$d jours, qui occupent %3$s.</item>
+    </plurals>
+    <string name="d_unused_back">Retour</string>
+    <string name="d_unused_ignored">Ignorées (%1$d)</string>
+    <string name="d_unused_last_used">Dernière utilisation %1$s</string>
+    <string name="d_unused_not_used_year">Pas utilisée depuis un an</string>
+    <string name="d_unused_restore">Restaurer</string>
+    <string name="d_unused_ignore">Ignorer</string>
+    <string name="d_unused_uninstall">Désinstaller</string>
+
+    <!-- History -->
+    <string name="d_history_range_24h">24 heures</string>
+    <string name="d_history_range_7d">7 jours</string>
+    <string name="d_history_range_30d">30 jours</string>
+    <string name="d_history_empty">Memdroid enregistre une mesure toutes les 30 minutes. Revenez plus tard pour voir les tendances.</string>
+    <string name="d_history_ram_title">RAM utilisée</string>
+    <string name="d_history_ram_now">Actuellement %1$s sur %2$s</string>
+    <string name="d_history_storage_title">Stockage utilisé</string>
+    <string name="d_history_storage_now">Actuellement %1$s · variation de %2$s sur la période</string>
+    <string name="d_history_battery_title">Niveau de batterie</string>
+    <string name="d_history_battery_now">Actuellement %1$d %%</string>
+    <string name="d_history_axis_bottom" formatted="false">0 %</string>
+    <string name="d_history_axis_top" formatted="false">100 % en haut</string>
+
+    <!-- App growth -->
+    <string name="d_growth_usage_access_text">Memdroid a besoin de l\'accès aux données d\'utilisation pour mesurer le stockage de chaque appli dans le temps.</string>
+    <string name="d_growth_empty">Memdroid mesure la taille de chaque appli une fois par jour (%1$d fois jusqu\'ici). Revenez demain pour voir quelles applis grossissent.</string>
+    <string name="d_growth_total">Variation totale : %1$s</string>
+
+    <!-- Tip jar products -->
+    <string name="d_tip_shot">Un shot</string>
+    <string name="d_tip_half">Un demi</string>
+    <string name="d_tip_pint">Une pinte</string>
+</resources>

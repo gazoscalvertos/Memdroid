@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared by the RAM, battery and app screens -->
+    <string name="d_shizuku_not_running_title">O Shizuku não está em execução</string>
+    <string name="d_shizuku_allow_title">Permitir o Memdroid no Shizuku</string>
+    <string name="d_grant_access">Permitir acesso</string>
+    <string name="d_refresh">Atualizar</string>
+    <string name="d_force_stop">Forçar parada</string>
+    <string name="d_usage_access_title">Permitir acesso ao uso</string>
+    <plurals name="d_days">
+        <item quantity="one">%1$d dia</item>
+        <item quantity="many">%1$d dias</item>
+        <item quantity="other">%1$d dias</item>
+    </plurals>
+
+    <!-- RAM -->
+    <string name="d_ram_sort_most">Mais RAM</string>
+    <string name="d_ram_sort_least">Menos RAM</string>
+    <string name="d_ram_sort_name">Nome</string>
+    <string name="d_ram_list_error">Não foi possível listar os apps em execução: %1$s</string>
+    <plurals name="d_ram_stopped">
+        <item quantity="one">%1$d de %2$d app encerrado, cerca de %3$s liberados.</item>
+        <item quantity="many">%1$d de %2$d apps encerrados, cerca de %3$s liberados.</item>
+        <item quantity="other">%1$d de %2$d apps encerrados, cerca de %3$s liberados.</item>
+    </plurals>
+    <string name="d_ram_title">RAM</string>
+    <string name="d_ram_detail">%1$s usados de %2$s · %3$s disponíveis</string>
+    <string name="d_ram_low_memory">O sistema está com pouca memória.</string>
+    <string name="d_ram_shizuku_not_running">Para ver e encerrar os apps em execução, instale o Shizuku pela Play Store e inicie-o com a depuração por Wi-Fi. Sem ele, o Memdroid ainda mostra a RAM total.</string>
+    <string name="d_ram_shizuku_no_permission">O Shizuku está em execução. Permita o acesso do Memdroid para listar e encerrar apps.</string>
+    <string name="d_ram_tab_user">Apps do usuário (%1$d)</string>
+    <string name="d_ram_tab_system">Apps do sistema (%1$d)</string>
+    <string name="d_ram_kill_selected">Encerrar selecionados (%1$d)</string>
+    <string name="d_ram_kill_all">Encerrar tudo</string>
+    <string name="d_ram_select_all">Selecionar tudo</string>
+    <string name="d_ram_kill_all_system_off">Encerrar tudo está desativado para apps do sistema. Você pode ativar em Configurações.</string>
+    <plurals name="d_ram_confirm_title">
+        <item quantity="one">Forçar a parada de %1$d app?</item>
+        <item quantity="many">Forçar a parada de %1$d apps?</item>
+        <item quantity="other">Forçar a parada de %1$d apps?</item>
+    </plurals>
+    <string name="d_ram_confirm_summary">Estes apps serão fechados. Trabalhos não salvos neles podem ser perdidos, e alguns podem reiniciar sozinhos.</string>
+    <plurals name="d_ram_processes">
+        <item quantity="one">%1$d processo</item>
+        <item quantity="many">%1$d processos</item>
+        <item quantity="other">%1$d processos</item>
+    </plurals>
+    <string name="d_ram_protected">Protegido</string>
+    <string name="d_ram_whitelist_remove">Remover da lista de permissões</string>
+    <string name="d_ram_whitelist_add">Adicionar à lista de permissões</string>
+
+    <!-- Battery -->
+    <string name="d_battery_stats_error">Não foi possível ler as estatísticas da bateria: %1$s</string>
+    <string name="d_battery_no_stats">Nenhuma estatística de bateria encontrada</string>
+    <string name="d_battery_stopped">%1$s encerrado.</string>
+    <string name="d_battery_stop_failed">Não foi possível encerrar %1$s.</string>
+    <string name="d_battery_title">Bateria %1$d%%</string>
+    <string name="d_battery_charging">Carregando</string>
+    <string name="d_battery_charging_via">Carregando (%1$s)</string>
+    <string name="d_battery_on_battery">Na bateria</string>
+    <string name="d_battery_detail">%1$s · %2$s °C · Saúde: %3$s</string>
+    <string name="d_battery_hot">A bateria está quente.</string>
+    <string name="d_battery_source_charger">carregador</string>
+    <string name="d_battery_source_usb">USB</string>
+    <string name="d_battery_source_wireless">sem fio</string>
+    <string name="d_battery_health_good">Boa</string>
+    <string name="d_battery_health_overheat">Superaquecida</string>
+    <string name="d_battery_health_cold">Fria</string>
+    <string name="d_battery_health_dead">Esgotada</string>
+    <string name="d_battery_health_over_voltage">Sobretensão</string>
+    <string name="d_battery_health_unknown">Desconhecida</string>
+    <string name="d_battery_shizuku_not_running">O Android só mostra o uso da bateria por app para o sistema. Inicie o Shizuku para ver aqui.</string>
+    <string name="d_battery_shizuku_no_permission">Permita o acesso para ler o uso da bateria por app.</string>
+    <string name="d_battery_since_full_charge">Desde a última carga completa</string>
+    <string name="d_battery_filter_user">Usuário (%1$d)</string>
+    <string name="d_battery_filter_system">Sistema (%1$d)</string>
+    <string name="d_battery_report_problem">Relatar este problema</string>
+    <string name="d_battery_confirm_title">Forçar a parada de %1$s?</string>
+    <string name="d_battery_confirm_summary">O app será fechado. Trabalhos não salvos nele podem ser perdidos, e ele pode reiniciar sozinho.</string>
+    <string name="d_battery_mah">%1$d mAh</string>
+    <string name="d_battery_on_screen">Na tela por %1$s nas últimas 24 h</string>
+    <string name="d_duration_under_minute">&lt;1 min</string>
+    <string name="d_duration_minutes">%1$d min</string>
+    <string name="d_duration_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Freeze apps and background limits -->
+    <string name="d_appcontrol_frozen">%1$s foi congelado.</string>
+    <string name="d_appcontrol_unfrozen">%1$s está de volta.</string>
+    <string name="d_appcontrol_change_failed">Não foi possível alterar %1$s.</string>
+    <string name="d_appcontrol_background_intro">Os apps limitados ainda podem ser abertos normalmente, mas o Android não deixa que rodem ou reiniciem em segundo plano. Apps de mensagens podem entregar notificações com atraso.</string>
+    <string name="d_appcontrol_freeze_intro">Um app congelado some da tela inicial e não pode ser executado até você descongelá-lo aqui. Nada é excluído.</string>
+    <string name="d_appcontrol_shizuku_not_running">Esta ferramenta requer o Shizuku. Inicie-o com a depuração por Wi-Fi e depois volte.</string>
+    <string name="d_appcontrol_shizuku_no_permission">Permita o acesso para alterar outros apps.</string>
+    <string name="d_appcontrol_status_frozen">Congelado</string>
+    <string name="d_appcontrol_status_limited">Limitado em segundo plano</string>
+    <string name="d_appcontrol_unfreeze">Descongelar</string>
+    <string name="d_appcontrol_freeze">Congelar</string>
+    <string name="d_appcontrol_confirm_title">Congelar %1$s?</string>
+    <string name="d_appcontrol_confirm_summary">Ele vai sumir da tela inicial e parar de funcionar até você descongelá-lo em Ferramentas › Congelar apps. Os dados dele são mantidos.</string>
+
+    <!-- Unused apps -->
+    <string name="d_unused_usage_access_text">O Memdroid precisa de acesso ao uso para ver quando você abriu cada app pela última vez.</string>
+    <plurals name="d_unused_ignored_summary">
+        <item quantity="one">%1$d app ignorado. Toque em Restaurar para mostrá-lo de novo.</item>
+        <item quantity="many">%1$d apps ignorados. Toque em Restaurar para mostrá-los de novo.</item>
+        <item quantity="other">%1$d apps ignorados. Toque em Restaurar para mostrá-los de novo.</item>
+    </plurals>
+    <plurals name="d_unused_summary">
+        <item quantity="one">%1$d app não aberto em %2$d dias, usando %3$s.</item>
+        <item quantity="many">%1$d apps não abertos em %2$d dias, usando %3$s.</item>
+        <item quantity="other">%1$d apps não abertos em %2$d dias, usando %3$s.</item>
+    </plurals>
+    <string name="d_unused_back">Voltar</string>
+    <string name="d_unused_ignored">Ignorados (%1$d)</string>
+    <string name="d_unused_last_used">Último uso: %1$s</string>
+    <string name="d_unused_not_used_year">Sem uso no último ano</string>
+    <string name="d_unused_restore">Restaurar</string>
+    <string name="d_unused_ignore">Ignorar</string>
+    <string name="d_unused_uninstall">Desinstalar</string>
+
+    <!-- History -->
+    <string name="d_history_range_24h">24 horas</string>
+    <string name="d_history_range_7d">7 dias</string>
+    <string name="d_history_range_30d">30 dias</string>
+    <string name="d_history_empty">O Memdroid registra uma leitura a cada 30 minutos. Volte mais tarde para ver as tendências.</string>
+    <string name="d_history_ram_title">RAM usada</string>
+    <string name="d_history_ram_now">Agora %1$s de %2$s</string>
+    <string name="d_history_storage_title">Armazenamento usado</string>
+    <string name="d_history_storage_now">Agora %1$s · variou %2$s neste período</string>
+    <string name="d_history_battery_title">Nível da bateria</string>
+    <string name="d_history_battery_now">Agora %1$d%%</string>
+    <string name="d_history_axis_bottom" formatted="false">0%</string>
+    <string name="d_history_axis_top" formatted="false">100% no topo</string>
+
+    <!-- App growth -->
+    <string name="d_growth_usage_access_text">O Memdroid precisa de acesso ao uso para medir o armazenamento de cada app ao longo do tempo.</string>
+    <string name="d_growth_empty">O Memdroid mede o tamanho de cada app uma vez por dia (%1$d até agora). Volte amanhã para ver quais apps estão crescendo.</string>
+    <string name="d_growth_total">Variação total: %1$s</string>
+
+    <!-- Tip jar products -->
+    <string name="d_tip_shot">Uma dose</string>
+    <string name="d_tip_half">Meia caneca</string>
+    <string name="d_tip_pint">Uma caneca</string>
+</resources>
